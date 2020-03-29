@@ -205,17 +205,29 @@ void ASoul_Like_ACTCharacter::CalculateLeanValue(float TurnValue)
 	LeanAmount_Anim = FMath::FInterpTo(LeanAmount_Anim, LeanAmount_Char, GetWorld()->GetDeltaSeconds(), LeanSpeed_Char);
 }
 
-FVector ASoul_Like_ACTCharacter::PredictMovement()
+
+void ASoul_Like_ACTCharacter::PredictMovement(FVector& DirectionVec, float& Degree)
 {
 	const FRotator Rotation = Controller->GetControlRotation();
 
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-	const FVector Direction =
-		((FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X) * ForwardAxisValue).GetSafeNormal()
-			+ FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y) * RightAxisValue).GetSafeNormal();
+	DirectionVec =
+		(
+			FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X) * ForwardAxisValue +
+			FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y) * RightAxisValue
+		).GetSafeNormal();
 
-	return Direction;
+	if (!DirectionVec.IsNearlyZero())
+	{
+		Degree = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(GetActorForwardVector(), DirectionVec)));
+
+		float RightCosAngle = FVector::DotProduct(GetActorRightVector(), DirectionVec);
+		if (RightCosAngle < 0)
+			Degree *= -1;
+	}
+	else
+		Degree = 0;
 }
 
 void ASoul_Like_ACTCharacter::MoveForward(float Value)
@@ -234,11 +246,17 @@ void ASoul_Like_ACTCharacter::MakeMove()
 {
 	if (Controller)
 	{
-		FVector Direction = PredictMovement();
+		FVector Direction;
+		float Degree;
+		float LocoMulti;
+		PredictMovement(Direction, Degree);
+		DegreeToMovementMultiplier(Degree, LocoMulti);
+
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::SanitizeFloat(Degree) + " " + FString::SanitizeFloat(LocoMulti));
 
 		if (TargetLockingComponent->GetIsTargetingEnabled())
-			AddMovementInput(Direction, BattleMovementScale);
+			AddMovementInput(Direction, BattleMovementScale * LocoMulti);
 		else
-			AddMovementInput(Direction, TravelMovementScale);
+			AddMovementInput(Direction, TravelMovementScale * LocoMulti);
 	}
 }

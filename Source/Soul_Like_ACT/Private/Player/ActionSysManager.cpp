@@ -153,7 +153,9 @@ bool UActionSysManager::JumpSectionForCombo()
 
 float UActionSysManager::PredictMovingDirection(ASoul_Like_ACTCharacter *CharacterRef)
 {
-	FVector PlayerVelocity = CharacterRef->PredictMovement();
+	FVector PlayerVelocity;
+	float Degree;
+	CharacterRef->PredictMovement(PlayerVelocity, Degree);
 	FRotator PlayerRotation = CharacterRef->GetActorRotation();
 	if (!PlayerVelocity.IsNearlyZero())
 	{

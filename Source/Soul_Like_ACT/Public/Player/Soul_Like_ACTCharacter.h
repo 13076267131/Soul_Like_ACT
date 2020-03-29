@@ -82,7 +82,10 @@ protected:
 	void CalculateLeanValue(float TurnValue);
 	//----------------------------------
 
-	FVector PredictMovement();
+	void PredictMovement(FVector& DirectionVec, float& Degree);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DegreeToMovementMultiplier(const float& Degree, float& Multiplier);
 
 protected:
 	// APawn interface
