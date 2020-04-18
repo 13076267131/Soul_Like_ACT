@@ -36,5 +36,4 @@ void UMyBTService_IsTargetAvailable::TickNode(UBehaviorTreeComponent& OwnerComp,
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(GetSelectedBlackboardKey(), 1);
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::FromInt(++counter));
 }

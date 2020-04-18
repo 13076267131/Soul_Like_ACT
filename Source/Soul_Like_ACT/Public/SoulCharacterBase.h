@@ -52,6 +52,13 @@ enum class EActorFaction : uint8
 	Enemy
 };
 
+UENUM(BlueprintType)
+enum class ESoulMovementMode : uint8
+{
+	Idle,
+	Run,
+	Sprint
+};
 
 UCLASS()
 class SOUL_LIKE_ACT_API ASoulCharacterBase : public ACharacter, public ITargetable, public IAbilitySystemInterface
@@ -268,4 +275,7 @@ public:
 	{
 		AbilitySystemComponent->SetTagMapCount(GameplayTag, 0);
 	}
+
+	UFUNCTION(BlueprintCallable, category = Movement)
+	void GetMovementMode(ESoulMovementMode& MovementMode) const;
 };

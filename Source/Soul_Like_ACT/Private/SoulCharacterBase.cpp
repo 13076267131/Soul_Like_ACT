@@ -108,6 +108,18 @@ void ASoulCharacterBase::MakeStepDecelAndSound_Notify(ASoulCharacterBase *Charac
 	CharacterRef->MakeStepDecelAndSound();
 }
 
+void ASoulCharacterBase::GetMovementMode(ESoulMovementMode& MovementMode) const
+{
+	float SpeedProportion = GetVelocity().Size() / AttributeSet->GetMoveSpeed();
+	
+	if (FMath::IsNearlyZero(SpeedProportion))
+		MovementMode = ESoulMovementMode::Idle;
+	else if (SpeedProportion <= 0.61f)
+		MovementMode = ESoulMovementMode::Run;
+	else
+		MovementMode = ESoulMovementMode::Sprint;
+}
+
 void ASoulCharacterBase::MakeStepDecelAndSound_Implementation()
 {
 	return;

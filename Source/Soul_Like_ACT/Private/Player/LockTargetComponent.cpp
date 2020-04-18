@@ -233,8 +233,6 @@ void ULockTargetComponent::EnableLockingTarget()
 {
 	bIsTargetingEnabled = 1;
 
-	Cast<ACharacter>(GetOwner())->GetCharacterMovement()->MaxWalkSpeed = 300.f;
-
 	//Save Rotation references
 	CacheRotationSetting();
 
@@ -279,9 +277,6 @@ void ULockTargetComponent::ResetRotationSetting()
 void ULockTargetComponent::DisableLockingTarget()
 {
 	bIsTargetingEnabled = false;
-
-	//TODO
-	Cast<ACharacter>(GetOwner())->GetCharacterMovement()->MaxWalkSpeed = 600.f;
 
 	PlayerArrow->SetVisibility(0);
 

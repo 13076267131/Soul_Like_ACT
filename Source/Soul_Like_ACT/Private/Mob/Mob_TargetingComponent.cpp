@@ -19,7 +19,6 @@ UMob_TargetingComponent::UMob_TargetingComponent()
 void UMob_TargetingComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	//Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, "UMob_TargetingComponent::TickComponent successful");
 
 	if (bIsFacingTarget /* && !OwnerRef->GetIsStun()*/)
 	{

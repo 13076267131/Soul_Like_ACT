@@ -17,5 +17,4 @@ void UMyBTService_PredicateActions::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	uint8 ActionToTake = FMath::RandRange(0, 3);
 	OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), ActionToTake);
-	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::FromInt(ActionToTake));
 }
