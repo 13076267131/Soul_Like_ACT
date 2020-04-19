@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SoulAssetManager.h"
+#include "Item/SoulAssetManager.h"
 #include "Item/ItemBasic.h"
 #include "AbilitySystemGlobals.h"
 

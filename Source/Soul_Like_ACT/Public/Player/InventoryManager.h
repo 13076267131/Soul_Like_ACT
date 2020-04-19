@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "WeaponActor.h"
+#include "Item/WeaponActor.h"
 #include "Types/SoulItemTypes.h"
 #include "Components/ActorComponent.h"
 #include "InventoryManager.generated.h"

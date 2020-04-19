@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "MobController.h"
+#include "Mob/MobController.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Mob/Mob_TargetingComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"

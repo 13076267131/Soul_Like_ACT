@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "SoulAbilitySysBPLib.h"
+#include "Abilities/SoulAbilitySysBPLib.h"
 
 USoulAbilitySysBPLib::USoulAbilitySysBPLib(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

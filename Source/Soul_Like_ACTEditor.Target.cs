@@ -8,6 +8,8 @@ public class Soul_Like_ACTEditorTarget : TargetRules
 	public Soul_Like_ACTEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
+		DefaultBuildSettings = BuildSettingsVersion.V2;
+
 		ExtraModuleNames.Add("Soul_Like_ACT");
 	}
 }

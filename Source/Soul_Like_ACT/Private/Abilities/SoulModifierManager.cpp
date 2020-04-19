@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SoulModifierManager.h"
+#include "Abilities/SoulModifierManager.h"
 #include "SoulCharacterBase.h"
 #include "GameFramework/Actor.h"
 #include "Types/SoulItemTypes.h"

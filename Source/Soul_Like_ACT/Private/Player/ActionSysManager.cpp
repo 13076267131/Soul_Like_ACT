@@ -8,7 +8,7 @@
 #include "Types/DA_ComboMontage.h"
 #include "Abilities/SoulAbilitySystemComponent.h"
 #include "TimerManager.h"
-#include "SoulGameplayAbility.h"
+#include "Abilities/SoulGameplayAbility.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 

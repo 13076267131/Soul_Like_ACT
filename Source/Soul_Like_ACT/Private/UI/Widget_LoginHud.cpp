@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Widget_LoginHud.h"
+#include "UI/Widget_LoginHud.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "SoulGameInstanceBase.h"

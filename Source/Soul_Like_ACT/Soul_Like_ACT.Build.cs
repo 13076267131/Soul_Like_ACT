@@ -8,7 +8,7 @@ public class Soul_Like_ACT : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] {
+        PublicDependencyModuleNames.AddRange(new string[] {
             "Core",
             "CoreUObject",
             "Slate",
@@ -19,6 +19,8 @@ public class Soul_Like_ACT : ModuleRules
             "GameplayTags",
             "GameplayTasks",
             "UMG",
-            "NavigationSystem"});
+            "NavigationSystem",
+            "InputBuffer"
+        });
 	}
 }

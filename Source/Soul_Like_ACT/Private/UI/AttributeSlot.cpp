@@ -4,7 +4,7 @@
 #include "Components/TextBlock.h"
 #include "Abilities/SoulAttributeSet.h"
 #include "Abilities/SoulAbilitySystemComponent.h"
-#include "SoulSerializerBpLib.h"
+#include "BPFL/SoulSerializerBpLib.h"
 
 
 void UAttributeSlot::SetAttributeType()

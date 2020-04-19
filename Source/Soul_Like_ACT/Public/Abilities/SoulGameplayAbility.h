@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Soul_Like_ACT.h"
-#include "GameplayAbility.h"
+#include "Abilities/GameplayAbility.h"
 #include "Abilities/SoulAbilityTypes.h"
 #include "GameplayTagContainer.h"
 #include "SoulGameplayAbility.generated.h"

@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "InventoryManager.h"
+#include "Player/InventoryManager.h"
 #include "Player/Soul_Like_ACTCharacter.h"
 #include "Abilities/SoulModifierManager.h"
 #include "Engine/World.h"

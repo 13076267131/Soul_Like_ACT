@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ItemBasic.h"
+#include "Item/ItemBasic.h"
 
 bool USoulItem::IsConsumable() const
 {

@@ -1,12 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Widget_ItemInfo.h"
+#include "UI/Widget_ItemInfo.h"
 #include "Types/SoulItemTypes.h"
 #include "Item/ItemBasic.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/Image.h"
+#include "BPFL/SoulSerializerBpLib.h"
 
 void UWidget_ItemInfo::MakeItemInfo_Implementation(const FSoulItemData& ItemData)
 {

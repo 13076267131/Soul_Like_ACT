@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Soul_Like_ACT.h"
 #include "SoulSaveGame.h"
 #include "Blueprint/UserWidget.h"
 #include "Widget_ItemInfo.generated.h"

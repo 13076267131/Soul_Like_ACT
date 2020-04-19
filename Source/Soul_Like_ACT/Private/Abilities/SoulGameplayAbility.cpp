@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "SoulGameplayAbility.h"
+#include "Abilities/SoulGameplayAbility.h"
 #include "Abilities/SoulAbilitySystemComponent.h"
 #include "Abilities/SoulTargetType.h"
 #include "SoulCharacterBase.h"

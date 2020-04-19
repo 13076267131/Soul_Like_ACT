@@ -1,5 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "MyBTTask_StrafeToLocation.h"
+#include "AI/MyBTTask_StrafeToLocation.h"
 
 

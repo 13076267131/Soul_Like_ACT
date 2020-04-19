@@ -6,7 +6,11 @@
 #include "Item/SoulAssetManager.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "SoulAssetManager.h"
+#include "Item/SoulAssetManager.h"
+#include "BPFL/SoulSerializerBpLib.h"
+#include "Player/InventoryManager.h"
+#include "Player/Soul_Like_ACTCharacter.h"
+#include "Player/SoulPlayerController.h"
 
 
 USoulGameInstanceBase::USoulGameInstanceBase()

@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SoulSerializerBpLib.h"
+#include "BPFL/SoulSerializerBpLib.h"
+#include "Abilities/SoulAttributeSet.h"
 #include "Item/ItemBasic.h"
 #include "Abilities/SoulGameplayAbility.h"
 

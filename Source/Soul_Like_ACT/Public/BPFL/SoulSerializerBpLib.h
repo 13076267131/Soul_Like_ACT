@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "SoulGameplayAbility.h"
+#include "Abilities/SoulGameplayAbility.h"
 #include "SoulSerializerBpLib.generated.h"
 
 struct FGameplayAttribute;

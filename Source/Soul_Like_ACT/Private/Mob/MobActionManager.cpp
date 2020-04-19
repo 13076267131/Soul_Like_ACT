@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "MobActionManager.h"
+#include "Mob/MobActionManager.h"
 
 // Sets default values for this component's properties
 UMobActionManager::UMobActionManager()

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
+#include "InputBufferPlayerController.h"
 #include "SoulPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SOUL_LIKE_ACT_API ASoulPlayerController : public APlayerController
+class SOUL_LIKE_ACT_API ASoulPlayerController : public AInputBufferPlayerController
 {
 	GENERATED_BODY()
 };
