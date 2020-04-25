@@ -100,12 +100,36 @@ public:
 };
 
 UCLASS()
-class USoulPrimaryStatusGameplayAbility : public USoulModifierGameplayAbility
+class SOUL_LIKE_ACT_API USoulPrimaryStatusGameplayAbility : public USoulModifierGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
 	USoulPrimaryStatusGameplayAbility()
 	{
+	}
+};
+
+
+UCLASS()
+class SOUL_LIKE_ACT_API UGA_Melee : public USoulGameplayAbility
+{
+	GENERATED_BODY()
+	
+protected:
+	UPROPERTY()
+	int32 CurrentComboIndex;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Animation)
+	TArray<UAnimMontage*> ComboMontages;
+
+	UFUNCTION(BlueprintCallable, Category = Animation)
+	UAnimMontage* GetComboMontage() const { return ComboMontages[CurrentComboIndex]; }
+	UFUNCTION(BlueprintCallable, Category = Animation)
+	void SetNextComboMontageIndex()
+	{
+		++CurrentComboIndex;
+
+		if (CurrentComboIndex == ComboMontages.Num())
+			CurrentComboIndex = 0;
 	}
 };

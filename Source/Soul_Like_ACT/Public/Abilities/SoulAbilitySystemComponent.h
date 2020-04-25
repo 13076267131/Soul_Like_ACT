@@ -36,12 +36,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static FActiveGameplayEffectHandle ApplyGE_ToTarget(const AActor* FromActor, const AActor* TargetActor, const TSubclassOf<UGameplayEffect> GameplayEffect, const int32 AbilityLevel);
-
-	//Use this to remove tag like Ability.Melee
-	//So we can force to use Evade while attacking
-	UFUNCTION(BlueprintCallable)
-	void RemoveGameplayTag(const FGameplayTag& GameplayTag)
-	{
-		SetTagMapCount(GameplayTag, 0);
-	}
 };

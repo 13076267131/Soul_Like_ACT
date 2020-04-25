@@ -111,4 +111,13 @@ private:
 	FOnMontageEnded MontageEndedDelegate;
 	FDelegateHandle CancelledHandle;
 	FDelegateHandle EventHandle;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void UnbindAllDelegates()
+	{
+		OnCompleted.Clear();
+		OnBlendOut.Clear();
+		OnInterrupted.Clear();
+	}
 };

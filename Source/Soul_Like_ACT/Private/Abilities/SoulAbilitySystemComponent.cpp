@@ -71,3 +71,4 @@ FActiveGameplayEffectHandle USoulAbilitySystemComponent::ApplyGE_ToTarget(const 
 
 	return FActiveGameplayEffectHandle();
 }
+

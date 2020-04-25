@@ -268,14 +268,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetAP_TEST() const { return GetAttackPower(); }
 
-	//Use this to remove tag like Ability.Melee
-	//So we can force to use Evade while attacking
-	UFUNCTION(BlueprintCallable)
-	void RemoveGameplayTag_DANGER(const FGameplayTag& GameplayTag)
-	{
-		AbilitySystemComponent->SetTagMapCount(GameplayTag, 0);
-	}
-
 	UFUNCTION(BlueprintCallable, category = Movement)
 	void GetMovementMode(ESoulMovementMode& MovementMode) const;
 };

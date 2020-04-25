@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Abilities/SoulAbilitySysBPLib.h"
+#include "AbilitySystemComponent.h"
 
 USoulAbilitySysBPLib::USoulAbilitySysBPLib(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -22,3 +23,15 @@ void USoulAbilitySysBPLib::CreateEventData(const AActor *Target, const AActor *S
 
 	OutpEventData = TempEventData;
 }
+
+bool USoulAbilitySysBPLib::OverrideActorGameplayTag(UAbilitySystemComponent* AbilitySysComp, const FGameplayTag& GameplayTag, bool bAdd)
+{
+	if (AbilitySysComp)
+	{
+		AbilitySysComp->SetTagMapCount(GameplayTag, bAdd);
+		return true;
+	}
+
+	return false;
+}
+
