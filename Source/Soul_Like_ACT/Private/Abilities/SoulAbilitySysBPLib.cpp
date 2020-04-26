@@ -35,3 +35,19 @@ bool USoulAbilitySysBPLib::OverrideActorGameplayTag(UAbilitySystemComponent* Abi
 	return false;
 }
 
+bool USoulAbilitySysBPLib::DoesActorHasTag(UAbilitySystemComponent* AbilitySysComp, FGameplayTag InTag)
+{
+	if (AbilitySysComp)
+		return AbilitySysComp->HasMatchingGameplayTag(InTag);
+
+	return false;
+}
+
+bool USoulAbilitySysBPLib::DoesActorHasAnyTags(UAbilitySystemComponent* AbilitySysComp, FGameplayTagContainer InTagContainer)
+{
+	if (AbilitySysComp)
+		return AbilitySysComp->HasAnyMatchingGameplayTags(InTagContainer);
+
+	return false;
+}
+

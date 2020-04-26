@@ -22,4 +22,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = GameplayTag)
 	static bool OverrideActorGameplayTag(UAbilitySystemComponent* AbilitySysComp, const FGameplayTag& InTag, bool bAdd);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = GameplayTag)
+	static bool DoesActorHasTag(UAbilitySystemComponent* AbilitySysComp, FGameplayTag InTag);
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = GameplayTag)
+	static bool DoesActorHasAnyTags(UAbilitySystemComponent* AbilitySysComp, FGameplayTagContainer InTagContainer);
 };
