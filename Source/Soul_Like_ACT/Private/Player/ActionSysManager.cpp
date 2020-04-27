@@ -30,92 +30,6 @@ void UActionSysManager::TickComponent(float DeltaTime, enum ELevelTick TickType,
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-bool UActionSysManager::DoMeleeAttack()
-{
-	if (!bCanUseAnyGA() || bIsUsingParry())
-		return 0;
-
- 	if (bIsUsingMelee())
- 		return TryEnableJumpSection();
-	
-	return PlayerRef->AbilitySystemComponent->TryActivateAbilitiesByTag(
-		FGameplayTagContainer{ FGameplayTag::RequestGameplayTag(FName{"Ability.Melee.Normal"}, true) },
-		true);
-}
-
-bool UActionSysManager::DoSpecialMeleeAttack()
-{
-	if (!bCanUseAnyGA())
-		return 0;
-
-	if (bIsUsingMelee())
-		return TryEnableJumpSection();
-
-	return PlayerRef->AbilitySystemComponent->TryActivateAbilitiesByTag(
-		FGameplayTagContainer{ FGameplayTag::RequestGameplayTag(FName{"Ability.Melee.ParryBreak"}, true) },
-		true);
-
-}
-
-bool UActionSysManager::DoDodge()
-{
-	if (!bCanUseAnyGA())
-	{
-		TArray<USoulGameplayAbility*> tempGAs;
-		PlayerRef->AbilitySystemComponent->GetActiveAbilitiesWithTags(
-			FGameplayTagContainer{ FGameplayTag::RequestGameplayTag(FName{"Ability.Skill"}, true) },
-			tempGAs);
-
-		for (USoulGameplayAbility * localGA : tempGAs)
-		{
-			LOG_FUNC_ERROR(localGA->GetName());
-		}
-		
-		return 0;
-	}
-
-	return PlayerRef->AbilitySystemComponent->TryActivateAbilitiesByTag(
-		FGameplayTagContainer{ FGameplayTag::RequestGameplayTag(FName{"Ability.Skill.Evade"}, true) },
-		true);
-}
-
-bool UActionSysManager::DoParry_Start()
-{
-	if (!bCanUseAnyGA())
-	{
-		TArray<USoulGameplayAbility*> tempGAs;
-		PlayerRef->AbilitySystemComponent->GetActiveAbilitiesWithTags(
-			FGameplayTagContainer{ FGameplayTag::RequestGameplayTag(FName{"Ability.Skill"}, true) },
-			tempGAs);
-
-		for (USoulGameplayAbility* localGA : tempGAs)
-		{
-			LOG_FUNC_ERROR(localGA->GetName());
-		}
-
-		return 0;
-	}
-
-	return PlayerRef->AbilitySystemComponent->TryActivateAbilitiesByTag(
-		FGameplayTagContainer{ FGameplayTag::RequestGameplayTag(FName{"Ability.Skill.Parry"}, true) },
-		true);
-
-}
-
-bool UActionSysManager::DoParry_End()
-{
-	UAnimInstance* AnimInstance = PlayerRef->GetMesh()->GetAnimInstance();
-	UAnimMontage* CurrentMontage = AnimInstance->GetCurrentActiveMontage();
-
-	if (CurrentMontage)
-	{
-		AnimInstance->Montage_JumpToSection(FName("ParryEnd"), CurrentMontage);
-		return true;
-	}
-
-	return false;
-}
-
 bool UActionSysManager::SetJumpSection(const FName InpComboScetionName, UAnimMontage *InpMontage)
 {
 	bWillJumpSection = 0;
@@ -139,7 +53,7 @@ bool UActionSysManager::JumpSectionForCombo()
 	UAnimMontage *CurrentMontage = AnimInstance->GetCurrentActiveMontage();
 	//FName CurrentSection = AnimInstance->Montage_GetCurrentSection(CurrentMontage);
 	
-	if (!JumpMontage || JumpMontage == CurrentMontage)
+	if (JumpMontage != nullptr && (JumpMontage == CurrentMontage))
 	{
 		FName CurrentSectionName = AnimInstance->Montage_GetCurrentSection(CurrentMontage);
 		
@@ -148,6 +62,7 @@ bool UActionSysManager::JumpSectionForCombo()
 		UE_LOG(LogTemp, Warning, TEXT("Current Montage: %s"),
 			*(CurrentMontage->GetName()));
 	}
+
 	return true;
 }
 
@@ -198,45 +113,4 @@ void UActionSysManager::GetActiveAbilitiesWithTags(FGameplayTagContainer Ability
 {
 	if (PlayerRef->AbilitySystemComponent)
 		PlayerRef->AbilitySystemComponent->GetActiveAbilitiesWithTags(AbilityTags, ActiveAbilities);
-}
-
-bool UActionSysManager::bIsUsingMelee() const
-{
-	USoulAbilitySystemComponent *LocalComp = Cast<USoulAbilitySystemComponent>(PlayerRef->GetAbilitySystemComponent());
-
-	if (!LocalComp) return 0;
-
-	else
-	{
-		TArray<class USoulGameplayAbility*> LocalAbilities;
-
-		LocalComp->GetActiveAbilitiesWithTags(
-			FGameplayTagContainer{ FGameplayTag::RequestGameplayTag(FName{"Ability.Melee"}, true) },
-			LocalAbilities);
-
-		return LocalAbilities.Num() > 0;
-	}
-}
-
-bool UActionSysManager::bIsUsingSkills() const
-{
-	UAbilitySystemComponent * MyAbilityComponent = PlayerRef->GetAbilitySystemComponent();
-	
-	return (MyAbilityComponent->HasMatchingGameplayTag(
-		FGameplayTag::RequestGameplayTag(FName{ "Ability.Skill" }, true)));
-}
-
-bool UActionSysManager::bCanUseAnyGA() const
-{
-	return (PlayerRef->GetHealth() > 0.f &&
-		!UGameplayStatics::IsGamePaused(GetWorld()) &&
-		!bIsUsingSkills());
-}
-
-bool UActionSysManager::bIsUsingParry() const
-{
-	UAbilitySystemComponent *MyAbilityComponent = USoulAbilitySystemComponent::GetAbilitySystemComponentFromActor(GetOwner(), false);
-
-	return (MyAbilityComponent->HasMatchingGameplayTag(
-		FGameplayTag::RequestGameplayTag(FName{ "Ability.Skill.Parry" }, true)));
 }

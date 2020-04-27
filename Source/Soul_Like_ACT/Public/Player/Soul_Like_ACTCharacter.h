@@ -115,6 +115,8 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly))
 	static void GetPlayer(UWorld *InWorld, bool &Successful, ASoulPlayerController *&SoulPlayerController, ASoul_Like_ACTCharacter *&SoulCharacter, UInventoryManager *&SoulInventoryManager);
 
+	virtual void GetMovementMode(ESoulMovementMode& MovementMode) const override;
+
 	friend UActionSysManager;
 };
 

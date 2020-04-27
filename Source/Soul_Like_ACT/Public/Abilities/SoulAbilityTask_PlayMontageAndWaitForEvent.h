@@ -113,7 +113,7 @@ private:
 	FDelegateHandle EventHandle;
 
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = AbilityTask)
 	void UnbindAllDelegates()
 	{
 		OnCompleted.Clear();

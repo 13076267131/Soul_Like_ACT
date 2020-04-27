@@ -20,7 +20,9 @@ public class Soul_Like_ACT : ModuleRules
             "GameplayTasks",
             "UMG",
             "NavigationSystem",
-            "InputBuffer"
+            "InputBuffer",
+            "BlueprintJson",
+            "Json"
         });
 	}
 }

@@ -35,23 +35,6 @@ protected:
 	UAnimMontage *JumpMontage;
 
 public:
-	bool bIsUsingMelee() const;
-	bool bIsUsingSkills() const;
-	bool bCanUseAnyGA() const;
-	bool bIsUsingParry() const;
-
-	UFUNCTION(BlueprintCallable)
-	bool DoMeleeAttack();
-	UFUNCTION(BlueprintCallable)
-	bool DoSpecialMeleeAttack();
-	UFUNCTION(BlueprintCallable)
-	bool DoDodge();
-
-	UFUNCTION(BlueprintCallable)
-		bool DoParry_Start();
-	UFUNCTION(BlueprintCallable)
-		bool DoParry_End();
-
 	/**
 	 * These 2 functions are called via Active Melee GameplayAbilities
 	 */

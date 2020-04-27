@@ -269,5 +269,5 @@ public:
 	float GetAP_TEST() const { return GetAttackPower(); }
 
 	UFUNCTION(BlueprintCallable, category = Movement)
-	void GetMovementMode(ESoulMovementMode& MovementMode) const;
+	virtual void GetMovementMode(ESoulMovementMode& MovementMode) const;
 };

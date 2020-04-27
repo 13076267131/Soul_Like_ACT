@@ -168,6 +168,16 @@ void ASoul_Like_ACTCharacter::GetPlayer(UWorld* InWorld, bool& Successful, ASoul
 	return;
 }
 
+void ASoul_Like_ACTCharacter::GetMovementMode(ESoulMovementMode& MovementMode) const
+{
+	if (FMath::IsNearlyZero(ForwardAxisValue) && FMath::IsNearlyZero(RightAxisValue))
+		MovementMode = ESoulMovementMode::Idle;
+	else if (GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+		MovementMode = ESoulMovementMode::Idle;
+	else
+		Super::GetMovementMode(MovementMode);
+}
+
 void ASoul_Like_ACTCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
