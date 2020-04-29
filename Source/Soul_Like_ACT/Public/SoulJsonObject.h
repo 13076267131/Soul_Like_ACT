@@ -39,4 +39,7 @@ public:
 			JsonObjectWrapper->JsonObject.Object->SetField(FieldName, JsonValue.Value);
 		}
 	}
+
+	UFUNCTION(BlueprintCallable, Category = Json)
+	static void SoulTryGetJumpSection(USoulJsonObjectWrapper* JsonObjectWrapper, bool& isSameMontage, FString& JumpTargetName, bool& bSuccessful);
 };
