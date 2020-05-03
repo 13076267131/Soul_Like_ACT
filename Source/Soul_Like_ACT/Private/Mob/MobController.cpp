@@ -25,7 +25,7 @@ AMobController::AMobController()
 	AIPerceptionComponent->ConfigureSense(*sightConfig);
 
 	//BB and BT
-	BlockBoardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBaordComponent"));
+	BlackBoardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBaordComponent"));
 	BehaviorTreeComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
 }
 
@@ -75,12 +75,12 @@ void AMobController::AISenseUpdateMessage(AActor* Actor, FAIStimulus Stimulus)
 	{
 		if (Stimulus.WasSuccessfullySensed())
 		{
-			BlockBoardComp->SetValueAsObject("PlayerPawn", Actor);
+			BlackBoardComp->SetValueAsObject("PlayerPawn", Actor);
 			UE_LOG(LogTemp, Warning, TEXT("%s is founded by %s"), *Actor->GetName(), *PossessedMob->GetName());
 		}
 		else
 		{
-			BlockBoardComp->SetValueAsObject("PlayerPawn", nullptr);
+			BlackBoardComp->SetValueAsObject("PlayerPawn", nullptr);
 			UE_LOG(LogTemp, Warning, TEXT("%s is lost by %s"), *Actor->GetName(), *PossessedMob->GetName());
 		}
 	}

@@ -16,13 +16,13 @@ void UMyBTService_DistanceToPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, 
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	AActor *PlayeyPawn = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("PlayerPawn"));
+	AActor *PlayeyPawn = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(TargetKey.SelectedKeyName));
 	if (PlayeyPawn)
 	{
 		float DistanceToPlayer = FVector::Distance(Cast<AMobController>(OwnerComp.GetOwner())->GetPawn()->GetActorLocation(), PlayeyPawn->GetActorLocation());
-		OwnerComp.GetBlackboardComponent()->SetValueAsFloat("DistanceToPlayer", DistanceToPlayer);
+		OwnerComp.GetBlackboardComponent()->SetValueAsFloat(DistanceKey.SelectedKeyName, DistanceToPlayer);
 		return;
 	}
-	OwnerComp.GetBlackboardComponent()->SetValueAsFloat("DistanceToPlayer", -1.f);
+	OwnerComp.GetBlackboardComponent()->SetValueAsFloat(DistanceKey.SelectedKeyName, -1.f);
 
 }

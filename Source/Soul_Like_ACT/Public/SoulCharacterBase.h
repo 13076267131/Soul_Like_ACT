@@ -253,6 +253,11 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void HandleOnDead();
 
+	UPROPERTY()
+	TArray<ASoulCharacterBase*> CounterTargets;
+	UPROPERTY()
+	bool bCounterEnabled;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	static void TagContainerToString(const FGameplayTagContainer &Container, FString &Outp)
@@ -270,4 +275,23 @@ public:
 
 	UFUNCTION(BlueprintCallable, category = Movement)
 	virtual void GetMovementMode(ESoulMovementMode& MovementMode) const;
+
+// 	UFUNCTION(BlueprintCallable, Category = CounterStrike)
+// 	void EnableCounterTimer()
+// 	{
+// 		if (AbilitySystemComponent->HasMatchingGameplayTag())
+// 		{
+// 			CounterTargets.Reset();
+// 			bCounterEnabled = true;
+// 		}
+// 		else
+// 		{
+// 			LOG_FUNC_NORMAL("bCounterEnabled is enabled currently");
+// 		}
+// 	}
+// 	UFUNCTION(BlueprintCallable, Category = CounterStrike)
+// 	void GetCounterTargets(TArray<ASoulCharacterBase*> Result) const { Result = CounterTargets; }
+	//TODO
+// 	UFUNCTION(BlueprintCallable, Category = CounterStrike)
+// 	void 
 };

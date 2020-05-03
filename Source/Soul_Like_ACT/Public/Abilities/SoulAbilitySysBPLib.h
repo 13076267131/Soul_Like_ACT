@@ -17,7 +17,7 @@ class SOUL_LIKE_ACT_API USoulAbilitySysBPLib : public UAbilitySystemBlueprintLib
 	GENERATED_UCLASS_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, BlueprintInternalUseOnly,Category = Ability, Meta = (Tooltip = "This function can be used to create the event data through weapon on hit"))
+	UFUNCTION(BlueprintCallable,Category = Ability, Meta = (Tooltip = "This function can be used to create the event data through weapon on hit"))
 	static void CreateEventData(const AActor *Target, const AActor *Source, const FHitResult &InpHitResult, const FGameplayTag EventTag, const float EventMagnitude, FGameplayEventData & OutpEventData);
 
 	UFUNCTION(BlueprintCallable, Category = GameplayTag)

@@ -20,12 +20,13 @@ protected:
 	class AMobBasic *PossessedMob;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
-		class UAIPerceptionComponent* AIPerceptionComponent;
+	class UAIPerceptionComponent* AIPerceptionComponent;
 	
+	UPROPERTY()
 	UAISenseConfig_Sight *sightConfig;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
-		class UBlackboardComponent *BlockBoardComp;
+		class UBlackboardComponent *BlackBoardComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
 		class UBehaviorTreeComponent *BehaviorTreeComp;
 
