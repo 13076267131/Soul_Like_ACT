@@ -178,7 +178,7 @@ public:
 	virtual int32 GetCharacterLevel() const { return 1; }
 	
 	UFUNCTION(BlueprintCallable)
-	bool GetIsDead() const { return bIsDead; }
+		bool GetIsDead() const { return bIsDead; }
 
 	UFUNCTION(BlueprintCallable)
 		bool GetIsHealthZero() const { return GetHealth() <= 0.f; }
@@ -275,23 +275,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, category = Movement)
 	virtual void GetMovementMode(ESoulMovementMode& MovementMode) const;
-
-// 	UFUNCTION(BlueprintCallable, Category = CounterStrike)
-// 	void EnableCounterTimer()
-// 	{
-// 		if (AbilitySystemComponent->HasMatchingGameplayTag())
-// 		{
-// 			CounterTargets.Reset();
-// 			bCounterEnabled = true;
-// 		}
-// 		else
-// 		{
-// 			LOG_FUNC_NORMAL("bCounterEnabled is enabled currently");
-// 		}
-// 	}
-// 	UFUNCTION(BlueprintCallable, Category = CounterStrike)
-// 	void GetCounterTargets(TArray<ASoulCharacterBase*> Result) const { Result = CounterTargets; }
-	//TODO
-// 	UFUNCTION(BlueprintCallable, Category = CounterStrike)
-// 	void 
 };

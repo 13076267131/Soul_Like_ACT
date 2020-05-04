@@ -4,6 +4,7 @@
 #include "Abilities/SoulAttributeSet.h"
 #include "SoulCharacterBase.h"
 #include "AbilitySystemComponent.h"
+#include "BPFL/BPFL_Math.h"
 
 struct SoulDamageStatics
 {
@@ -80,6 +81,13 @@ void USoulDamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	//Warning: it's non-static. Be careful when modify the GE
 	FGameplayEffectSpec* Spec = ExecutionParams.GetOwningSpecForPreExecuteMod();
 
+	/**
+	 * Print info of FGameplayEffectContextHandle
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, Spec->GetContext().GetInstigator()->GetName());
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, Spec->GetContext().GetEffectCauser()->GetName());
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, Spec->GetContext().GetHitResult()->ToString());
+	 */
+
 	// Gather the tags from the source and target as that can affect which buffs should be used
 	const FGameplayTagContainer* SourceTags = Spec->CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec->CapturedTargetTags.GetAggregatedTags();
@@ -113,15 +121,13 @@ void USoulDamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 
 	//Check whether it's a crit strike from source
 	//TODO: "Can't crit" tag to prevent crit triggered
-	int32 LocalRandValue = FMath::RandRange(0, 100);
-	const bool bIsCrit = CriticalStrike >= LocalRandValue ? true : false;
+	int32 TempCritRoll = FMath::RandRange(0, 100);
+	const bool bIsCrit = CriticalStrike >= TempCritRoll ? true : false;
 
-	/**
-	 * HEALTH DAMAGE
-	 */
+	//HEALTH DAMAGE
 	float DamageDone = 0.f;
 
-	if (CriticalStrike >= LocalRandValue)
+	if (CriticalStrike >= TempCritRoll)
 	{
 		Spec->DynamicAssetTags.AddTagFast(FGameplayTag::RequestGameplayTag(FName{ "Damage.Critical" }, true));
 		DamageDone = (DamageMulti + 1.f) * AttackPower * (1 + CriticalMulti / 100.f);
@@ -132,9 +138,29 @@ void USoulDamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	//Defense calculation
 	DamageDone *= (DamageDone / (DamageDone + DefensePower));
 	
-	/**
-	* POSTURE DAMAGE
-	*/
+	
+	
+	float CuttingAngle = 0.f;
+	UBPFL_Math::FindHitDirectionFromActor(TargetActor, SourceActor, CuttingAngle);
+
+	if (CuttingAngle < 60.f)
+	{
+		if (TargetTags->HasTag(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry.Perfect" }, true)))
+		{
+			//Warning: Pass the tag through the GE, just in case the Parry's GA ends before the Notify_OnMeleeAttack is triggered;
+			Spec->DynamicAssetTags.AddTagFast(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry.Perfect" }, true));
+
+			DamageDone = 0.f;
+		}
+		else if (TargetTags->HasTag(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry.Normal" }, true)))
+		{
+			Spec->DynamicAssetTags.AddTagFast(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry.Normal" }, true));
+
+			DamageDone *= 0.25f;
+		}
+	}
+	
+	//POSTURE DAMAGE
 	float PostureDamageDone =  (1.f +PostureMulti) * PostureCrumble * (PostureCrumble / (PostureCrumble + PostureStrength));
 
 	if (DamageDone >= 0.f)

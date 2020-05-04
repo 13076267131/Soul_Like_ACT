@@ -40,13 +40,6 @@ FSoulGameplayEffectContainerSpec USoulGameplayAbility::MakeEffectContainerSpecFr
 		{
 			FGameplayEffectSpecHandle newGEHandle = MakeOutgoingGameplayEffectSpec(EffectClass, OverrideGameplayLevel);
 
-			//Event.Magnitude -> Damage Multiplier
-			if (EffectClass->GetName() == "GE_Melee")
-			{
-				newGEHandle.Data->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Damage.Type.Physical"), true), EventData.EventMagnitude);
-				newGEHandle.Data->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Damage.Type.Posture"), true), EventData.EventMagnitude);
-			}
-			
 			ReturnSpec.TargetGameplayEffectSpecs.
 			           Add(newGEHandle);
 		}
