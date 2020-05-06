@@ -6,6 +6,15 @@
 #include "AbilitySystemGlobals.h"
 #include "Abilities/SoulAbilitySystemComponent.h"
 
+
+UBTT_UseGA::UBTT_UseGA(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	NodeName = "Use Combo Ability";
+	// instantiating to be able to use Timers
+	bCreateNodeInstance = true;
+}
+
 EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	USoulAbilitySystemComponent* AbilitySys = Cast<USoulAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Cast<AAIController>(OwnerComp.GetOwner())->GetPawn()));
@@ -15,11 +24,6 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 		return EBTNodeResult::Failed;
 	}
 
-	if(BTC)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, GetName() + " is not an instanced task");
-		return EBTNodeResult::Failed;
-	}
 	BTC = &OwnerComp;
 
 	FOnGameplayAbilityEnded::FDelegate DelegateObj = FOnGameplayAbilityEnded::FDelegate::CreateUObject(this, &UBTT_UseGA::OnGA_Ended);
@@ -28,6 +32,16 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 		return EBTNodeResult::Failed;
 
 	return EBTNodeResult::InProgress;
+}
+
+EBTNodeResult::Type UBTT_UseGA::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+	USoulAbilitySystemComponent* AbilitySys = Cast<USoulAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Cast<AAIController>(OwnerComp.GetOwner())->GetPawn()));
+	if(!AbilitySys)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Failed to get ASC");
+		return EBTNodeResult::Failed;
+	}
 }
 
 void UBTT_UseGA::OnGA_Ended(class UGameplayAbility* Ability)
