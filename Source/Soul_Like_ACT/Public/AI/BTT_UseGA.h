@@ -17,8 +17,6 @@ class SOUL_LIKE_ACT_API UBTT_UseGA : public UBTTaskNode
 	 * this function should be considered as const (don't modify state of object) if node is not instanced! */
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
-	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-
 public:
 	UPROPERTY(EditAnywhere, Category = Abilities)
 	TSubclassOf<UGameplayAbility> ADO;

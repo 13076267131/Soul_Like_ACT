@@ -58,7 +58,10 @@ void USoulAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 	FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
 	UAbilitySystemComponent* Source = Context.GetOriginalInstigatorAbilitySystemComponent();
-	const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	//const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	//const FGameplayTagContainer& TargetTags = *Data.EffectSpec.CapturedTargetTags.GetAggregatedTags();
+	const FGameplayTagContainer& EffectSpecTags = Data.EffectSpec.DynamicAssetTags;
+
 
 	// Compute the delta between old and new, if it is available
 	float DeltaValue = 0;
@@ -146,17 +149,18 @@ void USoulAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 				if (LocalContainer.HasTagExact(FGameplayTag::RequestGameplayTag(FName{ "Damage.Dot" }, true)))
 				{
-					TargetCharacter->HandleDotDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, SourceTags, SourceCharacter, SourceActor);
+					TargetCharacter->HandleDotDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, EffectSpecTags, SourceCharacter, SourceActor);
 				}
 				else
 				{
 					if (GetHealth() <= 0.f)
 						(Cast<ASoulCharacterBase>(SourceActor))->Notify_OnMeleeKill(SourceActor, TargetActor, HitResult);
 
-					TargetCharacter->HandleDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, SourceTags, SourceCharacter, SourceActor);
 				}
 			}
 		}
+
+		TargetCharacter->HandleDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, EffectSpecTags, SourceCharacter, SourceActor);
 	}
 	else if (Data.EvaluatedData.Attribute == GetPostureDamageAttribute())
 	{
@@ -219,7 +223,7 @@ void USoulAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			if (TargetCharacter)
 			{
 				// This is proper damage
-				TargetCharacter->HandlePostureDamage(LocalPostureDamageDone, bIsCritic, HitResult, SourceTags, SourceCharacter, SourceActor);
+				TargetCharacter->HandlePostureDamage(LocalPostureDamageDone, bIsCritic, HitResult, EffectSpecTags, SourceCharacter, SourceActor);
 			}
 		}
 	}

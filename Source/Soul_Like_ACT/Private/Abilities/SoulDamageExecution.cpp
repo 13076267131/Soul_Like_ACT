@@ -137,39 +137,50 @@ void USoulDamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 
 	//Defense calculation
 	DamageDone *= (DamageDone / (DamageDone + DefensePower));
-	
-	
-	
-	float CuttingAngle = 0.f;
-	bool isLeft;
-	UBPFL_Math::FindYawValueToFacingDirection(TargetActor, SourceActor, CuttingAngle, isLeft);
 
-	if (CuttingAngle < 60.f)
+	//POSTURE DAMAGE
+	float PostureDamageDone = (1.f + PostureMulti) * PostureCrumble * (PostureCrumble / (PostureCrumble + PostureStrength));
+	
+
+	float CuttingAngle = 0.f;
+	UBPFL_Math::FindYawValueToFacingDirection(TargetActor, SourceActor, CuttingAngle);
+	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::SanitizeFloat(CuttingAngle));
+
+	if(TargetTags->HasTag(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry" }, true)) && FMath::Abs(CuttingAngle) < 90.f)
 	{
-		if (TargetTags->HasTag(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry.Perfect" }, true)))
+		if(TargetTags->HasTagExact(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry.Perfect" }, true)))
 		{
 			//Warning: Pass the tag through the GE, just in case the Parry's GA ends before the Notify_OnMeleeAttack is triggered;
 			Spec->DynamicAssetTags.AddTagFast(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry.Perfect" }, true));
 
-			DamageDone = 0.f;
+			PostureDamageDone = DamageDone = 0.f;
+
 		}
-		else if (TargetTags->HasTag(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry.Normal" }, true)))
+		else if(TargetTags->HasTagExact(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry.Normal" }, true)))
 		{
 			Spec->DynamicAssetTags.AddTagFast(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Parry.Normal" }, true));
 
 			DamageDone *= 0.25f;
+			PostureDamageDone *= .25f;
 		}
 	}
-	
-	//POSTURE DAMAGE
-	float PostureDamageDone =  (1.f +PostureMulti) * PostureCrumble * (PostureCrumble / (PostureCrumble + PostureStrength));
+	else if(TargetTags->HasTagExact(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Dodge" }, true)))
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Buffer.Dodge");
 
+		Spec->DynamicAssetTags.AddTagFast(FGameplayTag::RequestGameplayTag(FName{ "Buffer.Dodge" }, true));
+
+		PostureDamageDone = DamageDone = 0.f;
+	}
+	else if(!Spec->DynamicAssetTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName{ "Damage.Stun" }, true)))
+	{
+		Spec->DynamicAssetTags.AddTagFast(FGameplayTag::RequestGameplayTag(FName{ "Damage.Stun" }, true));
+	}
+	
 	if (DamageDone >= 0.f)
 	{
 		//Passed the critical tag to the gameplay effect spec
 		//We shall see that when the change of the Damage is passed to the target's AttriuteSet
-
-		Spec->DynamicAssetTags.AddTagFast(FGameplayTag::RequestGameplayTag(FName{ "Damage.Stun" }, true));
 
 		(Cast<ASoulCharacterBase>(SourceActor))->Notify_OnMeleeAttack(TargetActor, *(Spec->GetContext().GetHitResult()));
 

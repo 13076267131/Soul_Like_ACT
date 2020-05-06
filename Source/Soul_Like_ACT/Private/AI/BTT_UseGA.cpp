@@ -34,15 +34,6 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 	return EBTNodeResult::InProgress;
 }
 
-EBTNodeResult::Type UBTT_UseGA::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
-{
-	USoulAbilitySystemComponent* AbilitySys = Cast<USoulAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Cast<AAIController>(OwnerComp.GetOwner())->GetPawn()));
-	if(!AbilitySys)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Failed to get ASC");
-		return EBTNodeResult::Failed;
-	}
-}
 
 void UBTT_UseGA::OnGA_Ended(class UGameplayAbility* Ability)
 {

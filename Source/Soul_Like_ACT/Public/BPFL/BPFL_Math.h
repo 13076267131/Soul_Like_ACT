@@ -18,5 +18,5 @@ class SOUL_LIKE_ACT_API UBPFL_Math : public UBlueprintFunctionLibrary
 	
 public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Math)
-	static void FindYawValueToFacingDirection(const AActor* HitActor, const AActor* Attacker, float& Result, bool& isLeft);
+	static void FindYawValueToFacingDirection(const AActor* HitActor, const AActor* Attacker, float& Result);
 };

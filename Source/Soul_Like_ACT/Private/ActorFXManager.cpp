@@ -16,9 +16,8 @@ void UActorFXManager::SpawnParticleWithHitResult(const FHitResult &HitResult, UP
 {
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld()
 		, OnHitParticles[0]
-		, GetOwner()->GetActorLocation()
-		, FRotator::ZeroRotator
-		, FVector::OneVector
+		, HitResult.ImpactPoint
+		, FRotationMatrix::MakeFromX(HitResult.ImpactNormal).Rotator()
 		, true);
 }
 
@@ -29,8 +28,22 @@ void UActorFXManager::SpawnSoundWithHitResult(const FHitResult &HitResult, USoun
 
 bool UActorFXManager::PlayEffects(const FHitResult& HitResult, const EFXType InputType)
 {
-	SpawnParticleWithHitResult(HitResult, OnHitParticles[0]);
-	SpawnSoundWithHitResult(HitResult, OnHitSounds[0]);
-
-	return 1;
+	switch(InputType)
+	{
+	case EFXType::VE_OnHit:
+		SpawnParticleWithHitResult(HitResult, OnHitParticles[0]);
+		SpawnSoundWithHitResult(HitResult, OnHitSounds[0]);
+		break;
+	case EFXType::VE_OnParry:
+		SpawnParticleWithHitResult(HitResult, OnParryParticles[0]);
+		SpawnSoundWithHitResult(HitResult, OnParrySounds[0]);
+		break;
+	case EFXType::VE_OnBlock:
+		SpawnParticleWithHitResult(HitResult, OnBlockParticles[0]);
+		SpawnSoundWithHitResult(HitResult, OnBlockSounds[0]);
+		break;
+	default:
+		break;
+	}
+	return true;
 }

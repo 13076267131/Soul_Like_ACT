@@ -37,12 +37,11 @@ void UAsyncTask_FacingTarget::Activate()
 void UAsyncTask_FacingTarget::TryRotate()
 {
 	float ForwardDelta;
-	bool isLeft;
-	UBPFL_Math::FindYawValueToFacingDirection(AI_Pawn, Target, ForwardDelta, isLeft);
+	UBPFL_Math::FindYawValueToFacingDirection(AI_Pawn, Target, ForwardDelta);
 
 	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::SanitizeFloat(ForwardDelta));
 
-	if(ForwardDelta <= DegreeTolerance)
+	if(FMath::Abs(ForwardDelta) <= DegreeTolerance)
 	{
 		if (OnEnded.IsBound())
 		{
