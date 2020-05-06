@@ -5,7 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "Math/Matrix.h"
 
-void UBPFL_Math::FindHitDirectionFromActor(const AActor* HitActor, const AActor* Attacker, float& Result)
+void UBPFL_Math::FindYawValueToFacingDirection(const AActor* HitActor, const AActor* Attacker, float& Result, bool& isLeft)
 {
 	FMatrix RotMatrix = FRotationMatrix(HitActor->GetActorRotation());
 	FVector ForwardVec = RotMatrix.GetScaledAxis(EAxis::X);
@@ -17,9 +17,13 @@ void UBPFL_Math::FindHitDirectionFromActor(const AActor* HitActor, const AActor*
 	float ForwardDeltaDegree = FMath::RadiansToDegrees(FMath::Acos(ForwardCosAngle));
 
 	float RightCosAngle = FVector::DotProduct(RightVector, FacingVector);
-
-	if (RightCosAngle < 0.f)
+	
+	//Left
+	if(RightCosAngle < 0.f)
+	{
 		ForwardDeltaDegree *= -1.f;
+		isLeft = true;
+	}
 
 	Result = ForwardDeltaDegree;
 }

@@ -36,4 +36,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static FActiveGameplayEffectHandle ApplyGE_ToTarget(const AActor* FromActor, const AActor* TargetActor, const TSubclassOf<UGameplayEffect> GameplayEffect, const int32 AbilityLevel);
+
+	bool TryActivateAbilityByClassWithDelegate(TSubclassOf<UGameplayAbility> InAbilityToActivate, FOnGameplayAbilityEnded::FDelegate* OnGameplayAbilityEndedDelegate = nullptr);
+
+	bool TryActivateAbilityWithDelegate(FGameplayAbilitySpecHandle AbilityToActivate, bool bAllowRemoteActivation, FOnGameplayAbilityEnded::FDelegate* OnGameplayAbilityEndedDelegate = nullptr);
 };

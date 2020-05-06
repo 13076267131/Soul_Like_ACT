@@ -141,7 +141,8 @@ void USoulDamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	
 	
 	float CuttingAngle = 0.f;
-	UBPFL_Math::FindHitDirectionFromActor(TargetActor, SourceActor, CuttingAngle);
+	bool isLeft;
+	UBPFL_Math::FindYawValueToFacingDirection(TargetActor, SourceActor, CuttingAngle, isLeft);
 
 	if (CuttingAngle < 60.f)
 	{

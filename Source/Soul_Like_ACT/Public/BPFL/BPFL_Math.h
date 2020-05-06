@@ -16,8 +16,7 @@ class SOUL_LIKE_ACT_API UBPFL_Math : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	
-	
 public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Math)
-	static void FindHitDirectionFromActor(const AActor* HitActor, const AActor* Attacker, float& Result);
+	static void FindYawValueToFacingDirection(const AActor* HitActor, const AActor* Attacker, float& Result, bool& isLeft);
 };
