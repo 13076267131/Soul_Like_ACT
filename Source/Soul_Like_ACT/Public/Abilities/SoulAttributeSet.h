@@ -19,77 +19,79 @@
 UCLASS()
 class SOUL_LIKE_ACT_API USoulAttributeSet : public UAttributeSet
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
 
-	USoulAttributeSet();
-	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
-	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData &Data) override;
+    USoulAttributeSet();
+    virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+    virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
-	/** Current Health, when 0 we expect owner to die. Capped by MaxHealth */
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
-	FGameplayAttributeData Health;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, Health)
+    /** Current Health, when 0 we expect owner to die. Capped by MaxHealth */
+    UPROPERTY(BlueprintReadOnly, Category = "Health")
+    FGameplayAttributeData Health;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, Health)
 
-	/** MaxHealth is its own attribute, since GameplayEffects may modify it */
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
-	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, MaxHealth)
+    /** MaxHealth is its own attribute, since GameplayEffects may modify it */
+    UPROPERTY(BlueprintReadOnly, Category = "Health")
+    FGameplayAttributeData MaxHealth;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, MaxHealth)
 
-	/** Current Health, when 0 we expect owner to die. Capped by MaxHealth */
-	UPROPERTY(BlueprintReadOnly, Category = "Defense")
-	FGameplayAttributeData Posture;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, Posture)
-		
-	UPROPERTY(BlueprintReadOnly, Category = "Defense")
-	FGameplayAttributeData MaxPosture;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, MaxPosture)
+    /** Current Health, when 0 we expect owner to die. Capped by MaxHealth */
+    UPROPERTY(BlueprintReadOnly, Category = "Defense")
+    FGameplayAttributeData Posture;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, Posture)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Defense")
-	FGameplayAttributeData PostureStrength;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, PostureStrength)
+    UPROPERTY(BlueprintReadOnly, Category = "Defense")
+    FGameplayAttributeData MaxPosture;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, MaxPosture)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Defense")
-	FGameplayAttributeData DefensePower;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, DefensePower)
+    UPROPERTY(BlueprintReadOnly, Category = "Defense")
+    FGameplayAttributeData PostureStrength;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, PostureStrength)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData AttackPower;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, AttackPower)
+    UPROPERTY(BlueprintReadOnly, Category = "Defense")
+    FGameplayAttributeData DefensePower;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, DefensePower)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData AttackSpeed;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, AttackSpeed)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData AttackPower;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, AttackPower)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData Leech;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, Leech)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData AttackSpeed;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, AttackSpeed)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData PostureCrumble;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, PostureCrumble)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData Leech;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, Leech)
 
-	UPROPERTY(BlueprintReadOnly, Category = "MoveSpeed")
-	FGameplayAttributeData MoveSpeed;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, MoveSpeed)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData PostureCrumble;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, PostureCrumble)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData CriticalStrike;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, CriticalStrike)
+    UPROPERTY(BlueprintReadOnly, Category = "MoveSpeed")
+    FGameplayAttributeData MoveSpeed;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, MoveSpeed)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData CriticalMulti;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, CriticalMulti)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData CriticalStrike;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, CriticalStrike)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Output", meta = (HideFromLevelInfos))
-	FGameplayAttributeData Damage;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, Damage)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData CriticalMulti;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, CriticalMulti)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Output", meta = (HideFromLevelInfos))
-	FGameplayAttributeData PostureDamage;
-	ATTRIBUTE_ACCESSORS(USoulAttributeSet, PostureDamage)
+    UPROPERTY(BlueprintReadOnly, Category = "Output", meta = (HideFromLevelInfos))
+    FGameplayAttributeData Damage;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, Damage)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Output", meta = (HideFromLevelInfos))
+    FGameplayAttributeData PostureDamage;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, PostureDamage)
 
 
 protected:
-	void AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty);
+    void AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute,
+                                     const FGameplayAttributeData& MaxAttribute, float NewMaxValue,
+                                     const FGameplayAttribute& AffectedAttributeProperty);
 };

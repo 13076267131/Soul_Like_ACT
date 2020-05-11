@@ -14,170 +14,172 @@
 
 
 USoulGameInstanceBase::USoulGameInstanceBase()
-	: SaveSlot(TEXT("SaveGame"))
-	, SaveUserIndex(0)
+    : SaveSlot(TEXT("SaveGame"))
+      , SaveUserIndex(0)
 {
-	static ConstructorHelpers::FClassFinder<USoulSaveGame> DefaultSaveGame(TEXT("/Game/Blueprints/SoulSaveGame"));
-	DefaultSaveGameBPClass = DefaultSaveGame.Class;
+    static ConstructorHelpers::FClassFinder<USoulSaveGame> DefaultSaveGame(TEXT("/Game/Blueprints/SoulSaveGame"));
+    DefaultSaveGameBPClass = DefaultSaveGame.Class;
 }
 
 void USoulGameInstanceBase::GetAllAccessibleItemID(TArray<FPrimaryAssetId>& OutpId)
 {
-	//Clear the assets id if we already called this before
-	OutpId.Reset();
+    //Clear the assets id if we already called this before
+    OutpId.Reset();
 
-	for (auto AssetType : AllItemTypes)
-	{
-		GetItemIDWithType(AssetType, OutpId);
-	}
+    for (const auto AssetType : AllItemTypes)
+    {
+        GetItemIDWithType(AssetType, OutpId);
+    }
 }
 
 void USoulGameInstanceBase::GetItemIDWithType(const FPrimaryAssetType ItemType, TArray<FPrimaryAssetId>& OutpId)
 {
-	USoulAssetManager* CurrentAssetManager = USoulAssetManager::Get();
+    USoulAssetManager* CurrentAssetManager = USoulAssetManager::Get();
 
-	CurrentAssetManager->GetPrimaryAssetIdList(ItemType, OutpId);
+    CurrentAssetManager->GetPrimaryAssetIdList(ItemType, OutpId);
 }
 
 void USoulGameInstanceBase::AddDefaultInventory()
 {
-	for (int i = 0; i < DefaultInventory.Num(); i++)
-	{
-		CurrentSaveGame->InventoryItemData[i] = DefaultInventory[i];
-	}
+    for (int i = 0; i < DefaultInventory.Num(); i++)
+    {
+        CurrentSaveGame->InventoryItemData[i] = DefaultInventory[i];
+    }
 }
 
 bool USoulGameInstanceBase::LoadOrCreateSaveGame()
 {
-	// Drop reference to old save game, this will GC out
-	CurrentSaveGame = nullptr;
+    // Drop reference to old save game, this will GC out
+    CurrentSaveGame = nullptr;
 
-	if (UGameplayStatics::DoesSaveGameExist(SaveSlot, SaveUserIndex) && !bForceReset)
-	{
-		CurrentSaveGame = Cast<USoulSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlot, SaveUserIndex));
-		UE_LOG(LogTemp, Warning, TEXT("GI: Loading"));
-	}
+    if (UGameplayStatics::DoesSaveGameExist(SaveSlot, SaveUserIndex) && !bForceReset)
+    {
+        CurrentSaveGame = Cast<USoulSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlot, SaveUserIndex));
+        UE_LOG(LogTemp, Warning, TEXT("GI: Loading"));
+    }
 
-	//Old Slot
-	if (CurrentSaveGame)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("GI: Loaded Successful"));
-		WriteSaveGame();
-		Broadcast_OnSaveGameLoadFinshed();
-		return true;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("GI: New Save Slot"));
-		//New Slot
-		CurrentSaveGame = Cast<USoulSaveGame>(UGameplayStatics::CreateSaveGameObject(DefaultSaveGameBPClass));
-		CurrentSaveGame->ResetSaveGame();
+    //Old Slot
+    if (CurrentSaveGame)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("GI: Loaded Successful"));
+        WriteSaveGame();
+        Broadcast_OnSaveGameLoadFinshed();
+        return true;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("GI: New Save Slot"));
+        //New Slot
+        CurrentSaveGame = Cast<USoulSaveGame>(UGameplayStatics::CreateSaveGameObject(DefaultSaveGameBPClass));
+        CurrentSaveGame->ResetSaveGame();
 
-		if (CurrentSaveGame)
-		{
-			AddDefaultInventory();
-			WriteSaveGame();
-			
-			Broadcast_OnSaveGameLoadFinshed();
-		}
-		else
-			UE_LOG(LogTemp, Warning, TEXT("GI: Failed to create save game"));
-		
-		return false;
-	}
+        if (CurrentSaveGame)
+        {
+            AddDefaultInventory();
+            WriteSaveGame();
+
+            Broadcast_OnSaveGameLoadFinshed();
+        }
+        else
+        UE_LOG(LogTemp, Warning, TEXT("GI: Failed to create save game"));
+
+        return false;
+    }
 }
 
 bool USoulGameInstanceBase::WriteSaveGame()
 {
-	LOG_FUNC_SUCCESS();
-	return UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SaveSlot, SaveUserIndex);
+    LOG_FUNC_SUCCESS();
+    return UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SaveSlot, SaveUserIndex);
 }
 
 void USoulGameInstanceBase::ResetSaveGame()
 {
-	LOG_FUNC_SUCCESS();
+    LOG_FUNC_SUCCESS();
 
-	bForceReset = true;
-	LoadOrCreateSaveGame();
-	bForceReset = false;
+    bForceReset = true;
+    LoadOrCreateSaveGame();
+    bForceReset = false;
 }
 
-void USoulGameInstanceBase::CopyKeysFromEquipMap(TArray<FSoulEquipmentSlot>& FromEquipSlotKeys, TMap<FSoulEquipmentSlot, FSoulItemData>& ToEquipItems)
+void USoulGameInstanceBase::CopyKeysFromEquipMap(TArray<FSoulEquipmentSlot>& FromEquipSlotKeys,
+                                                 TMap<FSoulEquipmentSlot, FSoulItemData>& ToEquipItems)
 {
-	USoulSerializerBpLib::AddKeysToMap<FSoulEquipmentSlot, FSoulItemData>(FromEquipSlotKeys, ToEquipItems);
+    USoulSerializerBpLib::AddKeysToMap<FSoulEquipmentSlot, FSoulItemData>(FromEquipSlotKeys, ToEquipItems);
 }
 
 void USoulGameInstanceBase::MakeSaveData()
 {
-	APawn *TempPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	
-	if (!TempPawn || !Cast<ASoul_Like_ACTCharacter>(TempPawn))
-	{
-		LOG_FUNC_FAIL();
-		return;
-	}
+    APawn* TempPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 
-	UInventoryManager* MyInventoryManager = Cast<ASoul_Like_ACTCharacter>(TempPawn)->GetInventoryManager();
+    if (!TempPawn || !Cast<ASoul_Like_ACTCharacter>(TempPawn))
+    {
+        LOG_FUNC_FAIL();
+        return;
+    }
 
+    UInventoryManager* MyInventoryManager = Cast<ASoul_Like_ACTCharacter>(TempPawn)->GetInventoryManager();
 }
 
 void USoulGameInstanceBase::MakeSoulItemSaveData(FSoulItemData InItemData, FSoulSaveItemData& OutSaveItemData)
 {
-	OutSaveItemData = FSoulSaveItemData(InItemData);
+    OutSaveItemData = FSoulSaveItemData(InItemData);
 }
 
-void USoulGameInstanceBase::MakeSoulItemData(UObject* InItemBase, TArray<UObject*> InJewels, FSoulItemData& OutItemData, int32 InItemCount /*= 1*/, int32 InItemLevel /*= 1*/)
+void USoulGameInstanceBase::MakeSoulItemData(UObject* InItemBase, TArray<UObject*> InJewels, FSoulItemData& OutItemData,
+                                             int32 InItemCount /*= 1*/, int32 InItemLevel /*= 1*/)
 {
-	OutItemData = FSoulItemData(Cast<USoulItem>(InItemBase), InItemCount, InItemLevel);
-	for (UObject* Jew : InJewels)
-	{
-		OutItemData.SlotedJewls.Add(Cast<USoulJewelItem>(InItemBase));
-	}
+    OutItemData = FSoulItemData(Cast<USoulItem>(InItemBase), InItemCount, InItemLevel);
+    for (UObject* Jew : InJewels)
+    {
+        OutItemData.SlotedJewls.Add(Cast<USoulJewelItem>(InItemBase));
+    }
 }
 
 void USoulGameInstanceBase::Broadcast_OnSaveGameLoadFinshed()
 {
-	if (OnSaveGameLoadingFinished.IsBound())
-		OnSaveGameLoadingFinished.Broadcast();
+    if (OnSaveGameLoadingFinished.IsBound())
+        OnSaveGameLoadingFinished.Broadcast();
 }
 
-bool USoulGameInstanceBase::GetSoulPlayer(UObject* WorldContextObject, ASoulPlayerController*& MyController, ASoul_Like_ACTCharacter*& MyChar, UInventoryManager*& MyInentory)
+bool USoulGameInstanceBase::GetSoulPlayer(UObject* WorldContextObject, ASoulPlayerController*& MyController,
+                                          ASoul_Like_ACTCharacter*& MyChar, UInventoryManager*& MyInentory)
 {
-	if (!WorldContextObject->IsValidLowLevel())
-		return false;
-	UWorld* MyWorld = WorldContextObject->GetWorld();
-	
-	if (!MyWorld)
-		return false;
+    if (!WorldContextObject->IsValidLowLevel())
+        return false;
+    UWorld* MyWorld = WorldContextObject->GetWorld();
 
-	MyController = Cast<ASoulPlayerController>(MyWorld->GetFirstPlayerController());
-	
-	if (MyController)
-	{
-		MyChar = Cast<ASoul_Like_ACTCharacter>(MyController->GetPawn());
-		if (MyChar)
-		{
-			MyInentory = MyChar->GetInventoryManager();
-			return true;
-		}
-	}
-	return false;
+    if (!MyWorld)
+        return false;
+
+    MyController = Cast<ASoulPlayerController>(MyWorld->GetFirstPlayerController());
+
+    if (MyController)
+    {
+        MyChar = Cast<ASoul_Like_ACTCharacter>(MyController->GetPawn());
+        if (MyChar)
+        {
+            MyInentory = MyChar->GetInventoryManager();
+            return true;
+        }
+    }
+    return false;
 }
 
 USoulSaveGame* USoulGameInstanceBase::GetSaveSlot()
 {
-	if (!CurrentSaveGame)
-	{
-		CurrentSaveGame = Cast<USoulSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlot, SaveUserIndex));
-		
-		if (!CurrentSaveGame)
-			return nullptr;
-	}
-	return CurrentSaveGame;
+    if (!CurrentSaveGame)
+    {
+        CurrentSaveGame = Cast<USoulSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlot, SaveUserIndex));
+
+        if (!CurrentSaveGame)
+            return nullptr;
+    }
+    return CurrentSaveGame;
 }
 
 void USoulGameInstanceBase::OnStartGameClicked_Implementation()
 {
-	WriteSaveGame();
-	UE_LOG(LogTemp, Warning, TEXT("GI: GAME START"));
+    WriteSaveGame();
+    UE_LOG(LogTemp, Warning, TEXT("GI: GAME START"));
 }

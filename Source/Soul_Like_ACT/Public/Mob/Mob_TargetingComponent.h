@@ -10,40 +10,40 @@
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SOUL_LIKE_ACT_API UMob_TargetingComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 protected:
-	bool bIsLockingOn;
+    bool bIsLockingOn;
 
-public:	
-	// Sets default values for this component's properties
-	UMob_TargetingComponent();
+public:
+    // Sets default values for this component's properties
+    UMob_TargetingComponent();
 
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+    virtual void TickComponent(float DeltaTime, enum ELevelTick TickType,
+                               FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+    // Called when the game starts
+    virtual void BeginPlay() override;
 
-	class AMobBasic *OwnerRef;
-	class AMobController *OwnerController;
+    class AMobBasic* OwnerRef;
+    class AMobController* OwnerController;
 
-	AActor *TargetPawn;
-	bool bIsFacingTarget;
+    AActor* TargetPawn;
+    bool bIsFacingTarget;
 
 
+public:
+    void FacingTarget_Init();
+    void FacingTarget_End();
 
-public:	
-	void FacingTarget_Init();
-	void FacingTarget_End();
+    //Toggled through AI BT
+    UFUNCTION(BlueprintCallable)
+    void ToggleTargetLocking();
 
-	//Toggled through AI BT
-	UFUNCTION(BlueprintCallable)
-	void ToggleTargetLocking();
+    UFUNCTION(BlueprintCallable)
+    void SetTarget(AActor* PlayerPawn) { TargetPawn = PlayerPawn; }
 
-	UFUNCTION(BlueprintCallable)
-	void SetTarget(AActor *PlayerPawn) { TargetPawn = PlayerPawn; }
-
-	UFUNCTION(BlueprintCallable)
-	bool GetIsEnabled() const{ return bIsFacingTarget; }
+    UFUNCTION(BlueprintCallable)
+    bool GetIsEnabled() const { return bIsFacingTarget; }
 };

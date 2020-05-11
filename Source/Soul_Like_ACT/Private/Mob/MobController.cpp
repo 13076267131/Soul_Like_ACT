@@ -11,77 +11,75 @@
 
 AMobController::AMobController()
 {
-	//Perception
-	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
-	SetPerceptionComponent(*AIPerceptionComponent);
-	sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
-	sightConfig->SightRadius = 1500.f;
-	sightConfig->LoseSightRadius = 2000.f;
-	sightConfig->PeripheralVisionAngleDegrees = 360.0f;
-	sightConfig->DetectionByAffiliation.bDetectEnemies = true;
-	sightConfig->DetectionByAffiliation.bDetectNeutrals = true;
-	sightConfig->DetectionByAffiliation.bDetectFriendlies = true;
-	AIPerceptionComponent->SetDominantSense(sightConfig->GetSenseImplementation());
-	AIPerceptionComponent->ConfigureSense(*sightConfig);
+    //Perception
+    AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
+    SetPerceptionComponent(*AIPerceptionComponent);
+    sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
+    sightConfig->SightRadius = 1500.f;
+    sightConfig->LoseSightRadius = 2000.f;
+    sightConfig->PeripheralVisionAngleDegrees = 360.0f;
+    sightConfig->DetectionByAffiliation.bDetectEnemies = true;
+    sightConfig->DetectionByAffiliation.bDetectNeutrals = true;
+    sightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+    AIPerceptionComponent->SetDominantSense(sightConfig->GetSenseImplementation());
+    AIPerceptionComponent->ConfigureSense(*sightConfig);
 
-	//BB and BT
-	BlackBoardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBaordComponent"));
-	BehaviorTreeComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
+    //BB and BT
+    BlackBoardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBaordComponent"));
+    BehaviorTreeComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
 }
 
 void AMobController::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
-	//FActorPerceptionUpdatedDelegate, AActor*, Actor, FAIStimulus, Stimulus
+    //FActorPerceptionUpdatedDelegate, AActor*, Actor, FAIStimulus, Stimulus
 }
 
 void AMobController::OnPossess(APawn* InPawn)
 {
-	Super::OnPossess(InPawn);
+    Super::OnPossess(InPawn);
 
-	PossessedMob = Cast<AMobBasic>(InPawn);
+    PossessedMob = Cast<AMobBasic>(InPawn);
 
-	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AMobController::AISenseUpdateMessage);
+    AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AMobController::AISenseUpdateMessage);
 
-	//set up bb and bt
-	check(BlockBoardData);
-	check(BehaviorTreeAsset);
-
+    //set up bb and bt
+    check(BlockBoardData);
+    check(BehaviorTreeAsset);
 }
 
 void AMobController::OnUnPossess()
 {
-	Super::OnUnPossess();
+    Super::OnUnPossess();
 
-	PossessedMob = nullptr;
+    PossessedMob = nullptr;
 }
 
 void AMobController::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+    Super::Tick(DeltaTime);
 }
 
 void AMobController::AISenseUpdateMessage(AActor* Actor, FAIStimulus Stimulus)
 {
+    if (!PossessedMob)
+    {
+        AIPerceptionComponent->OnTargetPerceptionUpdated.RemoveDynamic(this, &AMobController::AISenseUpdateMessage);
+        return;
+    }
 
-	if (!PossessedMob)
-	{
-		AIPerceptionComponent->OnTargetPerceptionUpdated.RemoveDynamic(this, &AMobController::AISenseUpdateMessage);
-		return;
-	}
-
-	if (Cast<ASoulCharacterBase>(Actor)->Faction == EActorFaction::Player)
-	{
-		if (Stimulus.WasSuccessfullySensed())
-		{
-			BlackBoardComp->SetValueAsObject("PlayerPawn", Actor);
-			UE_LOG(LogTemp, Warning, TEXT("%s is founded by %s"), *Actor->GetName(), *PossessedMob->GetName());
-		}
-		else
-		{
-			BlackBoardComp->SetValueAsObject("PlayerPawn", nullptr);
-			UE_LOG(LogTemp, Warning, TEXT("%s is lost by %s"), *Actor->GetName(), *PossessedMob->GetName());
-		}
-	}
-	}
+    if (Cast<ASoulCharacterBase>(Actor)->Faction == EActorFaction::Player)
+    {
+        if (Stimulus.WasSuccessfullySensed())
+        {
+            BlackBoardComp->SetValueAsObject("PlayerPawn", Actor);
+            UE_LOG(LogTemp, Warning, TEXT("%s is founded by %s"), *Actor->GetName(), *PossessedMob->GetName());
+        }
+        else
+        {
+            BlackBoardComp->SetValueAsObject("PlayerPawn", nullptr);
+            UE_LOG(LogTemp, Warning, TEXT("%s is lost by %s"), *Actor->GetName(), *PossessedMob->GetName());
+        }
+    }
+}

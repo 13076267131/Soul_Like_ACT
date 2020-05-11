@@ -13,47 +13,49 @@ class UAnimMontage;
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SOUL_LIKE_ACT_API UActionSysManager : public UActorComponent
 {
-	GENERATED_BODY()
-
-public:	
-	// Sets default values for this component's properties
-	UActionSysManager();
-
-	class ASoul_Like_ACTCharacter *PlayerRef;
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
-
-	void GetActiveAbilitiesWithTags(struct FGameplayTagContainer AbilityTags, TArray<USoulGameplayAbility*>& ActiveAbilities);
-
-	bool bCanJumpSection;
-	bool bWillJumpSection;
-	FName JumpSectionName;
-	UAnimMontage *JumpMontage;
+    GENERATED_BODY()
 
 public:
-	/**
-	 * These 2 functions are called via Active Melee GameplayAbilities
-	 */
-	UFUNCTION(BlueprintCallable)
-	bool SetJumpSection(const FName InpComboScetionName, UAnimMontage *InpMontage);
-	UFUNCTION(BlueprintCallable)
-	bool JumpSectionForCombo();
-	
-	UFUNCTION(BlueprintCallable)
-	bool TryEnableJumpSection () 
-	{
-		if(bCanJumpSection) 
-			return bWillJumpSection = true;
-		return false;
-	}
+    // Sets default values for this component's properties
+    UActionSysManager();
 
-	UFUNCTION(BlueprintCallable)
-	static float PredictMovingDirection(ASoul_Like_ACTCharacter *CharacterRef);
+    class ASoul_Like_ACTCharacter* PlayerRef;
 
-	UFUNCTION(BlueprintCallable)
-	static FName Get4WaysStepDirection_GA(float PredictableMovingDirection);
+protected:
+    // Called when the game starts
+    virtual void BeginPlay() override;
+
+    virtual void TickComponent(float DeltaTime, enum ELevelTick TickType,
+                               FActorComponentTickFunction* ThisTickFunction) override;
+
+    void GetActiveAbilitiesWithTags(struct FGameplayTagContainer AbilityTags,
+                                    TArray<USoulGameplayAbility*>& ActiveAbilities);
+
+    bool bCanJumpSection;
+    bool bWillJumpSection;
+    FName JumpSectionName;
+    UAnimMontage* JumpMontage;
+
+public:
+    /**
+     * These 2 functions are called via Active Melee GameplayAbilities
+     */
+    UFUNCTION(BlueprintCallable)
+    bool SetJumpSection(const FName InpComboScetionName, UAnimMontage* InpMontage);
+    UFUNCTION(BlueprintCallable)
+    bool JumpSectionForCombo();
+
+    UFUNCTION(BlueprintCallable)
+    bool TryEnableJumpSection()
+    {
+        if (bCanJumpSection)
+            return bWillJumpSection = true;
+        return false;
+    }
+
+    UFUNCTION(BlueprintCallable)
+    static float PredictMovingDirection(ASoul_Like_ACTCharacter* CharacterRef);
+
+    UFUNCTION(BlueprintCallable)
+    static FName Get4WaysStepDirection_GA(float PredictableMovingDirection);
 };

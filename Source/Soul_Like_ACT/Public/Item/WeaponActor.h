@@ -12,64 +12,64 @@ class ASoulCharacterBase;
 UCLASS()
 class SOUL_LIKE_ACT_API AWeaponActor : public AActor
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = 1))
-	class USkeletalMeshComponent *MeshComp;
+    UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = 1))
+    class USkeletalMeshComponent* MeshComp;
 
-	ASoulCharacterBase *OwnerRef;
-
-public:	
-	// Sets default values for this actor's properties
-	AWeaponActor();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GearInfo)
-		UDA_Gear *GearInfo;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = 1))
-		bool bCanDamageAllies;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	bool bIsTracingCollision;
-
-	TArray<FVector>PrevVecs;
-	TArray<FVector>CurrVecs;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	TArray<AActor*> MyTargets;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	float DmgMultiplier;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-protected:
-	void CheckCollision();
-
-	bool TryExcludeActor(AActor *HitActor);
-
-	void DrawTraceLine(FVector prevVec_, FVector currVec_, bool bDrawTraceLine);
+    ASoulCharacterBase* OwnerRef;
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (ExposeOnSpawn = 1))
-	bool bEnableDrawTraceLine;
+    // Sets default values for this actor's properties
+    AWeaponActor();
 
-	UFUNCTION(BlueprintCallable)
-	void StartSwing(const float &InDmgMulti);
-	UFUNCTION(BlueprintCallable)
-	void EndSwing();
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GearInfo)
+    UDA_Gear* GearInfo;
 
-	bool GetIsSwinging() const { return bIsTracingCollision; }
-
-	UFUNCTION(BlueprintCallable)
-	float GetDamageMagnitude() const { return DmgMultiplier; }
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = 1))
+    bool bCanDamageAllies;
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent)
-	void ApplyEventBackToGA(ASoulCharacterBase *Target, const FHitResult &InpHitResult);
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
+
+    bool bIsTracingCollision;
+
+    TArray<FVector> PrevVecs;
+    TArray<FVector> CurrVecs;
+
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+    TArray<AActor*> MyTargets;
+
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+    float DmgMultiplier;
+
+public:
+    // Called every frame
+    virtual void Tick(float DeltaTime) override;
+
+protected:
+    void CheckCollision();
+
+    bool TryExcludeActor(AActor* HitActor);
+
+    void DrawTraceLine(FVector prevVec_, FVector currVec_, bool bDrawTraceLine);
+
+public:
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (ExposeOnSpawn = 1))
+    bool bEnableDrawTraceLine;
+
+    UFUNCTION(BlueprintCallable)
+    void StartSwing(const float& InDmgMulti);
+    UFUNCTION(BlueprintCallable)
+    void EndSwing();
+
+    bool GetIsSwinging() const { return bIsTracingCollision; }
+
+    UFUNCTION(BlueprintCallable)
+    float GetDamageMagnitude() const { return DmgMultiplier; }
+
+protected:
+    UFUNCTION(BlueprintImplementableEvent)
+    void ApplyEventBackToGA(ASoulCharacterBase* Target, const FHitResult& InpHitResult);
 };

@@ -7,14 +7,14 @@
 
 UMyBTService_PredicateActions::UMyBTService_PredicateActions()
 {
-	bCreateNodeInstance = 1;
-	//bNotifyBecomeRelevant = true;
+    bCreateNodeInstance = 1;
+    //bNotifyBecomeRelevant = true;
 }
 
 
 void UMyBTService_PredicateActions::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
-	uint8 ActionToTake = FMath::RandRange(0, 3);
-	OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), ActionToTake);
+    Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+    const uint8 ActionToTake = FMath::RandRange(0, 3);
+    OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), ActionToTake);
 }

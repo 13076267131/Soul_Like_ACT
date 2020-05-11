@@ -16,31 +16,34 @@ class USoulItem;
 UCLASS()
 class SOUL_LIKE_ACT_API USoulAssetManager : public UAssetManager
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:
-	// Constructor and overrides
-	USoulAssetManager() {}
-	virtual void StartInitialLoading() override;
+    // Constructor and overrides
+    USoulAssetManager()
+    {
+    }
 
-	/** Static types for items */
-	static const FPrimaryAssetType	PotionItemType;
-	static const FPrimaryAssetType	JewelItemType;
-	static const FPrimaryAssetType	WeaponItemType;
-	static const FPrimaryAssetType	ArmourItemType;
+    virtual void StartInitialLoading() override;
+
+    /** Static types for items */
+    static const FPrimaryAssetType PotionItemType;
+    static const FPrimaryAssetType JewelItemType;
+    static const FPrimaryAssetType WeaponItemType;
+    static const FPrimaryAssetType ArmourItemType;
 
 
-	/** Returns the current AssetManager object */
-	UFUNCTION(BlueprintCallable)
-	static USoulAssetManager* Get();
+    /** Returns the current AssetManager object */
+    UFUNCTION(BlueprintCallable)
+    static USoulAssetManager* Get();
 
-	/**
-	 * Synchronously loads an RPGItem subclass, this can hitch but is useful when you cannot wait for an async load
-	 * This does not maintain a reference to the item so it will garbage collect if not loaded some other way
-	 *
-	 * @param PrimaryAssetId The asset identifier to load
-	 * @param bDisplayWarning If true, this will log a warning if the item failed to load
-	 */
-	UFUNCTION(BlueprintCallable)
-	USoulItem* ForceLoadItem(const FPrimaryAssetId& PrimaryAssetId, bool bLogWarning = true);
+    /**
+     * Synchronously loads an RPGItem subclass, this can hitch but is useful when you cannot wait for an async load
+     * This does not maintain a reference to the item so it will garbage collect if not loaded some other way
+     *
+     * @param PrimaryAssetId The asset identifier to load
+     * @param bDisplayWarning If true, this will log a warning if the item failed to load
+     */
+    UFUNCTION(BlueprintCallable)
+    USoulItem* ForceLoadItem(const FPrimaryAssetId& PrimaryAssetId, bool bLogWarning = true);
 };

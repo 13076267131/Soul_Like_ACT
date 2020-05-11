@@ -12,14 +12,14 @@
 UCLASS()
 class SOUL_LIKE_ACT_API UMyBTService_DistanceToPlayer : public UBTService
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
-	UMyBTService_DistanceToPlayer();
+    UMyBTService_DistanceToPlayer();
 
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	struct FBlackboardKeySelector TargetKey;
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	struct FBlackboardKeySelector DistanceKey;
+    UPROPERTY(EditAnywhere, Category = Blackboard)
+    struct FBlackboardKeySelector TargetKey;
+    UPROPERTY(EditAnywhere, Category = Blackboard)
+    struct FBlackboardKeySelector DistanceKey;
 
-	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+    virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

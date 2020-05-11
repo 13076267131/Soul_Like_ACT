@@ -6,9 +6,9 @@
 #include "Components/TextBlock.h"
 #include "BPFL/SoulSerializerBpLib.h"
 
-void UModifierSlot::Setup(const FText&inp_Name, const FText &inp_Level)
+void UModifierSlot::Setup(const FText& inp_Name, const FText& inp_Level)
 {
-	GA_Name->SetText(inp_Name);
+    GA_Name->SetText(inp_Name);
 
-	GA_Level->SetText(inp_Level);
+    GA_Level->SetText(inp_Level);
 }

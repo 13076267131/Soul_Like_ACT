@@ -14,41 +14,41 @@
 UCLASS()
 class SOUL_LIKE_ACT_API AMobController : public AAIController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 protected:
-	class AMobBasic *PossessedMob;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
-	class UAIPerceptionComponent* AIPerceptionComponent;
-	
-	UPROPERTY()
-	UAISenseConfig_Sight *sightConfig;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
-		class UBlackboardComponent *BlackBoardComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
-		class UBehaviorTreeComponent *BehaviorTreeComp;
+    class AMobBasic* PossessedMob;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
+    class UAIPerceptionComponent* AIPerceptionComponent;
+
+    UPROPERTY()
+    UAISenseConfig_Sight* sightConfig;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
+    class UBlackboardComponent* BlackBoardComp;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
+    class UBehaviorTreeComponent* BehaviorTreeComp;
 
 public:
-	AMobController();
+    AMobController();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AIAssets)
-		class UBlackboardData *BlockBoardData;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AIAssets)
-		class UBehaviorTree *BehaviorTreeAsset;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AIAssets)
+    class UBlackboardData* BlockBoardData;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AIAssets)
+    class UBehaviorTree* BehaviorTreeAsset;
 
 protected:
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void AISenseUpdateMessage(AActor* Actor, FAIStimulus Stimulus);
+    UFUNCTION(BlueprintCallable)
+    void AISenseUpdateMessage(AActor* Actor, FAIStimulus Stimulus);
 
-	virtual void OnPossess(APawn* InPawn) override;
-	virtual void OnUnPossess() override;
+    virtual void OnPossess(APawn* InPawn) override;
+    virtual void OnUnPossess() override;
 
-	virtual void Tick(float DeltaTime) override;
+    virtual void Tick(float DeltaTime) override;
 
-	class UBehaviorTreeComponent *GetBTComp() const { return BehaviorTreeComp; }
+    class UBehaviorTreeComponent* GetBTComp() const { return BehaviorTreeComp; }
 };

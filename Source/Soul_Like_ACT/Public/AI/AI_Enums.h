@@ -9,15 +9,15 @@
 UENUM(BlueprintType)
 enum class EAgreesiveActions : uint8
 {
-	Attack,
-	DashBack,
-	RunToTarget,
-	Strafe,
+    Attack,
+    DashBack,
+    RunToTarget,
+    Strafe,
 };
 
 UENUM(BlueprintType)
 enum class EDefensiveActions : uint8
 {
-	Strafe,
-	RunToTarget,
+    Strafe,
+    RunToTarget,
 };

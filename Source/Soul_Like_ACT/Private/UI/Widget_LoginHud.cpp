@@ -10,29 +10,29 @@
 
 void UWidget_LoginHud::CacheSaveSlot()
 {
-	USoulGameInstanceBase* MyGI = Cast<USoulGameInstanceBase>(GetGameInstance());
-	if (MyGI && MyGI->GetSaveSlot())
-	{
-		StartGame->SetIsEnabled(true);
-		ResetButton->SetIsEnabled(true);
-		PlayerID->SetVisibility(ESlateVisibility::Visible);
-		PlayerID->SetText(FText::FromString(MyGI->GetSaveSlot()->UserId));
-	}
-	else
-	{
-		PlayerID->SetVisibility(ESlateVisibility::Hidden);
-		PlayerID->SetIsEnabled(false);
-		ResetButton->SetIsEnabled(true);
-	}
+    USoulGameInstanceBase* MyGI = Cast<USoulGameInstanceBase>(GetGameInstance());
+    if (MyGI && MyGI->GetSaveSlot())
+    {
+        StartGame->SetIsEnabled(true);
+        ResetButton->SetIsEnabled(true);
+        PlayerID->SetVisibility(ESlateVisibility::Visible);
+        PlayerID->SetText(FText::FromString(MyGI->GetSaveSlot()->UserId));
+    }
+    else
+    {
+        PlayerID->SetVisibility(ESlateVisibility::Hidden);
+        PlayerID->SetIsEnabled(false);
+        ResetButton->SetIsEnabled(true);
+    }
 }
 
 void UWidget_LoginHud::BindButtons()
 {
-	USoulGameInstanceBase* MyGI = Cast<USoulGameInstanceBase>(GetGameInstance());
-	if (MyGI)
-	{
-		StartGame->OnClicked.AddDynamic(MyGI, &USoulGameInstanceBase::OnStartGameClicked);
+    USoulGameInstanceBase* MyGI = Cast<USoulGameInstanceBase>(GetGameInstance());
+    if (MyGI)
+    {
+        StartGame->OnClicked.AddDynamic(MyGI, &USoulGameInstanceBase::OnStartGameClicked);
 
-		ResetButton->OnClicked.AddDynamic(MyGI, &USoulGameInstanceBase::ResetSaveGame);
-	}
+        ResetButton->OnClicked.AddDynamic(MyGI, &USoulGameInstanceBase::ResetSaveGame);
+    }
 }

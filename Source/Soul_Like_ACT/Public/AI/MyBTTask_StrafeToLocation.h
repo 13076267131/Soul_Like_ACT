@@ -12,5 +12,5 @@
 UCLASS()
 class SOUL_LIKE_ACT_API UMyBTTask_StrafeToLocation : public UBTTask_MoveTo
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };

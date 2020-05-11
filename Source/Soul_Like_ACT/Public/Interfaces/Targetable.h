@@ -9,20 +9,20 @@
 UENUM(BlueprintType)
 enum class EActionStatus : uint8
 {
-	Idle,
-	Attack,
-	Dash,
-	Block,
-	Parry,
-	Stun,
-	Dead,
+    Idle,
+    Attack,
+    Dash,
+    Block,
+    Parry,
+    Stun,
+    Dead,
 };
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UTargetable : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
 /**
@@ -30,13 +30,13 @@ class UTargetable : public UInterface
  */
 class SOUL_LIKE_ACT_API ITargetable
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+    // Add interface functions to this class. This is the class that will be inherited to implement this interface.
 
 public:
-	
-	virtual bool IsTargetable() const = 0;
 
-	virtual void ToggleLockIcon() = 0;
+    virtual bool IsTargetable() const = 0;
+
+    virtual void ToggleLockIcon() = 0;
 };

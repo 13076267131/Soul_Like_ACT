@@ -13,33 +13,35 @@
 UCLASS(BlueprintType)
 class SOUL_LIKE_ACT_API USoulJsonObjectWrapper : public UObject
 {
-	GENERATED_BODY()
-	
-	USoulJsonObjectWrapper()
-		: Super()
-	{
-		JsonObject = UBlueprintJsonLibrary::JsonMake();
-	}
-	
+    GENERATED_BODY()
+
+    USoulJsonObjectWrapper()
+        : Super()
+    {
+        JsonObject = UBlueprintJsonLibrary::JsonMake();
+    }
+
 public:
-	UPROPERTY(BlueprintReadWrite, Category = Json)
-	FBlueprintJsonObject JsonObject;
+    UPROPERTY(BlueprintReadWrite, Category = Json)
+    FBlueprintJsonObject JsonObject;
 
-	UFUNCTION(BlueprintPure, Category = Json)
-	static USoulJsonObjectWrapper* MakeSoulJsonObject()
-	{
-		return NewObject<USoulJsonObjectWrapper>();
-	}
+    UFUNCTION(BlueprintPure, Category = Json)
+    static USoulJsonObjectWrapper* MakeSoulJsonObject()
+    {
+        return NewObject<USoulJsonObjectWrapper>();
+    }
+    
+    UFUNCTION(BlueprintCallable, category = Json)
+    static void SoulSetJsonField(USoulJsonObjectWrapper* JsonObjectWrapper, const FString& FieldName,
+                                 const FBlueprintJsonValue& JsonValue)
+    {
+        if (JsonObjectWrapper->JsonObject.Object.IsValid() && JsonValue.Value.IsValid())
+        {
+            JsonObjectWrapper->JsonObject.Object->SetField(FieldName, JsonValue.Value);
+        }
+    }
 
-	UFUNCTION(BlueprintCallable, category = Json)
- 	static void SoulSetJsonField(USoulJsonObjectWrapper* JsonObjectWrapper, const FString& FieldName, const FBlueprintJsonValue& JsonValue)
- 	{
- 		if (JsonObjectWrapper->JsonObject.Object.IsValid() && JsonValue.Value.IsValid())
-		{
-			JsonObjectWrapper->JsonObject.Object->SetField(FieldName, JsonValue.Value);
-		}
-	}
-
-	UFUNCTION(BlueprintCallable, Category = Json)
-	static void SoulTryGetJumpSection(USoulJsonObjectWrapper* JsonObjectWrapper, bool& isSameMontage, FString& JumpTargetName, bool& bSuccessful);
+    UFUNCTION(BlueprintCallable, Category = Json)
+    static void SoulTryGetJumpSection(USoulJsonObjectWrapper* JsonObjectWrapper, bool& isSameMontage,
+                                      FString& JumpTargetName, bool& bSuccessful);
 };

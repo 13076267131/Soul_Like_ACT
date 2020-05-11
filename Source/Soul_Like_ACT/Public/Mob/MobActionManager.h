@@ -9,35 +9,35 @@
 UENUM(BlueprintType)
 enum class EMobActionState : uint8
 {
-	Idel,
-	Attack,
-	Dodge,
-	Parry,
-	Block,
-	OnHit,
-	OnStun,
-	OnDead,
+    Idel,
+    Attack,
+    Dodge,
+    Parry,
+    Block,
+    OnHit,
+    OnStun,
+    OnDead,
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SOUL_LIKE_ACT_API UMobActionManager : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	UMobActionManager();
+public:
+    // Sets default values for this component's properties
+    UMobActionManager();
 
-	EMobActionState MobActionState;
+    EMobActionState MobActionState;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		bool bIsActing;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		bool bIsBlocking;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		bool bCanParry;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		bool bIsSwinging;
-	UPROPERTY(BlueprintReadWrite)
-		bool bIsStun;
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    bool bIsActing;
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    bool bIsBlocking;
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    bool bCanParry;
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    bool bIsSwinging;
+    UPROPERTY(BlueprintReadWrite)
+    bool bIsStun;
 };

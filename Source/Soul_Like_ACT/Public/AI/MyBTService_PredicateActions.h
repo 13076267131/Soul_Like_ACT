@@ -12,9 +12,9 @@
 UCLASS()
 class SOUL_LIKE_ACT_API UMyBTService_PredicateActions : public UBTService_BlackboardBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
-	UMyBTService_PredicateActions();
+    UMyBTService_PredicateActions();
 
-	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+    virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

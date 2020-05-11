@@ -13,43 +13,43 @@
 UCLASS()
 class SOUL_LIKE_ACT_API UWidget_Inventory : public UUserWidget
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
-		UWidget_EquipmentSlot* EquipSlot_Helmet;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
-		UWidget_EquipmentSlot* EquipSlot_Body;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
-		UWidget_EquipmentSlot* EquipSlot_Boots;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
-		UWidget_EquipmentSlot* EquipSlot_Gloves;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
-		UWidget_EquipmentSlot* EquipSlot_Amulet;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
-		UWidget_EquipmentSlot* EquipSlot_Ring;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
-		UWidget_EquipmentSlot* EquipSlot_Weapon;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
-		UWidget_EquipmentSlot* EquipSlot_Reliquary;
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
+    UWidget_EquipmentSlot* EquipSlot_Helmet;
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
+    UWidget_EquipmentSlot* EquipSlot_Body;
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
+    UWidget_EquipmentSlot* EquipSlot_Boots;
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
+    UWidget_EquipmentSlot* EquipSlot_Gloves;
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
+    UWidget_EquipmentSlot* EquipSlot_Amulet;
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
+    UWidget_EquipmentSlot* EquipSlot_Ring;
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
+    UWidget_EquipmentSlot* EquipSlot_Weapon;
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
+    UWidget_EquipmentSlot* EquipSlot_Reliquary;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
-		class UWrapBox* InventorySlotWrapper;
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget), Category = Units)
+    class UWrapBox* InventorySlotWrapper;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Default)
-		TSubclassOf<UWidget_InventorySlot> InventorySlotTemplate;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Default)
+    TSubclassOf<UWidget_InventorySlot> InventorySlotTemplate;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Units)
-		TMap<FSoulInventSlot, UWidget_InventorySlot*> InventorySlots;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Units)
+    TMap<FSoulInventSlot, UWidget_InventorySlot*> InventorySlots;
 
-	UFUNCTION(BlueprintCallable)
-		void ConstructInventorySlots();
+    UFUNCTION(BlueprintCallable)
+    void ConstructInventorySlots();
 
-	UFUNCTION(BlueprintCallable)
-		void BindWiddgets();
+    UFUNCTION(BlueprintCallable)
+    void BindWiddgets();
 
-	UFUNCTION()
-		void UpdateInventSlot(FSoulInventSlot ItemSlot, FSoulItemData Item);
-	UFUNCTION()
-		void UpdateGearSlot(FSoulEquipmentSlot EquipSlot, FSoulItemData Item);
+    UFUNCTION()
+    void UpdateInventSlot(FSoulInventSlot ItemSlot, FSoulItemData Item);
+    UFUNCTION()
+    void UpdateGearSlot(FSoulEquipmentSlot EquipSlot, FSoulItemData Item);
 };

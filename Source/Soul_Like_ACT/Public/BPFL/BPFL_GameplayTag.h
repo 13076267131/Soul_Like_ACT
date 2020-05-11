@@ -11,25 +11,25 @@
 UENUM(BlueprintType)
 enum class EParryStatus : uint8
 {
-	Unguard,
-	Normal,
-	Perfect,
+    Unguard,
+    Normal,
+    Perfect,
 };
 
 UCLASS()
 class SOUL_LIKE_ACT_API UBPFL_GameplayTag : public UBlueprintFunctionLibrary
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:
-	UFUNCTION(BlueprintCallable, Category = Tag)
-	static void PrintTagContainer(const FGameplayTagContainer& TagContainer)
-	{
-		LOG_FUNC_NORMAL(TagContainer.ToString());
-	}
+    UFUNCTION(BlueprintCallable, Category = Tag)
+    static void PrintTagContainer(const FGameplayTagContainer& TagContainer)
+    {
+        LOG_FUNC_NORMAL(TagContainer.ToString());
+    }
 
-	UFUNCTION(BlueprintCallable, Category = Tag)
-	void IsCharacterParry(const UAbilitySystemComponent* ASC, EParryStatus& ParryResult);
+    UFUNCTION(BlueprintCallable, Category = Tag)
+    void IsCharacterParry(const UAbilitySystemComponent* ASC, EParryStatus& ParryResult);
 
-	//UFUNCTION(BlueprintCallable, Category = Tag)
+    //UFUNCTION(BlueprintCallable, Category = Tag)
 };

@@ -15,102 +15,104 @@
 // Sets default values for this component's properties
 UActionSysManager::UActionSysManager()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+    PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UActionSysManager::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
-	check(PlayerRef);
+    check(PlayerRef);
 }
 
-void UActionSysManager::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void UActionSysManager::TickComponent(float DeltaTime, enum ELevelTick TickType,
+                                      FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-bool UActionSysManager::SetJumpSection(const FName InpComboScetionName, UAnimMontage *InpMontage)
+bool UActionSysManager::SetJumpSection(const FName InpComboScetionName, UAnimMontage* InpMontage)
 {
-	bWillJumpSection = 0;
-	bCanJumpSection = 1;
+    bWillJumpSection = 0;
+    bCanJumpSection = 1;
 
-	JumpSectionName = InpComboScetionName;
-	JumpMontage = InpMontage;
+    JumpSectionName = InpComboScetionName;
+    JumpMontage = InpMontage;
 
-	return true;
+    return true;
 }
 
 bool UActionSysManager::JumpSectionForCombo()
 {
-	bCanJumpSection = false;
+    bCanJumpSection = false;
 
-	if (!bWillJumpSection) return false;
+    if (!bWillJumpSection) return false;
 
-	bWillJumpSection = false;
+    bWillJumpSection = false;
 
-	UAnimInstance *AnimInstance = PlayerRef->GetMesh()->GetAnimInstance();
-	UAnimMontage *CurrentMontage = AnimInstance->GetCurrentActiveMontage();
-	//FName CurrentSection = AnimInstance->Montage_GetCurrentSection(CurrentMontage);
-	
-	if (JumpMontage != nullptr && (JumpMontage == CurrentMontage))
-	{
-		FName CurrentSectionName = AnimInstance->Montage_GetCurrentSection(CurrentMontage);
-		
-		AnimInstance->Montage_JumpToSection(JumpSectionName, CurrentMontage);
+    UAnimInstance* AnimInstance = PlayerRef->GetMesh()->GetAnimInstance();
+    UAnimMontage* CurrentMontage = AnimInstance->GetCurrentActiveMontage();
+    //FName CurrentSection = AnimInstance->Montage_GetCurrentSection(CurrentMontage);
 
-		UE_LOG(LogTemp, Warning, TEXT("Current Montage: %s"),
-			*(CurrentMontage->GetName()));
-	}
+    if (JumpMontage != nullptr && (JumpMontage == CurrentMontage))
+    {
+        FName CurrentSectionName = AnimInstance->Montage_GetCurrentSection(CurrentMontage);
 
-	return true;
+        AnimInstance->Montage_JumpToSection(JumpSectionName, CurrentMontage);
+
+        UE_LOG(LogTemp, Warning, TEXT("Current Montage: %s"),
+               *(CurrentMontage->GetName()));
+    }
+
+    return true;
 }
 
-float UActionSysManager::PredictMovingDirection(ASoul_Like_ACTCharacter *CharacterRef)
+float UActionSysManager::PredictMovingDirection(ASoul_Like_ACTCharacter* CharacterRef)
 {
-	FVector PlayerVelocity;
-	float Degree;
-	CharacterRef->PredictMovement(PlayerVelocity, Degree);
-	FRotator PlayerRotation = CharacterRef->GetActorRotation();
-	if (!PlayerVelocity.IsNearlyZero())
-	{
-		FMatrix RotMatrix = FRotationMatrix(PlayerRotation);
-		FVector ForwardVector = RotMatrix.GetScaledAxis(EAxis::X);
-		FVector RightVector = RotMatrix.GetScaledAxis(EAxis::Y);
-		FVector NormalizedVel = PlayerVelocity.GetSafeNormal2D();
+    FVector PlayerVelocity;
+    float Degree;
+    CharacterRef->PredictMovement(PlayerVelocity, Degree);
+    const FRotator PlayerRotation = CharacterRef->GetActorRotation();
+    if (!PlayerVelocity.IsNearlyZero())
+    {
+        const FMatrix RotMatrix = FRotationMatrix(PlayerRotation);
+        const FVector ForwardVector = RotMatrix.GetScaledAxis(EAxis::X);
+        const FVector RightVector = RotMatrix.GetScaledAxis(EAxis::Y);
+        const FVector NormalizedVel = PlayerVelocity.GetSafeNormal2D();
 
-		// get a cos(alpha) of forward vector vs velocity
-		float ForwardCosAngle = FVector::DotProduct(ForwardVector, NormalizedVel);
-		// now get the alpha and convert to degree
-		float ForwardDeltaDegree = FMath::RadiansToDegrees(FMath::Acos(ForwardCosAngle));
+        // get a cos(alpha) of forward vector vs velocity
+        const float ForwardCosAngle = FVector::DotProduct(ForwardVector, NormalizedVel);
+        // now get the alpha and convert to degree
+        float ForwardDeltaDegree = FMath::RadiansToDegrees(FMath::Acos(ForwardCosAngle));
 
-		// depending on where right vector is, flip it
-		float RightCosAngle = FVector::DotProduct(RightVector, NormalizedVel);
-		if (RightCosAngle < 0)
-		{
-			ForwardDeltaDegree *= -1;
-		}
+        // depending on where right vector is, flip it
+        const float RightCosAngle = FVector::DotProduct(RightVector, NormalizedVel);
+        if (RightCosAngle < 0)
+        {
+            ForwardDeltaDegree *= -1;
+        }
 
-		return ForwardDeltaDegree;
-	}
-	
-	return 0.f;
+        return ForwardDeltaDegree;
+    }
+
+    return 0.f;
 }
 
 FName UActionSysManager::Get4WaysStepDirection_GA(float PredictableMovingDirection)
 {
-	if (PredictableMovingDirection > -45.f && PredictableMovingDirection < 45.f)
-		return "F";
-	else if (PredictableMovingDirection <= -45.f && PredictableMovingDirection > -135.f)
-		return "L";
-	else if (PredictableMovingDirection < 135.f && PredictableMovingDirection >= 45.f)
-		return "R";
-	else
-		return "B";
+    if (PredictableMovingDirection > -45.f && PredictableMovingDirection < 45.f)
+        return "F";
+    else if (PredictableMovingDirection <= -45.f && PredictableMovingDirection > -135.f)
+        return "L";
+    else if (PredictableMovingDirection < 135.f && PredictableMovingDirection >= 45.f)
+        return "R";
+    else
+        return "B";
 }
 
-void UActionSysManager::GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTags, TArray<USoulGameplayAbility*>& ActiveAbilities)
+void UActionSysManager::GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTags,
+                                                   TArray<USoulGameplayAbility*>& ActiveAbilities)
 {
-	if (PlayerRef->AbilitySystemComponent)
-		PlayerRef->AbilitySystemComponent->GetActiveAbilitiesWithTags(AbilityTags, ActiveAbilities);
+    if (PlayerRef->AbilitySystemComponent)
+        PlayerRef->AbilitySystemComponent->GetActiveAbilitiesWithTags(AbilityTags, ActiveAbilities);
 }

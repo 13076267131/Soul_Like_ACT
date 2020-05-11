@@ -10,21 +10,20 @@
 UCLASS()
 class SOUL_LIKE_ACT_API UBTT_UseGA : public UBTTaskNode
 {
-	GENERATED_UCLASS_BODY()
-	
-	/** starts this task, should return Succeeded, Failed or InProgress
-	 *  (use FinishLatentTask() when returning InProgress)
-	 * this function should be considered as const (don't modify state of object) if node is not instanced! */
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+    GENERATED_UCLASS_BODY()
+
+    /** starts this task, should return Succeeded, Failed or InProgress
+     *  (use FinishLatentTask() when returning InProgress)
+     * this function should be considered as const (don't modify state of object) if node is not instanced! */
+    virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 public:
-	UPROPERTY(EditAnywhere, Category = Abilities)
-	TSubclassOf<UGameplayAbility> ADO;
+    UPROPERTY(EditAnywhere, Category = Abilities)
+    TSubclassOf<UGameplayAbility> ADO;
 
-	UPROPERTY()
-	UBehaviorTreeComponent* BTC;
+    UPROPERTY()
+    UBehaviorTreeComponent* BTC;
 
-	UFUNCTION()
-	void OnGA_Ended(class UGameplayAbility* Ability);
+    UFUNCTION()
+    void OnGA_Ended(class UGameplayAbility* Ability);
 };
-

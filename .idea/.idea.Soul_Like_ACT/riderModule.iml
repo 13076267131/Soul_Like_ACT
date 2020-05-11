@@ -131,6 +131,7 @@
     <content url="file://$MODULE_DIR$/../../../../UnrealEngine/UE_4.24/Engine/Plugins/Marketplace/InputBuffer" />
     <content url="file://$MODULE_DIR$/../../../../UnrealEngine/UE_4.24/Engine/Plugins/Marketplace/LogVIewer" />
     <content url="file://$MODULE_DIR$/../../../../UnrealEngine/UE_4.24/Engine/Plugins/Marketplace/PlayFabSDK" />
+    <content url="file://$MODULE_DIR$/../../../../UnrealEngine/UE_4.24/Engine/Plugins/Marketplace/RiderSourceCodeAccess" />
     <content url="file://$MODULE_DIR$/../../../../UnrealEngine/UE_4.24/Engine/Plugins/Marketplace/Substance" />
     <content url="file://$MODULE_DIR$/../../../../UnrealEngine/UE_4.24/Engine/Plugins/Marketplace/UFSM" />
     <content url="file://$MODULE_DIR$/../../../../UnrealEngine/UE_4.24/Engine/Plugins/Media/AndroidCamera" />
