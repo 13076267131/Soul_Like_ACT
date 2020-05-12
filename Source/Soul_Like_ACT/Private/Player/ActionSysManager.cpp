@@ -67,7 +67,7 @@ bool UActionSysManager::JumpSectionForCombo()
     return true;
 }
 
-float UActionSysManager::PredictMovingDirection(ASoul_Like_ACTCharacter* CharacterRef)
+void UActionSysManager::PredictMovingDirection(ASoul_Like_ACTCharacter* CharacterRef, float& MovementDegree, bool& isMoving)
 {
     FVector PlayerVelocity;
     float Degree;
@@ -92,10 +92,14 @@ float UActionSysManager::PredictMovingDirection(ASoul_Like_ACTCharacter* Charact
             ForwardDeltaDegree *= -1;
         }
 
-        return ForwardDeltaDegree;
+        MovementDegree = ForwardDeltaDegree;
+        isMoving = true;
+        return;
     }
 
-    return 0.f;
+    MovementDegree = 0.f;
+    isMoving = false;
+    return;
 }
 
 FName UActionSysManager::Get4WaysStepDirection_GA(float PredictableMovingDirection)

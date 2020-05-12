@@ -54,7 +54,7 @@ public:
     }
 
     UFUNCTION(BlueprintCallable)
-    static float PredictMovingDirection(ASoul_Like_ACTCharacter* CharacterRef);
+    static void PredictMovingDirection(ASoul_Like_ACTCharacter* CharacterRef, float& MovementDegree, bool& isMoving);
 
     UFUNCTION(BlueprintCallable)
     static FName Get4WaysStepDirection_GA(float PredictableMovingDirection);

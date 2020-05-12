@@ -19,3 +19,18 @@ void UBPFL_GameplayTag::IsCharacterParry(const UAbilitySystemComponent* ASC, EPa
         ParryResult = EParryStatus::Unguard;
     }
 }
+
+void UBPFL_GameplayTag::GetEffectContextDynamicTags(const FGameplayEffectContextHandle* ContextHandle,
+    FGameplayTagContainer& TagContainer)
+{
+    if(ContextHandle)
+    {
+        if(ContextHandle->Get())
+    }
+    if (EffectContext
+    {
+        return *EffectContext.GetHitResult();
+    }
+
+    return FHitResult();
+}

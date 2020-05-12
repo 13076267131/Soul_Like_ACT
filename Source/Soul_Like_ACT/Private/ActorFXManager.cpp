@@ -14,8 +14,9 @@ UActorFXManager::UActorFXManager()
 
 void UActorFXManager::SpawnParticleWithHitResult(const FHitResult& HitResult, UParticleSystem* ParticleClass)
 {
-    UGameplayStatics::SpawnEmitterAtLocation(GetWorld()
-                                             , OnHitParticles[0]
+    if(ParticleClass)
+        UGameplayStatics::SpawnEmitterAtLocation(GetWorld()
+                                             , ParticleClass
                                              , HitResult.ImpactPoint
                                              , FRotationMatrix::MakeFromX(HitResult.ImpactNormal).Rotator()
                                              , true);
@@ -23,7 +24,8 @@ void UActorFXManager::SpawnParticleWithHitResult(const FHitResult& HitResult, UP
 
 void UActorFXManager::SpawnSoundWithHitResult(const FHitResult& HitResult, USoundBase* SoundCue)
 {
-    UGameplayStatics::PlaySound2D(GetWorld(), SoundCue);
+    if(SoundCue)
+        UGameplayStatics::PlaySound2D(GetWorld(), SoundCue);
 }
 
 bool UActorFXManager::PlayEffects(const FHitResult& HitResult, const EFXType InputType)

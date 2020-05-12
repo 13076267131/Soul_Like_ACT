@@ -29,7 +29,10 @@ public:
     }
 
     UFUNCTION(BlueprintCallable, Category = Tag)
-    void IsCharacterParry(const UAbilitySystemComponent* ASC, EParryStatus& ParryResult);
+    static void IsCharacterParry(const UAbilitySystemComponent* ASC, EParryStatus& ParryResult);
+
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = Tag)
+    static void GetEffectContextDynamicTags(const FGameplayEffectContextHandle* ContextHandle, FGameplayTagContainer& TagContainer);
 
     //UFUNCTION(BlueprintCallable, Category = Tag)
 };
