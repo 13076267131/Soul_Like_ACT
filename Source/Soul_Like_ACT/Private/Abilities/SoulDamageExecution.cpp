@@ -148,7 +148,8 @@ void USoulDamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
     DamageDone *= (DamageDone / (DamageDone + DefensePower));
 
     //POSTURE DAMAGE
-    float PostureDamageDone = (1.f + PostureMulti) * PostureCrumble * (PostureCrumble / (PostureCrumble +
+    const float PostureCrumbleFinal = PostureCrumble + 10.f;
+    float PostureDamageDone = (1.f + PostureMulti) * PostureCrumbleFinal * (PostureCrumbleFinal / (PostureCrumbleFinal +
         PostureStrength));
 
 
