@@ -43,3 +43,11 @@ void UBPFL_Math::DegreeToFourDirection(float Degree, EFourDirection& Direction)
     else if(Degree >=45.f && Degree < 135.f)
         Direction = EFourDirection::Right;
 }
+
+FVector UBPFL_Math::FindVecBetweenTwoVecs(const FVector& Direction, const FVector& SurfaceNormal, float Degree)
+{
+    const float BigDot = Direction | SurfaceNormal;
+    const float BigDegree = FMath::RadiansToDegrees(FMath::Acos(BigDot));
+
+    BigDot * SurfaceNormal * (Degree / BigDegree);
+}
