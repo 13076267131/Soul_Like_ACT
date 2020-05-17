@@ -29,7 +29,4 @@ public:
     static void FindDegreeToHitNorm(const FRotator& ActorRotation, const FVector& HitNorm, float& Result);
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = Math)
     static void DegreeToFourDirection(float Degree, EFourDirection& Direction);
-
-    UFUNCTION(BlueprintCallable, BlueprintPure, Category = Math)
-    static FVector FindVecBetweenTwoVecs(const FVector& Direction, const FVector& SurfaceNormal, float Degree);
 };
