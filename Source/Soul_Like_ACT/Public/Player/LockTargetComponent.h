@@ -45,7 +45,7 @@ public:
     class AActor* LockedTarget;
 
     UPROPERTY(BlueprintReadOnly)
-    bool bIsTargetingEnabled;
+    bool isTargetingEnabled;
 
 protected:
     // Called when the game starts
@@ -76,6 +76,8 @@ protected:
     void Timer_CheckBlockingAndDistance();
 
     void Tick_UpdateRotation();
+
+    void InitComponent(class UArrowComponent* ArrowComponentRef);
 public:
     // Called every frame
     virtual void TickComponent(float DeltaTime, ELevelTick TickType,
@@ -87,9 +89,16 @@ public:
     UFUNCTION(BlueprintCallable)
     void Toggle_InDirection(ETargetFindingDirection Direction) { FindTarget(Direction); }
 
-    void InitComponent(class UArrowComponent* ArrowComponentRef);
+    bool GetIsTargetingEnabled() { return isTargetingEnabled; }
 
-    bool GetIsTargetingEnabled() { return bIsTargetingEnabled; }
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = TargetLocking)
+    void GetLockedTarget(bool& isEnabled, AActor*& OutLockedTarget) const
+    {
+        isEnabled = isTargetingEnabled;
+        OutLockedTarget = LockedTarget;
+    }
 
     FVector GetNormalizedVec(FVector Inp);
+
+    friend class ASoul_Like_ACTCharacter;
 };

@@ -37,7 +37,7 @@ void ULockTargetComponent::TickComponent(float DeltaTime, ELevelTick TickType,
     Tick_UpdateRotation();
 
     //Facing Offset during attacking
-    if (bIsFacingOffsetEnabled && !bIsTargetingEnabled)
+    if (bIsFacingOffsetEnabled && !isTargetingEnabled)
     {
         FacingOffsetDelta = FMath::Clamp(FacingOffsetDelta + DeltaTime * 5.f, 0.f, 1.f);
         const FRotator IdleRotation = FMath::Lerp(FRotator(0.f, FacingOffset_CurrentRotationYaw, 0.f),
@@ -53,7 +53,7 @@ void ULockTargetComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void ULockTargetComponent::ToggleCameraLock(bool FreeCamera)
 {
-    if (!bIsTargetingEnabled)
+    if (!isTargetingEnabled)
     {
         bFreeCamera = FreeCamera;
         FindTarget(ETargetFindingDirection::Centre);
@@ -170,7 +170,7 @@ void ULockTargetComponent::FindClosestTargetInScreen(TArray<AActor*>& LocalPoten
 void ULockTargetComponent::Find_InDirection(TArray<AActor*>& LocalPotentialTargets, AActor*& ClosestTarget,
                                             ETargetFindingDirection Direction)
 {
-    if (!bIsTargetingEnabled || !LockedTarget)
+    if (!isTargetingEnabled || !LockedTarget)
     {
         return;
     }
@@ -223,7 +223,7 @@ void ULockTargetComponent::Find_InDirection(TArray<AActor*>& LocalPotentialTarge
 
 void ULockTargetComponent::EnableLockingTarget()
 {
-    bIsTargetingEnabled = 1;
+    isTargetingEnabled = 1;
 
     //Save Rotation references
     CacheRotationSetting();
@@ -269,7 +269,7 @@ void ULockTargetComponent::ResetRotationSetting()
 
 void ULockTargetComponent::DisableLockingTarget()
 {
-    bIsTargetingEnabled = false;
+    isTargetingEnabled = false;
 
     PlayerArrow->SetVisibility(0);
 
@@ -307,7 +307,7 @@ FVector ULockTargetComponent::GetLineTraceStartLocation()
 
 void ULockTargetComponent::Timer_CheckBlockingAndDistance()
 {
-    if (!bIsTargetingEnabled)
+    if (!isTargetingEnabled)
     {
         GetWorld()->GetTimerManager().ClearTimer(TargetBlockingHandler);
         return;
@@ -337,7 +337,7 @@ void ULockTargetComponent::Timer_CheckBlockingAndDistance()
 
 void ULockTargetComponent::Tick_UpdateRotation()
 {
-    if (!bIsTargetingEnabled)
+    if (!isTargetingEnabled)
     {
         return;
     }
@@ -364,7 +364,7 @@ void ULockTargetComponent::Tick_UpdateRotation()
 
     //TODO need a precise condition
     //Prevent the CapsuleComponent sliding when gets close to the target
-    if (!PlayerRef->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() || bIsTargetingEnabled)
+    if (!PlayerRef->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() || isTargetingEnabled)
     {
         const FRotator PlayerCapRotation = PlayerRef->GetCapsuleComponent()->GetComponentRotation();
 

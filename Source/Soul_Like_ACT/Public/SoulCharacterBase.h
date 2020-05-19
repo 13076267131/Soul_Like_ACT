@@ -294,4 +294,21 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = Direction)
     void BP_ForceOverrideFacingDirection(float Speed) { return ForceOverrideFacingDirection(Speed);}
+
+    /**
+     * Call the function in ANS_BodySweeping
+     * If bUseTarget and Target is valid, then it sweeps to the target.
+     * Otherwise, it sweeps to the forward.
+     */
+    UFUNCTION(BlueprintCallable)
+    bool BodySweep_Init(const AActor* Target, bool bUseTarget, float InSweepingSpeed);
+
+    FVector BodySweep_ForwardVec;
+    float SweepingSpeed;
+    
+    UFUNCTION(BlueprintCallable)
+    void BodySweep_Tick(float Delta);
+    
+    UFUNCTION(BlueprintCallable)
+    void BodySweep_Finished();
 };

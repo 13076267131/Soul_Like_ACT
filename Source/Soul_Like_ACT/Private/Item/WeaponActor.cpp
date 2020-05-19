@@ -14,8 +14,6 @@ AWeaponActor::AWeaponActor()
     // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
-    RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
-
     MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>("MeshComp");
     MeshComp->SetupAttachment(RootComponent);
 }
@@ -26,8 +24,8 @@ void AWeaponActor::BeginPlay()
     Super::BeginPlay();
 
     OwnerRef = Cast<ASoulCharacterBase>(GetInstigator());
+    
     check(OwnerRef);
-
     check(GearInfo);
 }
 

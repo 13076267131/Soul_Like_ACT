@@ -126,6 +126,45 @@ void ASoulCharacterBase::GetMovementMode(ESoulMovementMode& MovementMode) const
         MovementMode = ESoulMovementMode::Sprint;
 }
 
+bool ASoulCharacterBase::BodySweep_Init(const AActor* Target, bool bUseTarget, float InSweepingSpeed)
+{
+    BodySweep_ForwardVec = FVector::ZeroVector;
+    
+    if(Target && bUseTarget)
+        BodySweep_ForwardVec = (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal2D(.01);
+    else
+    {
+        BodySweep_ForwardVec = FRotationMatrix(GetControlRotation()).GetScaledAxis(EAxis::X).GetSafeNormal2D();
+    }
+
+    if(BodySweep_ForwardVec.IsNearlyZero())
+        return false;
+    else
+    {
+        //Face the desired direction
+        SetActorRotation(BodySweep_ForwardVec.Rotation(), ETeleportType::TeleportPhysics);
+        GetCapsuleComponent()->SetEnableGravity(false);
+        GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        SweepingSpeed = InSweepingSpeed;
+
+        return true;
+    }
+}
+
+void ASoulCharacterBase::BodySweep_Tick(float Delta)
+{
+    if(!BodySweep_ForwardVec.IsNearlyZero())
+    {
+        SetActorLocation(GetActorLocation() + Delta * SweepingSpeed * BodySweep_ForwardVec);
+    }
+}
+
+void ASoulCharacterBase::BodySweep_Finished()
+{
+    GetCapsuleComponent()->SetEnableGravity(false);
+    GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
+
 void ASoulCharacterBase::MakeStepDecelAndSound_Implementation()
 {
     return;

@@ -90,6 +90,10 @@ protected:
 
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+    /**
+     * The function is called when some attack movements have root motion enabled and direction offsets.
+     * It overrides the direction with controller's rotation or by calling lock-target component;
+     */
     virtual void ForceOverrideFacingDirection(float Alpha) override;
     
 public:
