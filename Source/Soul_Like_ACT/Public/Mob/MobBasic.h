@@ -7,6 +7,7 @@
 #include "MobBasic.generated.h"
 
 class UDA_FXCollection;
+class UMob_TargetingComponent;
 
 UCLASS()
 class SOUL_LIKE_ACT_API AMobBasic : public ASoulCharacterBase
@@ -16,7 +17,7 @@ class SOUL_LIKE_ACT_API AMobBasic : public ASoulCharacterBase
 protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    class UMob_TargetingComponent* TargetingComponent;
+    UMob_TargetingComponent* TargetingComponent;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gears)
     class AWeaponActor* Weapon;
@@ -39,11 +40,8 @@ protected:
 
     virtual void ForceOverrideFacingDirection(float Alpha) override;
 public:
-    void SetTarget(AActor* PlayerPawn) const;
-
     UMob_TargetingComponent* GetTargetingComponent() const { return TargetingComponent; }
 
-    void SetFocus(bool Enable, AActor* Target);
-
-    bool GetIsTargetingEnabled() const;
+    UFUNCTION(BlueprintCallable, category = AI_Controller)
+    class AMobController* GetMobController() const;
 };

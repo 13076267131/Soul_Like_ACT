@@ -14,5 +14,12 @@ class SOUL_LIKE_ACT_API UMyBTTaskNode_GetStrafeVector : public UBTTaskNode
 {
     GENERATED_BODY()
 public:
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    FBlackboardKeySelector TargetKey;
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    float StrafeLength = 500.f;
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    FBlackboardKeySelector StrafeVecKey;
+    
     virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

@@ -7,12 +7,9 @@
 // Sets default values for this component's properties
 UMob_TargetingComponent::UMob_TargetingComponent()
 {
-    // Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-    // off to improve performance if you don't need them.
     PrimaryComponentTick.bCanEverTick = 1;
-    //PrimaryComponentTick.bStartWithTickEnabled = 1;
 
-    // ...
+    OwnerRef = Cast<class AMobBasic>(GetOwner());
 }
 
 
@@ -28,37 +25,30 @@ void UMob_TargetingComponent::TickComponent(float DeltaTime, enum ELevelTick Tic
 
         //TODO: Set rotate speed
         const FRotator Interped_LookAtRotation = FMath::RInterpConstantTo(GetOwner()->GetActorRotation(), LookAtRotation,
-                                                                          DeltaTime, 300.f);
+                                                                          DeltaTime, InterpSpeed);
 
         GetOwner()->SetActorRotation(Interped_LookAtRotation);
     }
 }
 
-// Called when the game starts
-void UMob_TargetingComponent::BeginPlay()
+void UMob_TargetingComponent::EnableTargeting(AActor* TargetActor)
 {
-    Super::BeginPlay();
-}
-
-void UMob_TargetingComponent::FacingTarget_Init()
-{
+    TargetPawn  =TargetActor;
     if (TargetPawn)
     {
-        bIsFacingTarget = 1;
+        bIsFacingTarget = true;
+        OwnerRef->GetCharacterMovement()->bOrientRotationToMovement = false;
     }
     else
-    UE_LOG(LogTemp, Warning, TEXT("UMob_TargetingComponent::FacingTarget_Init failed"));
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UMob_TargetingComponent::FacingTarget_Init failed"));
+        DisableTargeting();   
+    }
 }
 
-void UMob_TargetingComponent::FacingTarget_End()
+void UMob_TargetingComponent::DisableTargeting()
 {
-    bIsFacingTarget = 0;
-}
-
-void UMob_TargetingComponent::ToggleTargetLocking()
-{
-    if (bIsFacingTarget)
-        FacingTarget_End();
-    else if (TargetPawn)
-        FacingTarget_Init();
+    bIsFacingTarget = false;
+    TargetPawn = nullptr;
+    OwnerRef->GetCharacterMovement()->bOrientRotationToMovement = true;
 }

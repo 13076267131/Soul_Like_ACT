@@ -5,11 +5,10 @@
 #include "Components/CapsuleComponent.h"
 #include "Mob/Mob_TargetingComponent.h"
 #include "Mob/MobActionManager.h"
+#include "Mob/MobController.h"
 #include "Item/WeaponActor.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "UObject/ConstructorHelpers.h"
-#include "ActorFXManager.h"
-#include "AIController.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -75,35 +74,14 @@ void AMobBasic::MobOnDead_Implementation()
     if (LocalController)
         LocalController->UnPossess();
 
-    GetTargetingComponent()->FacingTarget_End();
+    GetTargetingComponent()->DisableTargeting();
 
     Faction = EActorFaction::Untargetable;
 
     StopAnimMontage(GetMesh()->GetAnimInstance()->GetCurrentActiveMontage());
 }
 
-void AMobBasic::SetTarget(AActor* PlayerPawn) const
+AMobController* AMobBasic::GetMobController() const
 {
-    TargetingComponent->SetTarget(PlayerPawn);
-}
-
-void AMobBasic::SetFocus(bool InputMode, AActor* Target)
-{
-    if (TargetingComponent->GetIsEnabled() && InputMode == 0)
-    {
-        TargetingComponent->FacingTarget_End();
-        TargetingComponent->SetTarget(nullptr);
-        return;
-    }
-    if (!TargetingComponent->GetIsEnabled() && InputMode == 1)
-    {
-        TargetingComponent->FacingTarget_Init();
-        TargetingComponent->SetTarget(Target);
-        return;
-    }
-}
-
-bool AMobBasic::GetIsTargetingEnabled() const
-{
-    return TargetingComponent->GetIsEnabled();
+    return Cast<class AMobController>(GetController());
 }

@@ -22,28 +22,25 @@ public:
     virtual void TickComponent(float DeltaTime, enum ELevelTick TickType,
                                FActorComponentTickFunction* ThisTickFunction) override;
 
-protected:
-    // Called when the game starts
-    virtual void BeginPlay() override;
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    float InterpSpeed = 300.f;
 
+protected:
+
+    
     class AMobBasic* OwnerRef;
     class AMobController* OwnerController;
 
     AActor* TargetPawn;
     bool bIsFacingTarget;
-
-
 public:
-    void FacingTarget_Init();
-    void FacingTarget_End();
-
-    //Toggled through AI BT
-    UFUNCTION(BlueprintCallable)
-    void ToggleTargetLocking();
-
-    UFUNCTION(BlueprintCallable)
-    void SetTarget(AActor* PlayerPawn) { TargetPawn = PlayerPawn; }
-
+    UFUNCTION(BlueprintCallable, Category = AI)
+    void EnableTargeting(AActor* TargetActor);
+    UFUNCTION(BlueprintCallable, Category = AI)
+    void DisableTargeting();
+    
     UFUNCTION(BlueprintCallable)
     bool GetIsEnabled() const { return bIsFacingTarget; }
+
+    friend class AMobBasic;
 };
