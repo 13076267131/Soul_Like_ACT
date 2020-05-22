@@ -7,55 +7,48 @@
 // Sets default values for this component's properties
 UMob_TargetingComponent::UMob_TargetingComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = 1;
-	//PrimaryComponentTick.bStartWithTickEnabled = 1;
+    PrimaryComponentTick.bCanEverTick = 1;
 
-	// ...
+    OwnerRef = Cast<class AMobBasic>(GetOwner());
 }
 
 
-void UMob_TargetingComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void UMob_TargetingComponent::TickComponent(float DeltaTime, enum ELevelTick TickType,
+                                            FActorComponentTickFunction* ThisTickFunction)
 {
-	//Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+    //Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (bIsFacingTarget /* && !OwnerRef->GetIsStun()*/)
-	{
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), TargetPawn->GetActorLocation());
+    if (bIsFacingTarget /* && !OwnerRef->GetIsStun()*/)
+    {
+        const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(
+            GetOwner()->GetActorLocation(), TargetPawn->GetActorLocation());
 
-		//TODO: Set rotate speed
-		FRotator Interped_LookAtRotation = FMath::RInterpConstantTo(GetOwner()->GetActorRotation(), LookAtRotation, DeltaTime, 300.f);
+        //TODO: Set rotate speed
+        const FRotator Interped_LookAtRotation = FMath::RInterpConstantTo(GetOwner()->GetActorRotation(), LookAtRotation,
+                                                                          DeltaTime, InterpSpeed);
 
-		GetOwner()->SetActorRotation(Interped_LookAtRotation);
-	}
+        GetOwner()->SetActorRotation(Interped_LookAtRotation);
+    }
 }
 
-// Called when the game starts
-void UMob_TargetingComponent::BeginPlay()
+void UMob_TargetingComponent::EnableTargeting(AActor* TargetActor)
 {
-	Super::BeginPlay();
+    TargetPawn  =TargetActor;
+    if (TargetPawn)
+    {
+        bIsFacingTarget = true;
+        OwnerRef->GetCharacterMovement()->bOrientRotationToMovement = false;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UMob_TargetingComponent::FacingTarget_Init failed"));
+        DisableTargeting();   
+    }
 }
 
-void UMob_TargetingComponent::FacingTarget_Init()
+void UMob_TargetingComponent::DisableTargeting()
 {
-	if (TargetPawn)
-	{
-		bIsFacingTarget = 1;
-	}
-	else
-		UE_LOG(LogTemp, Warning, TEXT("UMob_TargetingComponent::FacingTarget_Init failed"));
-}
-
-void UMob_TargetingComponent::FacingTarget_End()
-{
-	bIsFacingTarget = 0;
-}
-
-void UMob_TargetingComponent::ToggleTargetLocking()
-{
-	if (bIsFacingTarget)
-		FacingTarget_End();
-	else if (TargetPawn)
-		FacingTarget_Init();
+    bIsFacingTarget = false;
+    TargetPawn = nullptr;
+    OwnerRef->GetCharacterMovement()->bOrientRotationToMovement = true;
 }

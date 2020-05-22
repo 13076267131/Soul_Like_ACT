@@ -17,41 +17,41 @@ class UVerticalBox;
 UCLASS()
 class SOUL_LIKE_ACT_API UWidget_ItemInfo : public UUserWidget
 {
-	GENERATED_BODY()
-	
-protected:
-	//Edit in BP
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UVerticalBox* ModifierBox;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* ItemType;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* ItemMainStat;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* ItemStat;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* ItemStatPlus;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* ItemLevel;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* ItemName;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* ItemDescription;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UImage* ItemIcon;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* ItemQuantity;
+    GENERATED_BODY()
 
-	/**
-	 * Temp Variables
-	 */
-	TArray<FString> ModifierNames;
-	TArray<FString> ModifierLevels;
+protected:
+    //Edit in BP
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UVerticalBox* ModifierBox;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* ItemType;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* ItemMainStat;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* ItemStat;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* ItemStatPlus;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* ItemLevel;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* ItemName;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* ItemDescription;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UImage* ItemIcon;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* ItemQuantity;
+
+    /**
+     * Temp Variables
+     */
+    TArray<FString> ModifierNames;
+    TArray<FString> ModifierLevels;
 
 public:
-	/**
-	 * The function is called when to read the slot information
-	 */
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void MakeItemInfo(const FSoulItemData& ItemData);
+    /**
+     * The function is called when to read the slot information
+     */
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+    void MakeItemInfo(const FSoulItemData& ItemData);
 };

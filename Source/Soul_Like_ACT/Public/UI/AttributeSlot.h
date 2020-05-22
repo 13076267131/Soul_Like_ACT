@@ -15,21 +15,22 @@ class UTextBlock;
 UCLASS(Abstract)
 class SOUL_LIKE_ACT_API UAttributeSlot : public UUserWidget
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 protected:
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-		UTextBlock *AttributeType = nullptr;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-		UTextBlock *AttributeValue = nullptr;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* AttributeType = nullptr;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* AttributeValue = nullptr;
 
-	/** The Attribute we modify or the GE we modify modifies. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (ExposeOnSpawn = true), meta = (FilterMetaTag = "HideFromModifiers"))
-	FGameplayAttribute MyAttribute;
+    /** The Attribute we modify or the GE we modify modifies. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (ExposeOnSpawn = true), meta = (FilterMetaTag
+        = "HideFromModifiers"))
+    FGameplayAttribute MyAttribute;
 
-	UFUNCTION(BlueprintCallable)
-	void SetAttributeType();
+    UFUNCTION(BlueprintCallable)
+    void SetAttributeType();
 
-	UFUNCTION(BlueprintCallable)
-	void OnAttributeChanged(const TArray<float> & values);
+    UFUNCTION(BlueprintCallable)
+    void OnAttributeChanged(const TArray<float>& values);
 };

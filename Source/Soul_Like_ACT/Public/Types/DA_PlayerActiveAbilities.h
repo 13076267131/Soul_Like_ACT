@@ -12,8 +12,7 @@
 UCLASS()
 class SOUL_LIKE_ACT_API UDA_PlayerActiveAbilities : public UDataAsset
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-
 };

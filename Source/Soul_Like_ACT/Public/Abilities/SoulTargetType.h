@@ -21,41 +21,52 @@ struct FGameplayEventData;
 UCLASS(Blueprintable, meta = (ShowWorldContextPin))
 class SOUL_LIKE_ACT_API USoulTargetType : public UObject
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Constructor and overrides
-	USoulTargetType() {}
+    // Constructor and overrides
+    USoulTargetType()
+    {
+    }
 
-	/** Called to determine targets to apply gameplay effects to */
-	UFUNCTION(BlueprintNativeEvent)
-		void GetTargets(ASoulCharacterBase* TargetingCharacter, AActor* TargetingActor, FGameplayEventData EventData, TArray<FHitResult>& OutHitResults, TArray<AActor*>& OutActors) const;
+    /** Called to determine targets to apply gameplay effects to */
+    UFUNCTION(BlueprintNativeEvent)
+    void GetTargets(ASoulCharacterBase* TargetingCharacter, AActor* TargetingActor, FGameplayEventData EventData,
+                    TArray<FHitResult>& OutHitResults, TArray<AActor*>& OutActors) const;
 };
 
 /** Trivial target type that uses the owner */
 UCLASS(NotBlueprintable)
 class SOUL_LIKE_ACT_API USoulTargetType_UseOwner : public USoulTargetType
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Constructor and overrides
-	USoulTargetType_UseOwner() {}
+    // Constructor and overrides
+    USoulTargetType_UseOwner()
+    {
+    }
 
-	/** Uses the passed in event data */
-	virtual void GetTargets_Implementation(ASoulCharacterBase* TargetingCharacter, AActor* TargetingActor, FGameplayEventData EventData, TArray<FHitResult>& OutHitResults, TArray<AActor*>& OutActors) const override;
+    /** Uses the passed in event data */
+    virtual void GetTargets_Implementation(ASoulCharacterBase* TargetingCharacter, AActor* TargetingActor,
+                                           FGameplayEventData EventData, TArray<FHitResult>& OutHitResults,
+                                           TArray<AActor*>& OutActors) const override;
 };
 
 /** Trivial target type that pulls the target out of the event data */
 UCLASS(NotBlueprintable)
 class SOUL_LIKE_ACT_API USoulTargetType_UseEventData : public USoulTargetType
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Constructor and overrides
-	USoulTargetType_UseEventData() {}
+    // Constructor and overrides
+    USoulTargetType_UseEventData()
+    {
+    }
 
-	/** Uses the passed in event data */
-	virtual void GetTargets_Implementation(ASoulCharacterBase* TargetingCharacter, AActor* TargetingActor, FGameplayEventData EventData, TArray<FHitResult>& OutHitResults, TArray<AActor*>& OutActors) const override;
+    /** Uses the passed in event data */
+    virtual void GetTargets_Implementation(ASoulCharacterBase* TargetingCharacter, AActor* TargetingActor,
+                                           FGameplayEventData EventData, TArray<FHitResult>& OutHitResults,
+                                           TArray<AActor*>& OutActors) const override;
 };

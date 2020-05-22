@@ -13,8 +13,8 @@
 UCLASS()
 class SOUL_LIKE_ACT_API ASoulGameState : public AGameState
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
 };

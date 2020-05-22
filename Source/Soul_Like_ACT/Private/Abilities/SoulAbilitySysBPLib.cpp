@@ -1,24 +1,55 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Abilities/SoulAbilitySysBPLib.h"
+#include "AbilitySystemComponent.h"
 
 USoulAbilitySysBPLib::USoulAbilitySysBPLib(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+    : Super(ObjectInitializer)
 {
 }
 
-void USoulAbilitySysBPLib::CreateEventData(const AActor *Target, const AActor *Source, const FHitResult &InpHitResult, const FGameplayTag EventTag , const float EventMagnitude, FGameplayEventData &OutpEventData)
+void USoulAbilitySysBPLib::CreateEventData(const AActor* Target, const AActor* Source, const FHitResult& InpHitResult,
+                                           const FGameplayTag EventTag, const float EventMagnitude,
+                                           FGameplayEventData& OutpEventData)
 {
-	FGameplayEffectContextHandle TempContextHandle(new FGameplayEffectContext());
-	TempContextHandle.AddHitResult(InpHitResult);
+    FGameplayEffectContextHandle TempContextHandle(new FGameplayEffectContext());
+    TempContextHandle.AddHitResult(InpHitResult);
 
-	FGameplayEventData TempEventData;
-	TempEventData.Instigator = Source;
-	TempEventData.Target = Target;
-	//TODO damage magnitude
-	TempEventData.EventMagnitude = EventMagnitude;
-	TempEventData.EventTag = EventTag;
-	TempEventData.ContextHandle = TempContextHandle;
+    FGameplayEventData TempEventData;
+    TempEventData.Instigator = Source;
+    TempEventData.Target = Target;
+    TempEventData.EventMagnitude = EventMagnitude;
+    TempEventData.EventTag = EventTag;
+    TempEventData.ContextHandle = TempContextHandle;
 
-	OutpEventData = TempEventData;
+    OutpEventData = TempEventData;
+}
+
+bool USoulAbilitySysBPLib::OverrideActorGameplayTag(UAbilitySystemComponent* AbilitySysComp,
+                                                    const FGameplayTag& GameplayTag, bool bAdd)
+{
+    if (AbilitySysComp)
+    {
+        AbilitySysComp->SetTagMapCount(GameplayTag, bAdd);
+        return true;
+    }
+
+    return false;
+}
+
+bool USoulAbilitySysBPLib::DoesActorHasTag(UAbilitySystemComponent* AbilitySysComp, FGameplayTag InTag)
+{
+    if (AbilitySysComp)
+        return AbilitySysComp->HasMatchingGameplayTag(InTag);
+
+    return false;
+}
+
+bool USoulAbilitySysBPLib::DoesActorHasAnyTags(UAbilitySystemComponent* AbilitySysComp,
+                                               FGameplayTagContainer InTagContainer)
+{
+    if (AbilitySysComp)
+        return AbilitySysComp->HasAnyMatchingGameplayTags(InTagContainer);
+
+    return false;
 }

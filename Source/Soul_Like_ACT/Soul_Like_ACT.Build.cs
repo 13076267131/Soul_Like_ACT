@@ -4,11 +4,12 @@ using UnrealBuildTool;
 
 public class Soul_Like_ACT : ModuleRules
 {
-	public Soul_Like_ACT(ReadOnlyTargetRules Target) : base(Target)
-	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+    public Soul_Like_ACT(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] {
+        PublicDependencyModuleNames.AddRange(new string[]
+        {
             "Core",
             "CoreUObject",
             "Slate",
@@ -20,7 +21,9 @@ public class Soul_Like_ACT : ModuleRules
             "GameplayTasks",
             "UMG",
             "NavigationSystem",
-            "InputBuffer"
+            "InputBuffer",
+            "BlueprintJson",
+            "Json"
         });
-	}
+    }
 }

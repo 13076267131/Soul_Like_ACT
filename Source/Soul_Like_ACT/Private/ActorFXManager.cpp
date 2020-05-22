@@ -7,30 +7,45 @@
 // Sets default values for this component's properties
 UActorFXManager::UActorFXManager()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = 0;
+    // Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+    // off to improve performance if you don't need them.
+    PrimaryComponentTick.bCanEverTick = 0;
 }
 
-void UActorFXManager::SpawnParticleWithHitResult(const FHitResult &HitResult, UParticleSystem *ParticleClass)
+void UActorFXManager::SpawnParticleWithHitResult(const FHitResult& HitResult, UParticleSystem* ParticleClass)
 {
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld()
-		, OnHitParticles[0]
-		, GetOwner()->GetActorLocation()
-		, FRotator::ZeroRotator
-		, FVector::OneVector
-		, true);
+    if(ParticleClass)
+        UGameplayStatics::SpawnEmitterAtLocation(GetWorld()
+                                             , ParticleClass
+                                             , HitResult.ImpactPoint
+                                             , FRotationMatrix::MakeFromX(HitResult.ImpactNormal).Rotator()
+                                             , true);
 }
 
-void UActorFXManager::SpawnSoundWithHitResult(const FHitResult &HitResult, USoundBase *SoundCue)
+void UActorFXManager::SpawnSoundWithHitResult(const FHitResult& HitResult, USoundBase* SoundCue)
 {
-	UGameplayStatics::PlaySound2D(GetWorld(), SoundCue);
-}	
+    if(SoundCue)
+        UGameplayStatics::PlaySound2D(GetWorld(), SoundCue);
+}
 
 bool UActorFXManager::PlayEffects(const FHitResult& HitResult, const EFXType InputType)
 {
-	SpawnParticleWithHitResult(HitResult, OnHitParticles[0]);
-	SpawnSoundWithHitResult(HitResult, OnHitSounds[0]);
-
-	return 1;
+    switch (InputType)
+    {
+    case EFXType::VE_OnHit:
+        SpawnParticleWithHitResult(HitResult, OnHitParticles[0]);
+        SpawnSoundWithHitResult(HitResult, OnHitSounds[0]);
+        break;
+    case EFXType::VE_OnParry:
+        SpawnParticleWithHitResult(HitResult, OnParryParticles[0]);
+        SpawnSoundWithHitResult(HitResult, OnParrySounds[0]);
+        break;
+    case EFXType::VE_OnBlock:
+        SpawnParticleWithHitResult(HitResult, OnBlockParticles[0]);
+        SpawnSoundWithHitResult(HitResult, OnBlockSounds[0]);
+        break;
+    default:
+        break;
+    }
+    return true;
 }

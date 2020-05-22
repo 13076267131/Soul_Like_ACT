@@ -2,7 +2,8 @@
 
 #include "SoulGameState.h"
 #include "Kismet/GameplayStatics.h"
+
 void ASoulGameState::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 }

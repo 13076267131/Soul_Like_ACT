@@ -3,20 +3,24 @@
 #include "SoulGameMode.h"
 #include "SoulGameState.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Player/Soul_Like_ACTCharacter.h"
+#include "Player/SoulPlayerController.h"
 
 ASoulGameMode::ASoulGameMode()
 {
-	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<ASoul_Like_ACTCharacter> PlayerPawnBPClass(TEXT("/Game/Blueprints/Player/Player_Character_BP"));
-	static ConstructorHelpers::FClassFinder<ASoulPlayerController> PlayerControllerBPClass(TEXT("/Game/Blueprints/Player/SoulPlayerController_BP"));
-	static ConstructorHelpers::FClassFinder<ASoulGameState> GameStateBPClass(TEXT("/Game/Blueprints/SoulGameState"));
+    // set default pawn class to our Blueprinted character
+    static ConstructorHelpers::FClassFinder<ASoul_Like_ACTCharacter> PlayerPawnBPClass(
+        TEXT("/Game/Blueprints/Player/Player_Character_BP"));
+    static ConstructorHelpers::FClassFinder<ASoulPlayerController> PlayerControllerBPClass(
+        TEXT("/Game/Blueprints/Player/SoulPlayerController_BP"));
+    static ConstructorHelpers::FClassFinder<ASoulGameState> GameStateBPClass(TEXT("/Game/Blueprints/SoulGameState"));
 
-	if (PlayerPawnBPClass.Class != NULL)
-		DefaultPawnClass = PlayerPawnBPClass.Class;
+    if (PlayerPawnBPClass.Class != NULL)
+        DefaultPawnClass = PlayerPawnBPClass.Class;
 
-	if (PlayerControllerBPClass.Class != NULL)
-		PlayerControllerClass = PlayerControllerBPClass.Class;
-	
-	if(GameStateBPClass.Class != NULL)
-		GameStateClass = GameStateBPClass.Class;
+    if (PlayerControllerBPClass.Class != NULL)
+        PlayerControllerClass = PlayerControllerBPClass.Class;
+
+    if (GameStateBPClass.Class != NULL)
+        GameStateClass = GameStateBPClass.Class;
 }

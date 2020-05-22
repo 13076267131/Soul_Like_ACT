@@ -9,89 +9,96 @@
 UENUM(BlueprintType)
 enum class ETargetFindingDirection : uint8
 {
-	Centre,
-	Left,
-	Right,
+    Centre,
+    Left,
+    Right,
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SOUL_LIKE_ACT_API ULockTargetComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 protected:
-	FTimerHandle TargetBlockingHandler;
+    FTimerHandle TargetBlockingHandler;
 
-	bool bFreeCamera;
+    bool bFreeCamera;
 
-	bool bIsFacingOffsetEnabled;
-	float FacingOffsetDelta;
-	float FacingOffset_ForwardRotationYaw;
-	float FacingOffset_CurrentRotationYaw;
+    bool bIsFacingOffsetEnabled;
+    float FacingOffsetDelta;
+    float FacingOffset_ForwardRotationYaw;
+    float FacingOffset_CurrentRotationYaw;
 
-	bool bOwnerControllerRotationYaw = false
-		, bOwnerOrientRotToMovement = true
-		, bOwnerControllerDesiredRot = false;
+    bool bOwnerControllerRotationYaw = false
+         , bOwnerOrientRotToMovement = true
+         , bOwnerControllerDesiredRot = false;
 
-	TArray<AActor*> PotentialTargetActors;
+    TArray<AActor*> PotentialTargetActors;
 
-	class UArrowComponent *PlayerArrow;
-	class ACharacter *PlayerRef;
+    class UArrowComponent* PlayerArrow;
+    class ACharacter* PlayerRef;
 
-public:	
-	// Sets default values for this component's properties
-	ULockTargetComponent();
+public:
+    // Sets default values for this component's properties
+    ULockTargetComponent();
 
-	class AActor *SelectedActor;
+    class AActor* LockedTarget;
 
-	UPROPERTY(BlueprintReadOnly)
-	bool bIsTargetingEnabled;
+    UPROPERTY(BlueprintReadOnly)
+    bool isTargetingEnabled;
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+    // Called when the game starts
+    virtual void BeginPlay() override;
 
-	//Detection Stages-----------
-	void FindTarget(ETargetFindingDirection Direction = ETargetFindingDirection::Centre);
-	
-	void GetPotentialTargetsInScreen(TArray<AActor *> &OutPotentialTargets);
-	void RuleOutBlockedTargets(TArray<AActor *> LocalPotentialTargets, TArray<AActor *> &OutPotentialTargets);
+    //Detection Stages-----------
+    void FindTarget(ETargetFindingDirection Direction = ETargetFindingDirection::Centre);
 
-	void FindClosestTargetInScreen(TArray<AActor *> &LocalPotentialTargets, AActor *&ClosestTarget);
-	void Find_InDirection(TArray<AActor *> &LocalPotentialTargets, AActor *&ClosestTarget, ETargetFindingDirection Direction);
-	//---------------------------
+    void GetPotentialTargetsInScreen(TArray<AActor*>& OutPotentialTargets);
+    void RuleOutBlockedTargets(TArray<AActor*> LocalPotentialTargets, TArray<AActor*>& OutPotentialTargets);
 
-	void EnableLockingTarget();
-	void DisableLockingTarget();
+    void FindClosestTargetInScreen(TArray<AActor*>& LocalPotentialTargets, AActor*& ClosestTarget);
+    void Find_InDirection(TArray<AActor*>& LocalPotentialTargets, AActor*& ClosestTarget,
+                          ETargetFindingDirection Direction);
+    //---------------------------
 
-	void CacheRotationSetting();
-	void ResetRotationSetting();
+    void EnableLockingTarget();
+    void DisableLockingTarget();
 
-	void SetRotationMode_FaceTarget();
+    void CacheRotationSetting();
+    void ResetRotationSetting();
 
-	bool IsTraceBlocked(AActor *SelectedTarget, TArray<AActor*> IgnoredActors, const ECollisionChannel TraceChannel);
-	FVector GetLineTraceStartLocation();
+    void SetRotationMode_FaceTarget();
 
-	void Timer_CheckBlockingAndDistance();
+    bool IsTraceBlocked(AActor* SelectedTarget, TArray<AActor*> IgnoredActors, const ECollisionChannel TraceChannel);
+    FVector GetLineTraceStartLocation();
 
-	void Tick_UpdateRotation();
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+    void Timer_CheckBlockingAndDistance();
 
-	UFUNCTION(BlueprintCallable)
-	void ToggleCameraLock(bool FreeCamera);
+    void Tick_UpdateRotation();
 
-	UFUNCTION(BlueprintCallable)
-	void Toggle_InDirection(ETargetFindingDirection Direction) { FindTarget(Direction); }
+    void InitComponent(class UArrowComponent* ArrowComponentRef);
+public:
+    // Called every frame
+    virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+                               FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintCallable)
-	void ForceUsingFacingOffset(bool bHaveTarget);
+    UFUNCTION(BlueprintCallable)
+    void ToggleCameraLock(bool FreeCamera);
 
-	void InitComponent(class UArrowComponent *ArrowComponentRef);
+    UFUNCTION(BlueprintCallable)
+    void Toggle_InDirection(ETargetFindingDirection Direction) { FindTarget(Direction); }
 
-	bool GetIsTargetingEnabled() { return bIsTargetingEnabled; }
+    bool GetIsTargetingEnabled() { return isTargetingEnabled; }
 
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = TargetLocking)
+    void GetLockedTarget(bool& isEnabled, AActor*& OutLockedTarget) const
+    {
+        isEnabled = isTargetingEnabled;
+        OutLockedTarget = LockedTarget;
+    }
 
-	FVector GetNormalizedVec(FVector Inp);
+    FVector GetNormalizedVec(FVector Inp);
+
+    friend class ASoul_Like_ACTCharacter;
 };

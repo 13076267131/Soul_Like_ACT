@@ -12,7 +12,5 @@
 UCLASS()
 class SOUL_LIKE_ACT_API USoulModifierGameplayEffect : public UGameplayEffect
 {
-	GENERATED_BODY()
-
-
+    GENERATED_BODY()
 };

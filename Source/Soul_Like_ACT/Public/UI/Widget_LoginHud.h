@@ -16,21 +16,21 @@ class UImage;
 UCLASS()
 class SOUL_LIKE_ACT_API UWidget_LoginHud : public UUserWidget
 {
-	GENERATED_BODY()
-	
-public:
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UButton* StartGame;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UButton* ResetButton;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UImage* Rank;
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* PlayerID;
+    GENERATED_BODY()
 
-	//Call this on CONSTRUCT
-	UFUNCTION(BlueprintCallable)
-	void CacheSaveSlot();
-	UFUNCTION(BlueprintCallable)
-	void BindButtons();
+public:
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UButton* StartGame;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UButton* ResetButton;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UImage* Rank;
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+    UTextBlock* PlayerID;
+
+    //Call this on CONSTRUCT
+    UFUNCTION(BlueprintCallable)
+    void CacheSaveSlot();
+    UFUNCTION(BlueprintCallable)
+    void BindButtons();
 };

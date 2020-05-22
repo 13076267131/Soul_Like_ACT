@@ -10,30 +10,31 @@
 
 UMyBTService_IsTargetAvailable::UMyBTService_IsTargetAvailable()
 {
-	bCreateNodeInstance = 1;
+    bCreateNodeInstance = 1;
 }
 
 
 void UMyBTService_IsTargetAvailable::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+    Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 
-	AMobController *Owner = Cast<AMobController>(OwnerComp.GetOwner());
-	if (!Owner)
-	{
-		//OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName("SelfActor"), nullptr);
-		Owner->GetBTComp()->StopTree(EBTStopMode::Forced);
-		return;
-	}
-	ASoulCharacterBase *PlayerPawn = Cast<ASoulCharacterBase>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("PlayerPawn"));
-	if (!PlayerPawn || PlayerPawn->GetHealth() <= 0)
-	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(GetSelectedBlackboardKey(), 0);
-		return;
-	}
-	else
-	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(GetSelectedBlackboardKey(), 1);
-	}
+    AMobController* Owner = Cast<AMobController>(OwnerComp.GetOwner());
+    if (!Owner)
+    {
+        //OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName("SelfActor"), nullptr);
+        Owner->GetBTComp()->StopTree(EBTStopMode::Forced);
+        return;
+    }
+    ASoulCharacterBase* PlayerPawn = Cast<ASoulCharacterBase>(
+        OwnerComp.GetBlackboardComponent()->GetValueAsObject("PlayerPawn"));
+    if (!PlayerPawn || PlayerPawn->GetHealth() <= 0)
+    {
+        OwnerComp.GetBlackboardComponent()->SetValueAsBool(GetSelectedBlackboardKey(), 0);
+        return;
+    }
+    else
+    {
+        OwnerComp.GetBlackboardComponent()->SetValueAsBool(GetSelectedBlackboardKey(), 1);
+    }
 }

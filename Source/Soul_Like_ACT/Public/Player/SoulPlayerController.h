@@ -12,5 +12,5 @@
 UCLASS()
 class SOUL_LIKE_ACT_API ASoulPlayerController : public AInputBufferPlayerController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };

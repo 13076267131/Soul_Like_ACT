@@ -1,6 +1,7 @@
 # Visual Studio 2015 user specific files
 .vs/
 .vscode/
+.idea/
 
 # Visual Studio 2015 database file
 *.VC.db
@@ -73,6 +74,7 @@ Saved/*
 # Compiled source files for the engine to use
 Intermediate/*
 Plugins/*/Intermediate/*
+Plugins/Developer/RiderLink/
 
 # Cache files for the editor to use
 DerivedDataCache/*

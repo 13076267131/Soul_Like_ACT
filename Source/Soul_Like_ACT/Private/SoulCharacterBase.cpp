@@ -11,203 +11,247 @@
 // Sets default values
 ASoulCharacterBase::ASoulCharacterBase()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	
-	// Create ability system component, and set it to be explicitly replicated
-	AbilitySystemComponent = CreateDefaultSubobject<USoulAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	// Create the attribute set, this replicates by default
-	AttributeSet = CreateDefaultSubobject<USoulAttributeSet>(TEXT("AttributeSet"));
+    // Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
 
-	FXManager = CreateDefaultSubobject<UActorFXManager>(TEXT("FXManager"));
+    // Create ability system component, and set it to be explicitly replicated
+    AbilitySystemComponent = CreateDefaultSubobject<USoulAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+    // Create the attribute set, this replicates by default
+    AttributeSet = CreateDefaultSubobject<USoulAttributeSet>(TEXT("AttributeSet"));
 
-	ModifierManager = CreateDefaultSubobject<USoulModifierManager>(TEXT("ModifierManager"));
+    FXManager = CreateDefaultSubobject<UActorFXManager>(TEXT("FXManager"));
 
-	GetCapsuleComponent()->SetCapsuleHalfHeight(96.f);
-	GetCapsuleComponent()->SetCapsuleRadius(60.f);
+    ModifierManager = CreateDefaultSubobject<USoulModifierManager>(TEXT("ModifierManager"));
 
-	TargetIcon = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockIconWidget"));
-	TargetIcon->SetupAttachment(RootComponent);
-	TargetIcon->SetWidgetSpace(EWidgetSpace::Screen);
-	TargetIcon->SetDrawSize(FVector2D{ 35.f,35.f });
+    GetCapsuleComponent()->SetCapsuleHalfHeight(96.f);
+    GetCapsuleComponent()->SetCapsuleRadius(60.f);
+
+    TargetIcon = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockIconWidget"));
+    TargetIcon->SetupAttachment(RootComponent);
+    TargetIcon->SetWidgetSpace(EWidgetSpace::Screen);
+    TargetIcon->SetDrawSize(FVector2D{35.f, 35.f});
 }
 
 
 void ASoulCharacterBase::ToggleLockIcon()
 {
-
-	if (!IsTargetable() || TargetIcon->IsVisible())
-	{
-		TargetIcon->SetVisibility(false);
-	}
-	else
-	{
-		TargetIcon->SetVisibility(true);
-	}
+    if (!IsTargetable() || TargetIcon->IsVisible())
+    {
+        TargetIcon->SetVisibility(false);
+    }
+    else
+    {
+        TargetIcon->SetVisibility(true);
+    }
 }
 
 void ASoulCharacterBase::TriggerSlowMotion_WithDelay(float Delay)
 {
-	if (GetWorldTimerManager().GetTimerRemaining(Handler_SlowMotionDelay) <= 0.f)
-	{
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Handler_SlowMotionDelay.IsValid()");
-		GetWorldTimerManager().SetTimer(Handler_SlowMotionDelay, this, &ASoulCharacterBase::TriggerSlowMotion, 1.f, 0, Delay);
-	}
+    if (GetWorldTimerManager().GetTimerRemaining(Handler_SlowMotionDelay) <= 0.f)
+    {
+        //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Handler_SlowMotionDelay.IsValid()");
+        GetWorldTimerManager().SetTimer(Handler_SlowMotionDelay, this, &ASoulCharacterBase::TriggerSlowMotion, 1.f, 0,
+                                        Delay);
+    }
 }
 
 void ASoulCharacterBase::HandleMoveSpeedChanged(const FOnAttributeChangeData& Data)
 {
-	GetCharacterMovement()->MaxWalkSpeed = GetMoveSpeed();
+    GetCharacterMovement()->MaxWalkSpeed = GetMoveSpeed();
 
-	if (OnMoveSpeedChanged.IsBound())
-		OnMoveSpeedChanged.Broadcast(TArray<float>{GetMoveSpeed(), -1.f});
+    if (OnMoveSpeedChanged.IsBound())
+        OnMoveSpeedChanged.Broadcast(TArray<float>{GetMoveSpeed(), -1.f});
 }
 
 void ASoulCharacterBase::AddStartupGameplayAbilities()
 {
-	ModifierManager->AddStartupGameplayAbilities();
+    ModifierManager->AddStartupGameplayAbilities();
 }
 
-void ASoulCharacterBase::HandleDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
+void ASoulCharacterBase::HandleDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun,
+                                      const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
+                                      ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
-	OnDamaged(DamageAmount, IsCriticaled, bIsStun, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
-	
-	if (GetIsHealthZero())
-	{
-		HandleOnDead();
-	}
+    OnDamaged(DamageAmount, IsCriticaled, bIsStun, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
+
+    if (GetIsHealthZero())
+    {
+        HandleOnDead();
+    }
 }
 
-void ASoulCharacterBase::HandleDotDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
+void ASoulCharacterBase::HandleDotDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun,
+                                         const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
+                                         ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
-	OnDotDamaged(DamageAmount, IsCriticaled, bIsStun, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
+    OnDotDamaged(DamageAmount, IsCriticaled, bIsStun, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
 
-	if (GetIsHealthZero())
-	{
-		HandleOnDead();
-	}
+    if (GetIsHealthZero())
+    {
+        HandleOnDead();
+    }
 }
 
-void ASoulCharacterBase::HandlePostureDamage(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
+void ASoulCharacterBase::HandlePostureDamage(float PostureDamageAmount, const bool IsCriticaled,
+                                             const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
+                                             ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
-	OnPostureDamaged(PostureDamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
+    OnPostureDamaged(PostureDamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
 }
 
 void ASoulCharacterBase::ResetPerilousStatus()
 {
-	LOG_FUNC_FAIL();
+    LOG_FUNC_FAIL();
 }
 
 void ASoulCharacterBase::HandleOnDead()
 {
-	bIsDead = true;
+    bIsDead = true;
 }
 
-void ASoulCharacterBase::MakeStepDecelAndSound_Notify(ASoulCharacterBase *CharacterRef)
+void ASoulCharacterBase::MakeStepDecelAndSound_Notify(ASoulCharacterBase* CharacterRef)
 {
-	CharacterRef->MakeStepDecelAndSound();
+    CharacterRef->MakeStepDecelAndSound();
 }
 
 void ASoulCharacterBase::GetMovementMode(ESoulMovementMode& MovementMode) const
 {
-	float SpeedProportion = GetVelocity().Size() / AttributeSet->GetMoveSpeed();
-	
-	if (FMath::IsNearlyZero(SpeedProportion))
-		MovementMode = ESoulMovementMode::Idle;
-	else if (SpeedProportion <= 0.61f)
-		MovementMode = ESoulMovementMode::Run;
-	else
-		MovementMode = ESoulMovementMode::Sprint;
+    const float SpeedProportion = GetVelocity().Size() / AttributeSet->GetMoveSpeed();
+
+    if (FMath::IsNearlyZero(SpeedProportion))
+        MovementMode = ESoulMovementMode::Idle;
+    else if (SpeedProportion <= 0.61f)
+        MovementMode = ESoulMovementMode::Run;
+    else
+        MovementMode = ESoulMovementMode::Sprint;
+}
+
+bool ASoulCharacterBase::BodySweep_Init(const AActor* Target, bool bUseTarget, float InSweepingSpeed)
+{
+    BodySweep_ForwardVec = FVector::ZeroVector;
+    
+    if(Target && bUseTarget)
+        BodySweep_ForwardVec = (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal2D(.01);
+    else
+    {
+        BodySweep_ForwardVec = FRotationMatrix(GetControlRotation()).GetScaledAxis(EAxis::X).GetSafeNormal2D();
+    }
+
+    if(BodySweep_ForwardVec.IsNearlyZero())
+        return false;
+    else
+    {
+        //Face the desired direction
+        SetActorRotation(BodySweep_ForwardVec.Rotation(), ETeleportType::TeleportPhysics);
+        GetCapsuleComponent()->SetEnableGravity(false);
+        GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        SweepingSpeed = InSweepingSpeed;
+
+        return true;
+    }
+}
+
+void ASoulCharacterBase::BodySweep_Tick(float Delta)
+{
+    if(!BodySweep_ForwardVec.IsNearlyZero())
+    {
+        SetActorLocation(GetActorLocation() + Delta * SweepingSpeed * BodySweep_ForwardVec);
+    }
+}
+
+void ASoulCharacterBase::BodySweep_Finished()
+{
+    GetCapsuleComponent()->SetEnableGravity(false);
+    GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void ASoulCharacterBase::MakeStepDecelAndSound_Implementation()
 {
-	return;
+    return;
 }
 
 UAbilitySystemComponent* ASoulCharacterBase::GetAbilitySystemComponent() const
 {
-	return AbilitySystemComponent;
+    return AbilitySystemComponent;
 }
 
 USoulModifierManager* ASoulCharacterBase::GetModifierManager() const
 {
-	return ModifierManager;
+    return ModifierManager;
 }
 
-const bool ASoulCharacterBase::IsInRivalFaction(ASoulCharacterBase *DamageDealer, ASoulCharacterBase *DamageReceiver)
+const bool ASoulCharacterBase::IsInRivalFaction(ASoulCharacterBase* DamageDealer, ASoulCharacterBase* DamageReceiver)
 {
-	if (DamageDealer->Faction == EActorFaction::Player && DamageReceiver->Faction == EActorFaction::Enemy)
-		return 1;
-	
-	else if (DamageDealer->Faction == EActorFaction::Enemy && DamageReceiver->Faction == EActorFaction::Player)
-		return 1;
+    if (DamageDealer->Faction == EActorFaction::Player && DamageReceiver->Faction == EActorFaction::Enemy)
+        return 1;
 
-	return 0;
+    else if (DamageDealer->Faction == EActorFaction::Enemy && DamageReceiver->Faction == EActorFaction::Player)
+        return 1;
+
+    return 0;
 }
 
-void ASoulCharacterBase::PossessedBy(AController * NewController)
+void ASoulCharacterBase::PossessedBy(AController* NewController)
 {
-	Super::PossessedBy(NewController);
-	LOG_FUNC_SUCCESS();
+    Super::PossessedBy(NewController);
+    LOG_FUNC_SUCCESS();
 }
 
 void ASoulCharacterBase::UnPossessed()
 {
-	Super::UnPossessed();
+    Super::UnPossessed();
 }
 
 void ASoulCharacterBase::BindOnAttributesChanged()
 {
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetHealthAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandleHealthChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetHealthAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandleHealthChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetPostureAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandlePostureChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetPostureAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandlePostureChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetLeechAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandleLeechChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetLeechAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandleLeechChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetAttackSpeedAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandleAttackSpeedChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetAttackSpeedAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandleAttackSpeedChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetMoveSpeedAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandleMoveSpeedChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetMoveSpeedAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandleMoveSpeedChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetPostureStrengthAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandlePostureStrengthChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetPostureStrengthAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandlePostureStrengthChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetDefensePowerAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandleDefensePowerChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetDefensePowerAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandleDefensePowerChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetAttackPowerAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandleAttackPowerChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetAttackPowerAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandleAttackPowerChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetPostureCrumbleAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandlePostureCrumbleChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetPostureCrumbleAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandlePostureCrumbleChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetCriticalStrikeAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandleCriticalStrikeChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetCriticalStrikeAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandleCriticalStrikeChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetCriticalMultiAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandleCriticalMultiChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetCriticalMultiAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandleCriticalMultiChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetMaxHealthAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandleHealthChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetMaxHealthAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandleHealthChanged);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetMaxPostureAttribute())
-		.AddUObject(this, &ASoulCharacterBase::HandlePostureChanged);
+    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetMaxPostureAttribute())
+                          .AddUObject(this, &ASoulCharacterBase::HandlePostureChanged);
 }
 
 // Called every frame
 void ASoulCharacterBase::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
+    Super::Tick(DeltaTime);
 }
 
 // Called to bind functionality to input
 void ASoulCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
 }

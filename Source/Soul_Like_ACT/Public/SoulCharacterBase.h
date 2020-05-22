@@ -12,13 +12,14 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChanged, const TArray<float> &, values);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FTrigger_OnMeleeAttack, AActor*, SourceActor, AActor*, TargetActor, const FHitResult, HitResult);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FTrigger_OnMeleeAttack, AActor*, SourceActor, AActor*, TargetActor,
+                                               const FHitResult, HitResult);
 
 UENUM(BlueprintType)
 enum class EIsControllerValid : uint8
 {
-	IsValid,
-	IsNotValid,
+    IsValid,
+    IsNotValid,
 };
 
 #define ATTRIBUTE_GETTER(PropertyName) \
@@ -47,235 +48,267 @@ enum class EIsControllerValid : uint8
 UENUM(BlueprintType)
 enum class EActorFaction : uint8
 {
-	Untargetable,
-	Player,
-	Enemy
+    Untargetable,
+    Player,
+    Enemy
 };
 
 UENUM(BlueprintType)
 enum class ESoulMovementMode : uint8
 {
-	Idle,
-	Run,
-	Sprint
+    Idle,
+    Run,
+    Sprint
 };
 
 UCLASS()
 class SOUL_LIKE_ACT_API ASoulCharacterBase : public ACharacter, public ITargetable, public IAbilitySystemInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
-	ASoulCharacterBase();
+    // Sets default values for this pawn's properties
+    ASoulCharacterBase();
 
-	virtual void PossessedBy(AController* NewController) override;
-	virtual void UnPossessed() override;
-
-protected:
-	UFUNCTION(BlueprintCallable)
-	void BindOnAttributesChanged();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UWidgetComponent *TargetIcon;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UActorFXManager *FXManager;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USoulModifierManager* ModifierManager;
-
-	/** The component used to handle ability system interactions */
-	UPROPERTY(BlueprintReadOnly)
-	class USoulAbilitySystemComponent *AbilitySystemComponent;
-
-	/** List of attributes modified by the ability system */
-	UPROPERTY()
-	USoulAttributeSet* AttributeSet;
-
-	bool bIsDead;
-
-	UAnimMontage* DeathMontage;
-
-	FTimerHandle Handle_SlowMotion, Handler_SlowMotionDelay;
-
-	void WaitForDilationReset()
-	{ 
-		CustomTimeDilation = 1.f; 
-	}
-
-	void TriggerSlowMotion()
-	{
-		CustomTimeDilation = 0.003f;
-		GetWorldTimerManager().SetTimer(Handle_SlowMotion, this, &ASoulCharacterBase::WaitForDilationReset, 1.f, false, 0.2f);
-	}
-
-public:	
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-	virtual USoulModifierManager* GetModifierManager() const;
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	EActorFaction Faction;
-
-	static const bool IsInRivalFaction(ASoulCharacterBase *DamageDealer, ASoulCharacterBase *DamageReceiver);
-
-	UFUNCTION(BlueprintCallable)
-	virtual bool IsTargetable() const override 
-	{ 
-		return (Faction != EActorFaction::Untargetable
-			&& !GetIsDead()); 
-	}
-
-	UFUNCTION(BlueprintCallable)
-	virtual void ToggleLockIcon() override;
-
-	UFUNCTION(BlueprintCallable)
-	virtual bool IsAlive() const { return GetHealth() > 0.f; }
-
-	//Called by WeaponActor and OnHit
-	UFUNCTION(BlueprintCallable)
-	void TriggerSlowMotion_WithDelay(float Delay);
-
-	void Notify_OnMeleeAttack(AActor * TargetActor, const FHitResult HitResult)
-	{
-		if (OnMeleeAttack.IsBound())
-			OnMeleeAttack.Broadcast(this, TargetActor, HitResult);
-	}
-
-	void Notify_OnMeleeKill(AActor* SourceActor, AActor* TargetActor, const FHitResult HitResult)
-	{
-		if (OnMeleeKill.IsBound())
-			OnMeleeKill.Broadcast(SourceActor, TargetActor, HitResult);
-	}
-
-	ATTRIBUTE_GETTER_AND_HANDLECHANGED_TwoParams(Health);
-	ATTRIBUTE_GETTER(MaxHealth);
-	ATTRIBUTE_GETTER_AND_HANDLECHANGED_TwoParams(Posture);
-	ATTRIBUTE_GETTER(MaxPosture);
-	ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(Leech);
-	ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(PostureStrength);
-	ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(DefensePower);
-	ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(AttackPower);
-	ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(PostureCrumble);
-	ATTRIBUTE_GETTER(MoveSpeed);
-	virtual void HandleMoveSpeedChanged(const FOnAttributeChangeData& Data);
-	ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(AttackSpeed);
-	ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(CriticalStrike);
-	ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(CriticalMulti);
-
-	UFUNCTION(BlueprintCallable)
-	float GetPosturePercent() { return GetPosture() / GetMaxPosture(); }
-
-	/** Returns the character level that is passed to the ability system */
-	UFUNCTION(BlueprintCallable)
-	virtual int32 GetCharacterLevel() const { return 1; }
-	
-	UFUNCTION(BlueprintCallable)
-	bool GetIsDead() const { return bIsDead; }
-
-	UFUNCTION(BlueprintCallable)
-		bool GetIsHealthZero() const { return GetHealth() <= 0.f; }
+    virtual void PossessedBy(AController* NewController) override;
+    virtual void UnPossessed() override;
 
 protected:
-	/** Apply the startup GAs and GEs */
-	UFUNCTION(BlueprintCallable)
-	void AddStartupGameplayAbilities();
+    UFUNCTION(BlueprintCallable)
+    void BindOnAttributesChanged();
 
-	/**
-	 * Called when character takes damage, which may have killed them
-	 *
-	 * @param DamageAmount Amount of damage that was done, not clamped based on current health
-	 * @param HitInfo The hit info that generated this damage
-	 * @param DamageTags The gameplay tags of the event that did the damage
-	 * @param InstigatorCharacter The character that initiated this damage
-	 * @param DamageCauser The actual actor that did the damage, might be a weapon or projectile
-	 */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnDamaged(float DamageAmount, const bool IsCriticaled, const bool bIsStun, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class UWidgetComponent* TargetIcon;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnDotDamaged(float DamageAmount, const bool IsCriticaled, const bool bIsStun, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class UActorFXManager* FXManager;
 
-	/**
-	*Called when character takes posture damage
-	*/
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnPostureDamaged(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class USoulModifierManager* ModifierManager;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnHealthChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnPostureChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnMoveSpeedChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnPostureStrengthChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnDefensePowerChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnLeechChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnPostureCrumbleChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnAttackPowerChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnAttackSpeedChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnCriticalStrikeChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnChanged OnCriticalMultiChanged;
+    /** The component used to handle ability system interactions */
+    UPROPERTY(BlueprintReadOnly)
+    class USoulAbilitySystemComponent* AbilitySystemComponent;
 
-	UPROPERTY(BlueprintAssignable)
-	FTrigger_OnMeleeAttack OnMeleeAttack;
+    /** List of attributes modified by the ability system */
+    UPROPERTY()
+    USoulAttributeSet* AttributeSet;
 
-	UPROPERTY(BlueprintAssignable)
-	FTrigger_OnMeleeAttack OnMeleeKill;
+    bool bIsDead;
 
-	// Called from RPGAttributeSet, these call BP events above
-	virtual void HandleDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
-	virtual void HandleDotDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
+    UAnimMontage* DeathMontage;
 
-	virtual void HandlePostureDamage(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
+    FTimerHandle Handle_SlowMotion, Handler_SlowMotionDelay;
 
-	UFUNCTION(BlueprintNativeEvent)
-	void MakeStepDecelAndSound();
+    void WaitForDilationReset()
+    {
+        CustomTimeDilation = 1.f;
+    }
 
-	UFUNCTION(BlueprintCallable)
-	void ResetPerilousStatus();
-
-	UFUNCTION(BlueprintCallable)
-	virtual void HandleOnDead();
+    void TriggerSlowMotion()
+    {
+        CustomTimeDilation = 0.003f;
+        GetWorldTimerManager().SetTimer(Handle_SlowMotion, this, &ASoulCharacterBase::WaitForDilationReset, 1.f, false,
+                                        0.2f);
+    }
 
 public:
-	UFUNCTION(BlueprintCallable)
-	static void TagContainerToString(const FGameplayTagContainer &Container, FString &Outp)
-	{
-		Outp = Container.ToString();
-	}
+    virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UFUNCTION(BlueprintCallable)
-	static void MakeStepDecelAndSound_Notify(ASoulCharacterBase *CharacterRef);
+    virtual USoulModifierManager* GetModifierManager() const;
 
-	friend USoulAttributeSet;
+    // Called every frame
+    virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable)
-	float GetAP_TEST() const { return GetAttackPower(); }
+    // Called to bind functionality to input
+    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//Use this to remove tag like Ability.Melee
-	//So we can force to use Evade while attacking
-	UFUNCTION(BlueprintCallable)
-	void RemoveGameplayTag_DANGER(const FGameplayTag& GameplayTag)
-	{
-		AbilitySystemComponent->SetTagMapCount(GameplayTag, 0);
-	}
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    EActorFaction Faction;
 
-	UFUNCTION(BlueprintCallable, category = Movement)
-	void GetMovementMode(ESoulMovementMode& MovementMode) const;
+    static const bool IsInRivalFaction(ASoulCharacterBase* DamageDealer, ASoulCharacterBase* DamageReceiver);
+
+    UFUNCTION(BlueprintCallable)
+    virtual bool IsTargetable() const override
+    {
+        return (Faction != EActorFaction::Untargetable
+            && !GetIsDead());
+    }
+
+    UFUNCTION(BlueprintCallable)
+    virtual void ToggleLockIcon() override;
+
+    UFUNCTION(BlueprintCallable)
+    virtual bool IsAlive() const { return GetHealth() > 0.f; }
+
+    //Called by WeaponActor and OnHit
+    UFUNCTION(BlueprintCallable)
+    void TriggerSlowMotion_WithDelay(float Delay);
+
+    void Notify_OnMeleeAttack(AActor* TargetActor, const FHitResult HitResult)
+    {
+        if (OnMeleeAttack.IsBound())
+            OnMeleeAttack.Broadcast(this, TargetActor, HitResult);
+    }
+
+    void Notify_OnMeleeKill(AActor* SourceActor, AActor* TargetActor, const FHitResult HitResult)
+    {
+        if (OnMeleeKill.IsBound())
+            OnMeleeKill.Broadcast(SourceActor, TargetActor, HitResult);
+    }
+
+    ATTRIBUTE_GETTER_AND_HANDLECHANGED_TwoParams(Health);
+    ATTRIBUTE_GETTER(MaxHealth);
+    ATTRIBUTE_GETTER_AND_HANDLECHANGED_TwoParams(Posture);
+    ATTRIBUTE_GETTER(MaxPosture);
+    ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(Leech);
+    ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(PostureStrength);
+    ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(DefensePower);
+    ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(AttackPower);
+    ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(PostureCrumble);
+    ATTRIBUTE_GETTER(MoveSpeed);
+    virtual void HandleMoveSpeedChanged(const FOnAttributeChangeData& Data);
+    ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(AttackSpeed);
+    ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(CriticalStrike);
+    ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(CriticalMulti);
+
+    UFUNCTION(BlueprintCallable)
+    float GetPosturePercent() { return GetPosture() / GetMaxPosture(); }
+
+    /** Returns the character level that is passed to the ability system */
+    UFUNCTION(BlueprintCallable)
+    virtual int32 GetCharacterLevel() const { return 1; }
+
+    UFUNCTION(BlueprintCallable)
+    bool GetIsDead() const { return bIsDead; }
+
+    UFUNCTION(BlueprintCallable)
+    bool GetIsHealthZero() const { return GetHealth() <= 0.f; }
+
+protected:
+    /** Apply the startup GAs and GEs */
+    UFUNCTION(BlueprintCallable)
+    void AddStartupGameplayAbilities();
+
+    /**
+     * Called when character takes damage, which may have killed them
+     *
+     * @param DamageAmount Amount of damage that was done, not clamped based on current health
+     * @param HitInfo The hit info that generated this damage
+     * @param DamageTags The gameplay tags of the event that did the damage
+     * @param InstigatorCharacter The character that initiated this damage
+     * @param DamageCauser The actual actor that did the damage, might be a weapon or projectile
+     */
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnDamaged(float DamageAmount, const bool IsCriticaled, const bool bIsStun, const FHitResult& HitInfo,
+                   const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+                   AActor* DamageCauser);
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnDotDamaged(float DamageAmount, const bool IsCriticaled, const bool bIsStun, const FHitResult& HitInfo,
+                      const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+                      AActor* DamageCauser);
+
+    /**
+    *Called when character takes posture damage
+    */
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnPostureDamaged(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+                          const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+                          AActor* DamageCauser);
+
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnHealthChanged;
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnPostureChanged;
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnMoveSpeedChanged;
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnPostureStrengthChanged;
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnDefensePowerChanged;
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnLeechChanged;
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnPostureCrumbleChanged;
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnAttackPowerChanged;
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnAttackSpeedChanged;
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnCriticalStrikeChanged;
+    UPROPERTY(BlueprintAssignable)
+    FOnChanged OnCriticalMultiChanged;
+
+    UPROPERTY(BlueprintAssignable)
+    FTrigger_OnMeleeAttack OnMeleeAttack;
+
+    UPROPERTY(BlueprintAssignable)
+    FTrigger_OnMeleeAttack OnMeleeKill;
+
+    // Called from RPGAttributeSet, these call BP events above
+    virtual void HandleDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun,
+                              const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
+                              ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
+    virtual void HandleDotDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun,
+                                 const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
+                                 ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
+
+    virtual void HandlePostureDamage(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+                                     const struct FGameplayTagContainer& DamageTags,
+                                     ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
+
+    UFUNCTION(BlueprintNativeEvent)
+    void MakeStepDecelAndSound();
+
+    UFUNCTION(BlueprintCallable)
+    void ResetPerilousStatus();
+
+    UFUNCTION(BlueprintCallable)
+    virtual void HandleOnDead();
+
+    UPROPERTY()
+    TArray<ASoulCharacterBase*> CounterTargets;
+    UPROPERTY()
+    bool bCounterEnabled;
+
+    virtual void ForceOverrideFacingDirection(float Alpha){ return; }
+
+public:
+    UFUNCTION(BlueprintCallable)
+    static void TagContainerToString(const FGameplayTagContainer& Container, FString& Outp)
+    {
+        Outp = Container.ToString();
+    }
+
+    UFUNCTION(BlueprintCallable)
+    static void MakeStepDecelAndSound_Notify(ASoulCharacterBase* CharacterRef);
+
+    friend USoulAttributeSet;
+
+    UFUNCTION(BlueprintCallable)
+    float GetAP_TEST() const { return GetAttackPower(); }
+
+    UFUNCTION(BlueprintCallable, category = Movement)
+    virtual void GetMovementMode(ESoulMovementMode& MovementMode) const;
+
+    UFUNCTION(BlueprintCallable, Category = Direction)
+    void BP_ForceOverrideFacingDirection(float Speed) { return ForceOverrideFacingDirection(Speed);}
+
+    /**
+     * Call the function in ANS_BodySweeping
+     * If bUseTarget and Target is valid, then it sweeps to the target.
+     * Otherwise, it sweeps to the forward.
+     */
+    UFUNCTION(BlueprintCallable)
+    bool BodySweep_Init(const AActor* Target, bool bUseTarget, float InSweepingSpeed);
+
+    FVector BodySweep_ForwardVec;
+    float SweepingSpeed;
+    
+    UFUNCTION(BlueprintCallable)
+    void BodySweep_Tick(float Delta);
+    
+    UFUNCTION(BlueprintCallable)
+    void BodySweep_Finished();
 };

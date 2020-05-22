@@ -12,11 +12,11 @@
 UCLASS()
 class SOUL_LIKE_ACT_API UMyBTService_IsTargetAvailable : public UBTService_BlackboardBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-		int32 counter;
+    int32 counter;
 public:
-	UMyBTService_IsTargetAvailable();
+    UMyBTService_IsTargetAvailable();
 
-	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+    virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };
