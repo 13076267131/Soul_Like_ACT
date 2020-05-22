@@ -19,7 +19,7 @@ class SOUL_LIKE_ACT_API UBTT_UseGA : public UBTTaskNode
 
 public:
     UPROPERTY(EditAnywhere, Category = Abilities)
-    TSubclassOf<UGameplayAbility> ADO;
+    FBlackboardKeySelector GA_Melee_CDO;
 
     UPROPERTY()
     UBehaviorTreeComponent* BTC;

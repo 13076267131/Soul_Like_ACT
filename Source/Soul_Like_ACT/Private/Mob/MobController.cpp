@@ -2,11 +2,10 @@
 
 #include "Mob/MobController.h"
 #include "Perception/AIPerceptionComponent.h"
-#include "Mob/Mob_TargetingComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "Mob/MobRageManager.h"
 #include "Mob/MobBasic.h"
 
 AMobController::AMobController()
@@ -27,13 +26,8 @@ AMobController::AMobController()
     //BB and BT
     BlackBoardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBaordComponent"));
     BehaviorTreeComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
-}
 
-void AMobController::BeginPlay()
-{
-    Super::BeginPlay();
-
-    //FActorPerceptionUpdatedDelegate, AActor*, Actor, FAIStimulus, Stimulus
+    RageComponent = CreateDefaultSubobject<UMobRageManager>("RageComponent");
 }
 
 void AMobController::OnPossess(APawn* InPawn)
@@ -54,11 +48,6 @@ void AMobController::OnUnPossess()
     Super::OnUnPossess();
 
     PossessedMob = nullptr;
-}
-
-void AMobController::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
 }
 
 void AMobController::AISenseUpdateMessage(AActor* Actor, FAIStimulus Stimulus)

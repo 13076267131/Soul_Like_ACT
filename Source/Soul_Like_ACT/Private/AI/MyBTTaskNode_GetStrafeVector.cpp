@@ -10,6 +10,11 @@
 #include "NavigationSystem.h"
 
 
+UMyBTTaskNode_GetStrafeVector::UMyBTTaskNode_GetStrafeVector()
+{
+    NodeName = "Find Strafe Vector On Nav Mesh";
+}
+
 EBTNodeResult::Type UMyBTTaskNode_GetStrafeVector::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     AActor* TargetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(TargetKey.SelectedKeyName));

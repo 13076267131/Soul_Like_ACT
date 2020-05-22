@@ -4,7 +4,9 @@
 #include "AI/BTT_UseGA.h"
 #include "AIController.h"
 #include "AbilitySystemGlobals.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Abilities/SoulAbilitySystemComponent.h"
+#include "Abilities/SoulGameplayAbility.h"
 
 
 UBTT_UseGA::UBTT_UseGA(const FObjectInitializer& ObjectInitializer)
@@ -31,8 +33,11 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
     FOnGameplayAbilityEnded::FDelegate DelegateObj = FOnGameplayAbilityEnded::FDelegate::CreateUObject(
         this, &UBTT_UseGA::OnGA_Ended);
 
-    if (!AbilitySys->TryActivateAbilityByClassWithDelegate(ADO, &DelegateObj))
-        return EBTNodeResult::Failed;
+    UClass* GA_Class = OwnerComp.GetBlackboardComponent()->GetValueAsClass(GA_Melee_CDO.SelectedKeyName);
+
+    if(GA_Class && GA_Class->GetClass() == UGA_Melee::StaticClass())
+        if (!AbilitySys->TryActivateAbilityByClassWithDelegate(GA_Class->StaticClass(), &DelegateObj))
+            return EBTNodeResult::Failed;
 
     return EBTNodeResult::InProgress;
 }

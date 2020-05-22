@@ -14,6 +14,8 @@ class SOUL_LIKE_ACT_API UMyBTTaskNode_GetStrafeVector : public UBTTaskNode
 {
     GENERATED_BODY()
 public:
+    UMyBTTaskNode_GetStrafeVector();
+    
     UPROPERTY(BlueprintReadWrite, EditAnywhere)
     FBlackboardKeySelector TargetKey;
     UPROPERTY(BlueprintReadWrite, EditAnywhere)

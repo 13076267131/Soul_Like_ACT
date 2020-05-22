@@ -29,26 +29,22 @@ protected:
     class UBlackboardComponent* BlackBoardComp;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
     class UBehaviorTreeComponent* BehaviorTreeComp;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
+    class UMobRageManager* RageComponent;
 
 public:
     AMobController();
+    
+    virtual void OnPossess(APawn* InPawn) override;
+    virtual void OnUnPossess() override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AIAssets)
     class UBlackboardData* BlockBoardData;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AIAssets)
     class UBehaviorTree* BehaviorTreeAsset;
 
-protected:
-    virtual void BeginPlay() override;
-
-public:
     UFUNCTION(BlueprintCallable)
     void AISenseUpdateMessage(AActor* Actor, FAIStimulus Stimulus);
-
-    virtual void OnPossess(APawn* InPawn) override;
-    virtual void OnUnPossess() override;
-
-    virtual void Tick(float DeltaTime) override;
 
     class UBehaviorTreeComponent* GetBTComp() const { return BehaviorTreeComp; }
 };
