@@ -16,10 +16,8 @@ class SOUL_LIKE_ACT_API USoulAbilitySystemComponent : public UAbilitySystemCompo
     GENERATED_BODY()
 public:
     // Constructors and overrides
-    USoulAbilitySystemComponent()
-    {
-    }
-
+    USoulAbilitySystemComponent();
+    
     /** Returns a list of currently active ability instances that match the tags */
     void GetActiveAbilitiesWithTags(const FGameplayTagContainer& GameplayTagContainer,
                                     TArray<USoulGameplayAbility*>& ActiveAbilities);

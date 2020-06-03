@@ -24,14 +24,14 @@ enum class EIsControllerValid : uint8
 
 #define ATTRIBUTE_GETTER(PropertyName) \
 	UFUNCTION(BlueprintCallable) \
-	virtual float Get##PropertyName##() const \
+	float Get##PropertyName##() const \
 	{ \
 		return AttributeSet->Get##PropertyName##(); \
 	}
 
 #define ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(PropertyName) \
 	ATTRIBUTE_GETTER(PropertyName) \
-	virtual void Handle##PropertyName##Changed(const FOnAttributeChangeData& Data) \
+	void Handle##PropertyName##Changed(const FOnAttributeChangeData& Data) \
 	{ \
 		if(On##PropertyName##Changed.IsBound()) \
 			On##PropertyName##Changed.Broadcast(TArray<float>{Get##PropertyName##(), -1.f}); \
@@ -39,7 +39,7 @@ enum class EIsControllerValid : uint8
 
 #define ATTRIBUTE_GETTER_AND_HANDLECHANGED_TwoParams(PropertyName) \
 	ATTRIBUTE_GETTER(##PropertyName##) \
-	virtual void Handle##PropertyName##Changed(const FOnAttributeChangeData& Data) \
+	void Handle##PropertyName##Changed(const FOnAttributeChangeData& Data) \
 	{ \
 		if(On##PropertyName##Changed.IsBound()) \
 			On##PropertyName##Changed.Broadcast(TArray<float>{Get##PropertyName##(), GetMax##PropertyName##()}); \
@@ -94,9 +94,10 @@ protected:
     UPROPERTY()
     USoulAttributeSet* AttributeSet;
 
-    bool bIsDead;
-
-    UAnimMontage* DeathMontage;
+    UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = GameplayEffects)
+    TSubclassOf<UGameplayEffect> PerilousGE_Class;
+    UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = GameplayEffects)
+    TSubclassOf<UGameplayEffect> DeadGE_Class;    
 
     FTimerHandle Handle_SlowMotion, Handler_SlowMotionDelay;
 
@@ -111,6 +112,7 @@ protected:
         GetWorldTimerManager().SetTimer(Handle_SlowMotion, this, &ASoulCharacterBase::WaitForDilationReset, 1.f, false,
                                         0.2f);
     }
+
 
 public:
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -180,10 +182,27 @@ public:
     virtual int32 GetCharacterLevel() const { return 1; }
 
     UFUNCTION(BlueprintCallable)
-    bool GetIsDead() const { return bIsDead; }
+    bool GetIsDead() const
+    {
+        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Dead", true));;
+    }
+    
+    UFUNCTION(BlueprintCallable)
+    bool GetIsStun() const
+    {
+        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Stun", true));
+    }
 
     UFUNCTION(BlueprintCallable)
-    bool GetIsHealthZero() const { return GetHealth() <= 0.f; }
+    bool GetIsPerilous() const
+    {
+        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Perilous", true));
+    }
+
+    UFUNCTION(BlueprintCallable)
+    bool GetIsHealthZero() const { return FMath::IsNearlyEqual(GetHealth(), 0.f); }
+    UFUNCTION(BlueprintCallable)
+    bool GetIsPostureFull() const { return FMath::IsNearlyEqual(GetPosture(), GetMaxPosture()); }
 
 protected:
     /** Apply the startup GAs and GEs */
@@ -217,6 +236,29 @@ protected:
                           const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
                           AActor* DamageCauser);
 
+    UFUNCTION(BlueprintImplementableEvent)
+    void BP_OnDead(float DamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+                          const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+                          AActor* DamageCauser);
+    virtual void HandleOnDead(float DamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+                          const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+                          AActor* DamageCauser);
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void BP_OnCrumbled(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+                          const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+                          AActor* DamageCauser);
+    virtual void HandleOnCrumble(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+                          const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+                          AActor* DamageCauser);
+
+#pragma region GameplayEffect_Delegate
+    UFUNCTION(BlueprintImplementableEvent)
+    void BP_OnGameplayEffectApplied(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle);
+    UFUNCTION(BlueprintImplementableEvent)
+    void BP_OnGameplayEffectRemoved(const FActiveGameplayEffect& EffectRemovalInfo);
+#pragma endregion
+    
     UPROPERTY(BlueprintAssignable)
     FOnChanged OnHealthChanged;
     UPROPERTY(BlueprintAssignable)
@@ -263,9 +305,6 @@ protected:
 
     UFUNCTION(BlueprintCallable)
     void ResetPerilousStatus();
-
-    UFUNCTION(BlueprintCallable)
-    virtual void HandleOnDead();
 
     UPROPERTY()
     TArray<ASoulCharacterBase*> CounterTargets;

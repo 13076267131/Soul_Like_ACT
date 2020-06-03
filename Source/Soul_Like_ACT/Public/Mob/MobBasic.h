@@ -12,6 +12,7 @@ class UMob_TargetingComponent;
 UCLASS()
 class SOUL_LIKE_ACT_API AMobBasic : public ASoulCharacterBase
 {
+private:
     GENERATED_BODY()
 
 protected:
@@ -33,12 +34,12 @@ protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
-    UFUNCTION(BlueprintNativeEvent)
-    void MobOnDead();
-
-    virtual void HandleOnDead() override;
-
     virtual void ForceOverrideFacingDirection(float Alpha) override;
+
+    virtual void HandleOnDead(float DamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+       const FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+       AActor* DamageCauser) override;
+
 public:
     UMob_TargetingComponent* GetTargetingComponent() const { return TargetingComponent; }
 

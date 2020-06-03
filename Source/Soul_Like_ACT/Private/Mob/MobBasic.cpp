@@ -36,14 +36,6 @@ void AMobBasic::BeginPlay()
     Super::BeginPlay();
 }
 
-
-void AMobBasic::HandleOnDead()
-{
-    Super::HandleOnDead();
-
-    MobOnDead();
-}
-
 void AMobBasic::ForceOverrideFacingDirection(float Alpha)
 {
     AAIController* MobController = Cast<AAIController>(GetController());
@@ -63,7 +55,8 @@ void AMobBasic::ForceOverrideFacingDirection(float Alpha)
     }
 }
 
-void AMobBasic::MobOnDead_Implementation()
+void AMobBasic::HandleOnDead(float DamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+    const FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
     //Remove Collision
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -79,6 +72,8 @@ void AMobBasic::MobOnDead_Implementation()
     Faction = EActorFaction::Untargetable;
 
     StopAnimMontage(GetMesh()->GetAnimInstance()->GetCurrentActiveMontage());
+    
+    Super::HandleOnDead(DamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
 }
 
 AMobController* AMobBasic::GetMobController() const

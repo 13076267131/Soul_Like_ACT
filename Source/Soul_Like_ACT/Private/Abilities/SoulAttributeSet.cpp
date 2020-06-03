@@ -217,7 +217,7 @@ void USoulAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
          * Data.EffectSpec.DynamicAssetTags
          */
         bool bIsCritic = Data.EffectSpec.DynamicAssetTags.HasTagExact(
-            FGameplayTag::RequestGameplayTag(FName{"Event.Montage.Shared.Critical"}, true));
+            FGameplayTag::RequestGameplayTag(FName{"Damage.Critical"}, true));
 
         // Store a local copy of the amount of damage done and clear the damage attribute
         const float LocalPostureDamageDone = GetPostureDamage();
@@ -227,7 +227,7 @@ void USoulAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
         {
             // Apply the health change and then clamp it
             const float OldPosture = GetPosture();
-            SetPosture(FMath::Clamp(OldPosture + LocalPostureDamageDone, 0.0f, GetMaxHealth()));
+            SetPosture(FMath::Clamp(OldPosture + LocalPostureDamageDone, 0.0f, GetMaxPosture()));
 
             if (TargetCharacter)
             {

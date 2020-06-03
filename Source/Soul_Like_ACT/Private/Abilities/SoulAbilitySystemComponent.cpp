@@ -6,6 +6,10 @@
 #include "AbilitySystemGlobals.h"
 
 
+USoulAbilitySystemComponent::USoulAbilitySystemComponent()
+{
+}
+
 void USoulAbilitySystemComponent::GetActiveAbilitiesWithTags(const FGameplayTagContainer& GameplayTagContainer,
                                                              TArray<USoulGameplayAbility*>& ActiveAbilities)
 {
