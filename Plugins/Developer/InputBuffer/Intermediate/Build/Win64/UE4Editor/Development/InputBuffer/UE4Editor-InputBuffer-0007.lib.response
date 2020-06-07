@@ -1,0 +1,14 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-InputBuffer-0007.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\UnrealProjects\Soul_Like_ACT\Intermediate\Build\Win64\Soul_Like_ACTEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"D:\UnrealProjects\Soul_Like_ACT\Plugins\Developer\InputBuffer\Intermediate\Build\Win64\UE4Editor\Development\InputBuffer\Module.InputBuffer.cpp.obj"
+"D:\UnrealProjects\Soul_Like_ACT\Plugins\Developer\InputBuffer\Intermediate\Build\Win64\UE4Editor\Development\InputBuffer\Module.InputBuffer.gen.cpp.obj"
+"D:\UnrealProjects\Soul_Like_ACT\Plugins\Developer\InputBuffer\Intermediate\Build\Win64\UE4Editor\Development\InputBuffer\Default.rc2.res"
+/OUT:"D:\UnrealProjects\Soul_Like_ACT\Plugins\Developer\InputBuffer\Intermediate\Build\Win64\UE4Editor\Development\InputBuffer\UE4Editor-InputBuffer-0007.lib"
+/INCLUDE:IMPLEMENT_MODULE_InputBuffer

@@ -12,7 +12,7 @@
 UBTT_UseGA::UBTT_UseGA(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
-    NodeName = "Use Combo Ability";
+    NodeName = "Use Melee Ability";
     // instantiating to be able to use Timers
     bCreateNodeInstance = true;
 }
@@ -45,10 +45,11 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
         ASC->GiveAbility(FGameplayAbilitySpec(GA_Class));
     }
         
-    if(GA_Class && GA_Class->GetClass() == UGA_Melee::StaticClass())
+    if(GA_Class && GA_Class->IsChildOf(UGA_Melee::StaticClass()))
     {
-    
-        if (!ASC->TryActivateAbilityByClassWithDelegate(GA_Class->StaticClass(), &DelegateObj))
+        GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, GA_Class->GetName());
+
+        if (!ASC->TryActivateAbilityByClassWithDelegate(GA_Class, &DelegateObj))
             return EBTNodeResult::Failed;
     }
         

@@ -17,9 +17,9 @@ private:
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector GA_Selector;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<UGA_Melee>> MeleeAbilities;
 		
 

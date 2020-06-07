@@ -186,8 +186,13 @@ bool USoulAbilitySystemComponent::TryActivateAbilityWithDelegate(FGameplayAbilit
 bool USoulAbilitySystemComponent::IsAbilityGiven(TSubclassOf<UGameplayAbility> Ability)
 {
     for(auto& Spec : ActivatableAbilities.Items)
-        if(Spec.Ability->StaticClass() == Ability)
+    {
+        if(Spec.Ability == Ability.GetDefaultObject())
+        {
+            //GEngine->AddOnScreenDebugMessage(-1,5,FColor::Red, Spec.Ability->GetName() + " " + Ability.GetDefaultObject()->GetName());
             return true;
+        }
+    }
 
     return false;;
 }

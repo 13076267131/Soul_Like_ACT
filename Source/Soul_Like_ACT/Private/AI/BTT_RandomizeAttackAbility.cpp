@@ -8,8 +8,6 @@ EBTNodeResult::Type UBTT_RandomizeAttackAbility::ExecuteTask(UBehaviorTreeCompon
 {
     TSubclassOf<UGA_Melee> RandomizedAbility = MeleeAbilities[FMath::RandRange(0, MeleeAbilities.Num() - 1)];
 
-    //MobPawn->GetAbilitySystemComponent()->GetActivatableAbilities().Contains()
-
     OwnerComp.GetBlackboardComponent()->SetValueAsClass(GA_Selector.SelectedKeyName, RandomizedAbility);
     
     return EBTNodeResult::Succeeded;
