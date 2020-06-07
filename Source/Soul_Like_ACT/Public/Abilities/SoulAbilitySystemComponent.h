@@ -49,4 +49,10 @@ public:
 
     bool TryActivateAbilityWithDelegate(FGameplayAbilitySpecHandle AbilityToActivate, bool bAllowRemoteActivation,
                                         FOnGameplayAbilityEnded::FDelegate* OnGameplayAbilityEndedDelegate = nullptr);
+
+#pragma region Utilities
+
+    UFUNCTION(BlueprintCallable, Category = GameplayAbility)
+    bool IsAbilityGiven(TSubclassOf<UGameplayAbility> Ability);
+    
 };

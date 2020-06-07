@@ -1,0 +1,17 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.InputBufferEditor.cpp.obj": [
+			"InputBufferEditor.cpp.obj",
+			"InputCommandAssetTypeActions.cpp.obj",
+			"InputCommandFactory.cpp.obj",
+			"InputCommandThumbnailRenderer.cpp.obj",
+			"InputBufferTest.cpp.obj"
+		],
+		"Module.InputBufferEditor.gen.cpp.obj": [
+			"InputBufferEditor.init.gen.cpp.obj",
+			"InputCommandFactory.gen.cpp.obj",
+			"InputCommandThumbnailRenderer.gen.cpp.obj"
+		]
+	}
+}

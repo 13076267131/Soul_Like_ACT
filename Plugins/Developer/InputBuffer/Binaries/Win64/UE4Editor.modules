@@ -1,0 +1,8 @@
+{
+	"BuildId": "13144385",
+	"Modules": 
+	{
+		"InputBuffer": "UE4Editor-InputBuffer.dll",
+		"InputBufferEditor": "UE4Editor-InputBufferEditor.dll"
+	}
+}

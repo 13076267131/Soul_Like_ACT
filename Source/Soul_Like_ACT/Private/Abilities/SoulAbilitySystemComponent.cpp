@@ -182,3 +182,12 @@ bool USoulAbilitySystemComponent::TryActivateAbilityWithDelegate(FGameplayAbilit
 
     return InternalTryActivateAbility(AbilityToActivate, FPredictionKey(), nullptr, OnGameplayAbilityEndedDelegate);
 }
+
+bool USoulAbilitySystemComponent::IsAbilityGiven(TSubclassOf<UGameplayAbility> Ability)
+{
+    for(auto& Spec : ActivatableAbilities.Items)
+        if(Spec.Ability->StaticClass() == Ability)
+            return true;
+
+    return false;;
+}

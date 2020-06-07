@@ -19,10 +19,10 @@ UBTT_UseGA::UBTT_UseGA(const FObjectInitializer& ObjectInitializer)
 
 EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    USoulAbilitySystemComponent* AbilitySys = Cast<USoulAbilitySystemComponent>(
+    USoulAbilitySystemComponent* ASC = Cast<USoulAbilitySystemComponent>(
         UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(
             Cast<AAIController>(OwnerComp.GetOwner())->GetPawn()));
-    if (!AbilitySys)
+    if (!ASC)
     {
         GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Failed to get ASC");
         return EBTNodeResult::Failed;
@@ -35,9 +35,23 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 
     UClass* GA_Class = OwnerComp.GetBlackboardComponent()->GetValueAsClass(GA_Melee_CDO.SelectedKeyName);
 
+    //Give GA to ASC if not given yet
+    if(!ASC->IsAbilityGiven(GA_Class))
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Ability is not given to ASC");
+
+        //return EBTNodeResult::Failed;
+
+        ASC->GiveAbility(FGameplayAbilitySpec(GA_Class));
+    }
+        
     if(GA_Class && GA_Class->GetClass() == UGA_Melee::StaticClass())
-        if (!AbilitySys->TryActivateAbilityByClassWithDelegate(GA_Class->StaticClass(), &DelegateObj))
+    {
+    
+        if (!ASC->TryActivateAbilityByClassWithDelegate(GA_Class->StaticClass(), &DelegateObj))
             return EBTNodeResult::Failed;
+    }
+        
 
     return EBTNodeResult::InProgress;
 }
