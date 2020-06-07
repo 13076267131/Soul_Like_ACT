@@ -1,8 +1,0 @@
-{
-	"OutputFiles": [
-		"Module.InputBuffer.cppa7.o",
-		"Module.InputBuffer.cppa8.o",
-		"Module.InputBuffer.gen.cppa7.o",
-		"Module.InputBuffer.gen.cppa8.o"
-	]
-}
