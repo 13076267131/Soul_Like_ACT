@@ -153,22 +153,32 @@ void USoulAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
                 FGameplayTagContainer LocalContainer;
                 Data.EffectSpec.GetAllAssetTags(LocalContainer);
 
+                //Dot damage
                 if (LocalContainer.HasTagExact(FGameplayTag::RequestGameplayTag(FName{"Damage.Dot"}, true)))
                 {
                     TargetCharacter->HandleDotDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, EffectSpecTags,
                                                      SourceCharacter, SourceActor);
                 }
+                //Hit damage
                 else
                 {
-                    if (GetHealth() <= 0.f)
-                        (Cast<ASoulCharacterBase>(SourceActor))->
-                            Notify_OnMeleeKill(SourceActor, TargetActor, HitResult);
+                    TargetCharacter->HandleDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, EffectSpecTags, SourceCharacter,
+                              SourceActor);
+                }
+
+                if (GetHealth() <= 0.f)
+                {
+                    (Cast<ASoulCharacterBase>(SourceActor))->
+                        Notify_OnMeleeKill(SourceActor, TargetActor, HitResult);
+
+                    if(OldHealth > 0.f)
+                        TargetCharacter->HandleOnDead(HitResult, EffectSpecTags, SourceCharacter,
+                              SourceActor);
                 }
             }
         }
 
-        TargetCharacter->HandleDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, EffectSpecTags, SourceCharacter,
-                                      SourceActor);
+
     }
     else if (Data.EvaluatedData.Attribute == GetPostureDamageAttribute())
     {
@@ -234,6 +244,12 @@ void USoulAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
                 // This is proper damage
                 TargetCharacter->HandlePostureDamage(LocalPostureDamageDone, bIsCritic, HitResult, EffectSpecTags,
                                                      SourceCharacter, SourceActor);
+
+                if(!FMath::IsNearlyEqual(OldPosture, GetPosture(), .1f) && FMath::IsNearlyEqual(GetPosture(), GetMaxPosture(), .1f))
+                {
+                    TargetCharacter->HandleOnCrumble(LocalPostureDamageDone, bIsCritic, HitResult, EffectSpecTags,
+                                                     SourceCharacter, SourceActor);
+                }
             }
         }
     }

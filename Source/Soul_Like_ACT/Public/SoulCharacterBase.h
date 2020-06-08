@@ -237,10 +237,10 @@ protected:
                           AActor* DamageCauser);
 
     UFUNCTION(BlueprintImplementableEvent)
-    void BP_OnDead(float DamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
-                          const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
-                          AActor* DamageCauser);
-    virtual void HandleOnDead(float DamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+    void BP_OnDead(const FHitResult& HitInfo,
+                   const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+                   AActor* DamageCauser);
+    virtual void HandleOnDead(const FHitResult& HitInfo,
                           const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
                           AActor* DamageCauser);
 

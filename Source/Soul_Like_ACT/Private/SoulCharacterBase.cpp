@@ -32,7 +32,7 @@ ASoulCharacterBase::ASoulCharacterBase()
     TargetIcon->SetDrawSize(FVector2D{35.f, 35.f});
 
     static ConstructorHelpers::FClassFinder<UGameplayEffect> GE_Perilous_ClassFinder(TEXT("/Game/Abilities/GEs/GE_Ailment_Perilous"));
-    static ConstructorHelpers::FClassFinder<UGameplayEffect> GE_Dead_ClassFinder(TEXT("/Game/Abilities/GEs/GE_Ailment_Perilous"));
+    static ConstructorHelpers::FClassFinder<UGameplayEffect> GE_Dead_ClassFinder(TEXT("/Game/Abilities/GEs/GE_Ailment_Dead"));
     if(GE_Perilous_ClassFinder.Succeeded()) PerilousGE_Class = GE_Perilous_ClassFinder.Class;
     if(GE_Dead_ClassFinder.Succeeded()) DeadGE_Class = GE_Dead_ClassFinder.Class;
 
@@ -76,18 +76,18 @@ void ASoulCharacterBase::AddStartupGameplayAbilities()
     ModifierManager->AddStartupGameplayAbilities();
 }
 
-void ASoulCharacterBase::HandleOnDead(float DamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+void ASoulCharacterBase::HandleOnDead(const FHitResult& HitInfo,
     const FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
     AbilitySystemComponent->ApplyGE_ToSelf(this, DeadGE_Class, 0);
 
-    BP_OnDead(DamageAmount,IsCriticaled,HitInfo,DamageTags,InstigatorCharacter,DamageCauser);
+    BP_OnDead(HitInfo,DamageTags,InstigatorCharacter,DamageCauser);
 }
 
 void ASoulCharacterBase::HandleOnCrumble(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
     const FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
-    AbilitySystemComponent->ApplyGE_ToSelf(this, PerilousGE_Class, 0);
+    AbilitySystemComponent->ApplyGE_ToSelf(this, PerilousGE_Class, 1);
 
     BP_OnCrumbled(PostureDamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
 }
@@ -97,11 +97,6 @@ void ASoulCharacterBase::HandleDamage(float DamageAmount, const bool IsCriticale
                                       ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
     OnDamaged(DamageAmount, IsCriticaled, bIsStun, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
-
-    if (GetIsHealthZero())
-    {        
-        HandleOnDead(DamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
-    }
 }
 
 void ASoulCharacterBase::HandleDotDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun,
@@ -109,12 +104,6 @@ void ASoulCharacterBase::HandleDotDamage(float DamageAmount, const bool IsCritic
                                          ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
     OnDotDamaged(DamageAmount, IsCriticaled, bIsStun, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
-
-    if (GetIsHealthZero())
-    {
-        HandleOnDead(DamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
-    }
-
 }
 
 void ASoulCharacterBase::HandlePostureDamage(float PostureDamageAmount, const bool IsCriticaled,
@@ -122,11 +111,6 @@ void ASoulCharacterBase::HandlePostureDamage(float PostureDamageAmount, const bo
                                              ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
     OnPostureDamaged(PostureDamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
-
-    if(FMath::IsNearlyEqual(GetPosture(), GetMaxPosture()))
-    {
-        HandleOnCrumble(PostureDamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
-    }
 }
 
 void ASoulCharacterBase::ResetPerilousStatus()

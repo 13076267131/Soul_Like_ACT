@@ -55,7 +55,7 @@ void AMobBasic::ForceOverrideFacingDirection(float Alpha)
     }
 }
 
-void AMobBasic::HandleOnDead(float DamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+void AMobBasic::HandleOnDead(const FHitResult& HitInfo,
     const FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
     //Remove Collision
@@ -73,7 +73,7 @@ void AMobBasic::HandleOnDead(float DamageAmount, const bool IsCriticaled, const 
 
     StopAnimMontage(GetMesh()->GetAnimInstance()->GetCurrentActiveMontage());
     
-    Super::HandleOnDead(DamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
+    Super::HandleOnDead(HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
 }
 
 AMobController* AMobBasic::GetMobController() const

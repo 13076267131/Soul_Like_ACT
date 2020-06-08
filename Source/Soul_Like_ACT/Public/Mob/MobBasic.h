@@ -36,7 +36,7 @@ protected:
 
     virtual void ForceOverrideFacingDirection(float Alpha) override;
 
-    virtual void HandleOnDead(float DamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+    virtual void HandleOnDead(const FHitResult& HitInfo,
        const FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
        AActor* DamageCauser) override;
 
