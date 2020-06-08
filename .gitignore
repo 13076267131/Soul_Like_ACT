@@ -76,3 +76,8 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+
+Content/Levels/AI_Test.umap
+Content/Levels/ControllerTest.umap
+Content/Levels/ModifierTest.umap
