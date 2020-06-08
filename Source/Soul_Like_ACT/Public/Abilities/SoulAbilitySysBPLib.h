@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayEffectUIData.h"
+
 #include "SoulAbilitySysBPLib.generated.h"
 
 class UAbilitySystemComponent;
@@ -30,4 +32,7 @@ public:
     static bool DoesActorHasTag(UAbilitySystemComponent* AbilitySysComp, FGameplayTag InTag);
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = GameplayTag)
     static bool DoesActorHasAnyTags(UAbilitySystemComponent* AbilitySysComp, FGameplayTagContainer InTagContainer);
+    
+    UFUNCTION(BlueprintCallable, Category = GameplayEffect)
+    static UGameplayEffectUIData* GetActiveGameplayEffectUIData(FActiveGameplayEffectHandle Handle);
 };

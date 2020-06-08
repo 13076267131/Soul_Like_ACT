@@ -53,3 +53,15 @@ bool USoulAbilitySysBPLib::DoesActorHasAnyTags(UAbilitySystemComponent* AbilityS
 
     return false;
 }
+
+UGameplayEffectUIData* USoulAbilitySysBPLib::GetActiveGameplayEffectUIData(FActiveGameplayEffectHandle Handle)
+{
+    UAbilitySystemComponent* ASC = Handle.GetOwningAbilitySystemComponent();
+    const FActiveGameplayEffect* ActiveGE = ASC->GetActiveGameplayEffect(Handle);
+    if (ActiveGE)
+    {
+        return ActiveGE->Spec.Def->UIData;
+    }
+
+    return nullptr;
+}

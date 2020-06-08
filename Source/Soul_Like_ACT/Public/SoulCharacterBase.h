@@ -240,17 +240,12 @@ protected:
     void BP_OnDead(const FHitResult& HitInfo,
                    const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
                    AActor* DamageCauser);
-    virtual void HandleOnDead(const FHitResult& HitInfo,
-                          const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
-                          AActor* DamageCauser);
 
     UFUNCTION(BlueprintImplementableEvent)
     void BP_OnCrumbled(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
                           const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
                           AActor* DamageCauser);
-    virtual void HandleOnCrumble(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
-                          const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
-                          AActor* DamageCauser);
+
 
 #pragma region GameplayEffect_Delegate
     UFUNCTION(BlueprintImplementableEvent)
@@ -295,10 +290,17 @@ protected:
     virtual void HandleDotDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun,
                                  const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
                                  ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
+    virtual void HandleOnDead(const FHitResult& HitInfo,
+                          const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+                          AActor* DamageCauser);
 
     virtual void HandlePostureDamage(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
                                      const struct FGameplayTagContainer& DamageTags,
                                      ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser);
+
+    virtual void HandleOnCrumble(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+                      const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+                      AActor* DamageCauser);
 
     UFUNCTION(BlueprintNativeEvent)
     void MakeStepDecelAndSound();
