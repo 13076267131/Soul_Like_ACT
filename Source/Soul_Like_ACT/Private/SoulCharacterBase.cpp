@@ -185,15 +185,15 @@ USoulModifierManager* ASoulCharacterBase::GetModifierManager() const
     return ModifierManager;
 }
 
-const bool ASoulCharacterBase::IsInRivalFaction(ASoulCharacterBase* DamageDealer, ASoulCharacterBase* DamageReceiver)
+bool ASoulCharacterBase::IsInRivalFaction(ASoulCharacterBase* DamageDealer, ASoulCharacterBase* DamageReceiver)
 {
     if (DamageDealer->Faction == EActorFaction::Player && DamageReceiver->Faction == EActorFaction::Enemy)
-        return 1;
+        return true;
 
     else if (DamageDealer->Faction == EActorFaction::Enemy && DamageReceiver->Faction == EActorFaction::Player)
-        return 1;
+        return true;
 
-    return 0;
+    return false;
 }
 
 void ASoulCharacterBase::PossessedBy(AController* NewController)

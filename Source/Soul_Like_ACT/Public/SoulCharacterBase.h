@@ -126,7 +126,7 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     EActorFaction Faction;
 
-    static const bool IsInRivalFaction(ASoulCharacterBase* DamageDealer, ASoulCharacterBase* DamageReceiver);
+    static bool IsInRivalFaction(ASoulCharacterBase* DamageDealer, ASoulCharacterBase* DamageReceiver);
 
     UFUNCTION(BlueprintCallable)
     virtual bool IsTargetable() const override
@@ -182,19 +182,19 @@ public:
     UFUNCTION(BlueprintCallable)
     bool GetIsDead() const
     {
-        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Dead", true));;
+        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Dead"));;
     }
     
     UFUNCTION(BlueprintCallable)
     bool GetIsStun() const
     {
-        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Stun", true));
+        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Stun"));
     }
 
     UFUNCTION(BlueprintCallable)
     bool GetIsPerilous() const
     {
-        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Perilous", true));
+        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Perilous"));
     }
 
     UFUNCTION(BlueprintCallable)
