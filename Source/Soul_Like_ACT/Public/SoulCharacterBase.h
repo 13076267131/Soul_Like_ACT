@@ -95,8 +95,6 @@ protected:
     USoulAttributeSet* AttributeSet;
 
     UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = GameplayEffects)
-    TSubclassOf<UGameplayEffect> PerilousGE_Class;
-    UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = GameplayEffects)
     TSubclassOf<UGameplayEffect> DeadGE_Class;    
 
     FTimerHandle Handle_SlowMotion, Handler_SlowMotionDelay;

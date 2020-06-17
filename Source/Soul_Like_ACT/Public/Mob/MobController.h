@@ -47,4 +47,6 @@ public:
     void AISenseUpdateMessage(AActor* Actor, FAIStimulus Stimulus);
 
     class UBehaviorTreeComponent* GetBTComp() const { return BehaviorTreeComp; }
+
+    class UMobRageManager* GetRageManager() const { return RageComponent;}
 };

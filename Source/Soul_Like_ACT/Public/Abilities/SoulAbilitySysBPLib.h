@@ -25,6 +25,12 @@ public:
                                 const FGameplayTag EventTag, const float EventMagnitude,
                                 FGameplayEventData& OutpEventData);
 
+    UFUNCTION(BlueprintCallable,Category = Ability, Meta = (Tooltip =
+    "This function can be used to create the event data through weapon on hit"))
+    static void CreateEventDataWithoutHitResult(const AActor* Target, const AActor* Source,
+                            const FGameplayTag EventTag, const float EventMagnitude,
+                            FGameplayEventData& OutpEventData);
+
     UFUNCTION(BlueprintCallable, Category = GameplayTag)
     static bool OverrideActorGameplayTag(UAbilitySystemComponent* AbilitySysComp, const FGameplayTag& InTag, bool bAdd);
 

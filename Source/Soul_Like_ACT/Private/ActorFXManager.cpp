@@ -14,10 +14,10 @@ UActorFXManager::UActorFXManager()
 
 void UActorFXManager::SpawnParticleWithHitResult(const FHitResult& HitResult, UParticleSystem* ParticleClass)
 {
-    if(ParticleClass)
+    if(ParticleClass && HitResult.IsValidBlockingHit())
         UGameplayStatics::SpawnEmitterAtLocation(GetWorld()
                                              , ParticleClass
-                                             , HitResult.ImpactPoint
+                                             , HitResult.ImpactPoint 
                                              , FRotationMatrix::MakeFromX(HitResult.ImpactNormal).Rotator()
                                              , true);
 }

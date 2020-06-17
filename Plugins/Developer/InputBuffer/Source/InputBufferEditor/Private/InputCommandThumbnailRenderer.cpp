@@ -9,22 +9,22 @@ UInputCommandThumbnailRenderer::UInputCommandThumbnailRenderer()
 	DefaultTexture = LoadObject<UTexture2D>(nullptr, TEXT("/InputBuffer/T_InputCommand"), nullptr, LOAD_None, nullptr);
 }
 
-void UInputCommandThumbnailRenderer::Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget*, FCanvas* Canvas)
+void UInputCommandThumbnailRenderer::Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget*, FCanvas* Canvas, bool bAdditionalViewFamily)
 {
 	UInputCommand* InputCommand = Cast<UInputCommand>(Object);
 	if (InputCommand == nullptr) return;
 
 	if (InputCommand->Thumbnail)
 	{
-		DrawTexture(InputCommand->Thumbnail, X, Y, Width, Height, Canvas);
+		DrawTexture(InputCommand->Thumbnail, X, Y, Width, Height, Canvas, bAdditionalViewFamily);
 	}
 	else
 	{
-		DrawTexture(DefaultTexture, X, Y, Width, Height, Canvas);
+		DrawTexture(DefaultTexture, X, Y, Width, Height, Canvas, bAdditionalViewFamily);
 	}
 }
 
-void UInputCommandThumbnailRenderer::DrawTexture(UTexture2D* Texture, int32 X, int32 Y, uint32 Width, uint32 Height, FCanvas* Canvas)
+void UInputCommandThumbnailRenderer::DrawTexture(UTexture2D* Texture, int32 X, int32 Y, uint32 Width, uint32 Height, FCanvas* Canvas, bool bAdditionalViewFamily)
 {
 	if (Texture)
 	{

@@ -31,9 +31,8 @@ ASoulCharacterBase::ASoulCharacterBase()
     TargetIcon->SetWidgetSpace(EWidgetSpace::Screen);
     TargetIcon->SetDrawSize(FVector2D{35.f, 35.f});
 
-    static ConstructorHelpers::FClassFinder<UGameplayEffect> GE_Perilous_ClassFinder(TEXT("/Game/Abilities/GEs/GE_Ailment_Perilous"));
+    //TODO remove 
     static ConstructorHelpers::FClassFinder<UGameplayEffect> GE_Dead_ClassFinder(TEXT("/Game/Abilities/GEs/GE_Ailment_Dead"));
-    if(GE_Perilous_ClassFinder.Succeeded()) PerilousGE_Class = GE_Perilous_ClassFinder.Class;
     if(GE_Dead_ClassFinder.Succeeded()) DeadGE_Class = GE_Dead_ClassFinder.Class;
 
     AbilitySystemComponent->OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &ASoulCharacterBase::BP_OnGameplayEffectApplied);
@@ -57,7 +56,6 @@ void ASoulCharacterBase::TriggerSlowMotion_WithDelay(float Delay)
 {
     if (GetWorldTimerManager().GetTimerRemaining(Handler_SlowMotionDelay) <= 0.f)
     {
-        //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Handler_SlowMotionDelay.IsValid()");
         GetWorldTimerManager().SetTimer(Handler_SlowMotionDelay, this, &ASoulCharacterBase::TriggerSlowMotion, 1.f, 0,
                                         Delay);
     }
@@ -87,8 +85,6 @@ void ASoulCharacterBase::HandleOnDead(const FHitResult& HitInfo,
 void ASoulCharacterBase::HandleOnCrumble(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
     const FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
-    AbilitySystemComponent->ApplyGE_ToSelf(this, PerilousGE_Class, 1);
-
     BP_OnCrumbled(PostureDamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
 }
 

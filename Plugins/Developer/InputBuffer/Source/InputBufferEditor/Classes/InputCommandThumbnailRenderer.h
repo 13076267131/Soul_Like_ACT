@@ -16,7 +16,7 @@ public:
 	UInputCommandThumbnailRenderer();
 
 	// UThumbnailRenderer interface
-	virtual void Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget*, FCanvas* Canvas) override;
+	virtual void Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget*, FCanvas* Canvas, bool bAdditionalViewFamily) override;
 	// End of UThumbnailRenderer interface
 
 protected:
@@ -26,5 +26,5 @@ protected:
 
 protected:
 
-	void DrawTexture(class UTexture2D* Texture, int32 X, int32 Y, uint32 Width, uint32 Height, FCanvas* Canvas);
+	void DrawTexture(class UTexture2D* Texture, int32 X, int32 Y, uint32 Width, uint32 Height, FCanvas* Canvas, bool bAdditionalViewFamily);
 };

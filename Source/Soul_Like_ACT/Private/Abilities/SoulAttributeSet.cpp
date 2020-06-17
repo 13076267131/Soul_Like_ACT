@@ -148,37 +148,32 @@ void USoulAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
             const float OldHealth = GetHealth();
             SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));
 
-            if (TargetCharacter)
+            //On-Kill Proc
+            if (GetHealth() <= 0.f)
             {
-                FGameplayTagContainer LocalContainer;
-                Data.EffectSpec.GetAllAssetTags(LocalContainer);
+                (Cast<ASoulCharacterBase>(SourceActor))->
+                    Notify_OnMeleeKill(SourceActor, TargetActor, HitResult);
 
-                //Dot damage
-                if (LocalContainer.HasTagExact(FGameplayTag::RequestGameplayTag(FName{"Damage.Dot"}, true)))
-                {
-                    TargetCharacter->HandleDotDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, EffectSpecTags,
-                                                     SourceCharacter, SourceActor);
-                }
-                //Hit damage
-                else
-                {
-                    TargetCharacter->HandleDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, EffectSpecTags, SourceCharacter,
-                              SourceActor);
-                }
-
-                if (GetHealth() <= 0.f)
-                {
-                    (Cast<ASoulCharacterBase>(SourceActor))->
-                        Notify_OnMeleeKill(SourceActor, TargetActor, HitResult);
-
-                    if(OldHealth > 0.f)
-                        TargetCharacter->HandleOnDead(HitResult, EffectSpecTags, SourceCharacter,
-                              SourceActor);
-                }
+                if(OldHealth > 0.f)
+                    TargetCharacter->HandleOnDead(HitResult, EffectSpecTags, SourceCharacter,
+                          SourceActor);
             }
         }
+        
+        if (TargetCharacter)
+        {
+            FGameplayTagContainer LocalContainer;
+            Data.EffectSpec.GetAllAssetTags(LocalContainer);
 
-
+            //Dot damage
+            if (LocalContainer.HasTagExact(FGameplayTag::RequestGameplayTag(FName{"Damage.Dot"}, true)))
+                TargetCharacter->HandleDotDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, EffectSpecTags,
+                                                 SourceCharacter, SourceActor);
+            //Hit damage
+            else
+                TargetCharacter->HandleDamage(LocalDamageDone, bIsCritic, bIsStun, HitResult, EffectSpecTags, SourceCharacter,
+                          SourceActor);
+        }
     }
     else if (Data.EvaluatedData.Attribute == GetPostureDamageAttribute())
     {

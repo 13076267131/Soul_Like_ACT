@@ -78,5 +78,14 @@ void AMobBasic::HandleOnDead(const FHitResult& HitInfo,
 
 AMobController* AMobBasic::GetMobController() const
 {
-    return Cast<class AMobController>(GetController());
+    if(GetController())
+        return Cast<class AMobController>(GetController());
+    return nullptr;
+}
+
+UMobRageManager* AMobBasic::GetRageManager() const
+{
+    if(GetController())
+        return  GetMobController()->GetRageManager();
+    return nullptr;
 }

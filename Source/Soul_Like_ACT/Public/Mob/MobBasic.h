@@ -9,6 +9,9 @@
 class UDA_FXCollection;
 class UMob_TargetingComponent;
 
+UENUM()
+enum class EAI_ActionType : uint8 { Attack, Parry, Dodge, DashBack, Walk };
+
 UCLASS()
 class SOUL_LIKE_ACT_API AMobBasic : public ASoulCharacterBase
 {
@@ -43,6 +46,10 @@ protected:
 public:
     UMob_TargetingComponent* GetTargetingComponent() const { return TargetingComponent; }
 
-    UFUNCTION(BlueprintCallable, category = AI_Controller)
+    UFUNCTION(BlueprintCallable, category = "AI Controller")
     class AMobController* GetMobController() const;
+
+   UFUNCTION(BlueprintCallable, Category = "AI Controller")
+    class UMobRageManager* GetRageManager() const;
+        
 };

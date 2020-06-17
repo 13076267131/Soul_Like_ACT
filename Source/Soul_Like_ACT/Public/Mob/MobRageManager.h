@@ -8,16 +8,19 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRagePointUpdated);
 UCLASS()
 class SOUL_LIKE_ACT_API UMobRageManager : public UActorComponent
 {
+public:
     GENERATED_BODY()
 
-public:
     UMobRageManager();
 
+    virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+        FActorComponentTickFunction* ThisTickFunction) override;
+    
     UPROPERTY(BlueprintReadOnly, Category = RageSystem)
-    int32 RageScore;
+    float RageScore;
 
     UFUNCTION(BlueprintCallable, Category = RageSystem)
-    void UpdateRageScore(int32 AdditiveRageScore, bool bOverride, int32& UpdatedRageScore);
+    void UpdateRageScore(float AdditiveRageScore, bool bOverride, int32& UpdatedRageScore);
     UPROPERTY(BlueprintAssignable)
     FOnRagePointUpdated OnRagePointUpdated;
 };

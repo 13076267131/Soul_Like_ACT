@@ -47,8 +47,6 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
         
     if(GA_Class && GA_Class->IsChildOf(UGA_Melee::StaticClass()))
     {
-        GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, GA_Class->GetName());
-
         if (!ASC->TryActivateAbilityByClassWithDelegate(GA_Class, &DelegateObj))
             return EBTNodeResult::Failed;
     }
@@ -56,6 +54,7 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 
     return EBTNodeResult::InProgress;
 }
+
 
 
 void UBTT_UseGA::OnGA_Ended(class UGameplayAbility* Ability)
