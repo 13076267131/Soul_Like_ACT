@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "ActorFxManager.h"
+#include "NavigationSystem.h"
 
 // Sets default values
 ASoulCharacterBase::ASoulCharacterBase()
@@ -158,9 +159,17 @@ bool ASoulCharacterBase::BodySweep_Init(const AActor* Target, bool bUseTarget, f
 
 void ASoulCharacterBase::BodySweep_Tick(float Delta)
 {
+    //GEngine->AddOnScreenDebugMessage(-1,5,FColor::Red, (BodySweep_ForwardVec  * SweepingSpeed).ToString());
     if(!BodySweep_ForwardVec.IsNearlyZero())
     {
-        SetActorLocation(GetActorLocation() + Delta * SweepingSpeed * BodySweep_ForwardVec);
+        //DO NOT USE THIS
+        //AddMovementInput(BodySweep_ForwardVec, SweepingSpeed, true);
+
+        FVector ResultLocation = GetActorLocation() + BodySweep_ForwardVec * SweepingSpeed * Delta;
+        FNavLocation LocOnNavMesh;
+        FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld())->ProjectPointToNavigation(
+            ResultLocation, LocOnNavMesh);
+        SetActorLocation(LocOnNavMesh.Location + FVector{0,0,GetCapsuleComponent()->GetScaledCapsuleHalfHeight()});
     }
 }
 
@@ -247,16 +256,4 @@ void ASoulCharacterBase::BindOnAttributesChanged()
 
     AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetMaxPostureAttribute())
                           .AddUObject(this, &ASoulCharacterBase::HandlePostureChanged);
-}
-
-// Called every frame
-void ASoulCharacterBase::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-}
-
-// Called to bind functionality to input
-void ASoulCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
 }

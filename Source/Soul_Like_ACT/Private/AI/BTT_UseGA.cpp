@@ -51,7 +51,6 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
             return EBTNodeResult::Failed;
     }
         
-
     return EBTNodeResult::InProgress;
 }
 

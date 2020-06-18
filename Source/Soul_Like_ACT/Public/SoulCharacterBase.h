@@ -117,12 +117,6 @@ public:
 
     virtual USoulModifierManager* GetModifierManager() const;
 
-    // Called every frame
-    virtual void Tick(float DeltaTime) override;
-
-    // Called to bind functionality to input
-    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     EActorFaction Faction;
 
