@@ -186,9 +186,9 @@ public:
     }
 
     UFUNCTION(BlueprintCallable)
-    bool GetIsPerilous() const
+    bool GetIsCrumbled() const
     {
-        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Perilous"));
+        return AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ailment.Crumbled"));
     }
 
     UFUNCTION(BlueprintCallable)
@@ -209,7 +209,7 @@ protected:
      * @param DamageTags The gameplay tags of the event that did the damage
      * @param InstigatorCharacter The character that initiated this damage
      * @param DamageCauser The actual actor that did the damage, might be a weapon or projectile
-     */
+     */    
     UFUNCTION(BlueprintImplementableEvent)
     void OnDamaged(float DamageAmount, const bool IsCriticaled, const bool bIsStun, const FHitResult& HitInfo,
                    const struct FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
