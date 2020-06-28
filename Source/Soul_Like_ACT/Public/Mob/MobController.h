@@ -44,7 +44,9 @@ public:
     class UBehaviorTree* BehaviorTreeAsset;
 
     UFUNCTION(BlueprintCallable)
-    void AISenseUpdateMessage(AActor* Actor, FAIStimulus Stimulus);
+    void AISenseUpdateMessage(AActor* TargetActor, FAIStimulus Stimulus);
 
     class UBehaviorTreeComponent* GetBTComp() const { return BehaviorTreeComp; }
+
+    class UMobRageManager* GetRageManager() const { return RageComponent;}
 };

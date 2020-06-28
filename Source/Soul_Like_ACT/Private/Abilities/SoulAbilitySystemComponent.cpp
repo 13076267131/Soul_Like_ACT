@@ -6,6 +6,10 @@
 #include "AbilitySystemGlobals.h"
 
 
+USoulAbilitySystemComponent::USoulAbilitySystemComponent()
+{
+}
+
 void USoulAbilitySystemComponent::GetActiveAbilitiesWithTags(const FGameplayTagContainer& GameplayTagContainer,
                                                              TArray<USoulGameplayAbility*>& ActiveAbilities)
 {
@@ -177,4 +181,18 @@ bool USoulAbilitySystemComponent::TryActivateAbilityWithDelegate(FGameplayAbilit
     }
 
     return InternalTryActivateAbility(AbilityToActivate, FPredictionKey(), nullptr, OnGameplayAbilityEndedDelegate);
+}
+
+bool USoulAbilitySystemComponent::IsAbilityGiven(TSubclassOf<UGameplayAbility> Ability)
+{
+    for(auto& Spec : ActivatableAbilities.Items)
+    {
+        if(Spec.Ability == Ability.GetDefaultObject())
+        {
+            //GEngine->AddOnScreenDebugMessage(-1,5,FColor::Red, Spec.Ability->GetName() + " " + Ability.GetDefaultObject()->GetName());
+            return true;
+        }
+    }
+
+    return false;;
 }

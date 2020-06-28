@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayEffectUIData.h"
+
 #include "SoulAbilitySysBPLib.generated.h"
 
 class UAbilitySystemComponent;
@@ -23,6 +25,12 @@ public:
                                 const FGameplayTag EventTag, const float EventMagnitude,
                                 FGameplayEventData& OutpEventData);
 
+    UFUNCTION(BlueprintCallable,Category = Ability, Meta = (Tooltip =
+    "This function can be used to create the event data through weapon on hit"))
+    static void CreateEventDataWithoutHitResult(const AActor* Target, const AActor* Source,
+                            const FGameplayTag EventTag, const float EventMagnitude,
+                            FGameplayEventData& OutpEventData);
+
     UFUNCTION(BlueprintCallable, Category = GameplayTag)
     static bool OverrideActorGameplayTag(UAbilitySystemComponent* AbilitySysComp, const FGameplayTag& InTag, bool bAdd);
 
@@ -30,4 +38,7 @@ public:
     static bool DoesActorHasTag(UAbilitySystemComponent* AbilitySysComp, FGameplayTag InTag);
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = GameplayTag)
     static bool DoesActorHasAnyTags(UAbilitySystemComponent* AbilitySysComp, FGameplayTagContainer InTagContainer);
+    
+    UFUNCTION(BlueprintCallable, Category = GameplayEffect)
+    static UGameplayEffectUIData* GetActiveGameplayEffectUIData(FActiveGameplayEffectHandle Handle);
 };

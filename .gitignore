@@ -52,8 +52,7 @@ SourceArt/**/*.tga
 
 # Binary Files
 Binaries/*
-Plugins/*/Binaries/*
-
+Plugins/**/Binaries/*
 # Builds
 Build/*
 
@@ -73,8 +72,14 @@ Saved/*
 
 # Compiled source files for the engine to use
 Intermediate/*
-Plugins/*/Intermediate/*
-Plugins/Developer/RiderLink/
+Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+
+Content/Levels/AI_Test.umap
+Content/Levels/ControllerTest.umap
+Content/Levels/ModifierTest.umap
+
+Content/Developers/*

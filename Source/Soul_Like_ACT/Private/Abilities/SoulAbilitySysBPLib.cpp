@@ -25,6 +25,17 @@ void USoulAbilitySysBPLib::CreateEventData(const AActor* Target, const AActor* S
     OutpEventData = TempEventData;
 }
 
+void USoulAbilitySysBPLib::CreateEventDataWithoutHitResult(const AActor* Target, const AActor* Source,
+    const FGameplayTag EventTag, const float EventMagnitude, FGameplayEventData& OutpEventData)
+{
+    FGameplayEventData TempEventData;
+    TempEventData.Instigator = Source;
+    TempEventData.Target = Target;
+    TempEventData.EventMagnitude = EventMagnitude;
+    TempEventData.EventTag = EventTag;
+    OutpEventData = TempEventData;
+}
+
 bool USoulAbilitySysBPLib::OverrideActorGameplayTag(UAbilitySystemComponent* AbilitySysComp,
                                                     const FGameplayTag& GameplayTag, bool bAdd)
 {
@@ -52,4 +63,16 @@ bool USoulAbilitySysBPLib::DoesActorHasAnyTags(UAbilitySystemComponent* AbilityS
         return AbilitySysComp->HasAnyMatchingGameplayTags(InTagContainer);
 
     return false;
+}
+
+UGameplayEffectUIData* USoulAbilitySysBPLib::GetActiveGameplayEffectUIData(FActiveGameplayEffectHandle Handle)
+{
+    UAbilitySystemComponent* ASC = Handle.GetOwningAbilitySystemComponent();
+    const FActiveGameplayEffect* ActiveGE = ASC->GetActiveGameplayEffect(Handle);
+    if (ActiveGE)
+    {
+        return ActiveGE->Spec.Def->UIData;
+    }
+
+    return nullptr;
 }

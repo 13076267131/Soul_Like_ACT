@@ -50,25 +50,27 @@ void AMobController::OnUnPossess()
     PossessedMob = nullptr;
 }
 
-void AMobController::AISenseUpdateMessage(AActor* Actor, FAIStimulus Stimulus)
+void AMobController::AISenseUpdateMessage(AActor* TargetActor, FAIStimulus Stimulus)
 {
     if (!PossessedMob)
     {
         AIPerceptionComponent->OnTargetPerceptionUpdated.RemoveDynamic(this, &AMobController::AISenseUpdateMessage);
         return;
     }
-
-    if (Cast<ASoulCharacterBase>(Actor)->Faction == EActorFaction::Player)
+    if(TargetActor && TargetActor->StaticClass()->IsChildOf(ASoulCharacterBase::StaticClass()))
     {
-        if (Stimulus.WasSuccessfullySensed())
+        if (Cast<ASoulCharacterBase>(TargetActor)->Faction == EActorFaction::Player)
         {
-            BlackBoardComp->SetValueAsObject("PlayerPawn", Actor);
-            UE_LOG(LogTemp, Warning, TEXT("%s is founded by %s"), *Actor->GetName(), *PossessedMob->GetName());
-        }
-        else
-        {
-            BlackBoardComp->SetValueAsObject("PlayerPawn", nullptr);
-            UE_LOG(LogTemp, Warning, TEXT("%s is lost by %s"), *Actor->GetName(), *PossessedMob->GetName());
+            if (Stimulus.WasSuccessfullySensed())
+            {
+                BlackBoardComp->SetValueAsObject("PlayerPawn", TargetActor);
+                UE_LOG(LogTemp, Warning, TEXT("%s is founded by %s"), *TargetActor->GetName(), *PossessedMob->GetName());
+            }
+            else
+            {
+                BlackBoardComp->SetValueAsObject("PlayerPawn", nullptr);
+                UE_LOG(LogTemp, Warning, TEXT("%s is lost by %s"), *TargetActor->GetName(), *PossessedMob->GetName());
+            }
         }
     }
 }

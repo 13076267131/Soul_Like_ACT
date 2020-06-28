@@ -64,9 +64,16 @@ class SOUL_LIKE_ACT_API USoulActiveAbility : public USoulGameplayAbility
 public:
     USoulActiveAbility()
     {
-    }
+        ActivationBlockedTags.AddTagFast(FGameplayTag::RequestGameplayTag("Ailment.Dead", true));
+        ActivationBlockedTags.AddTagFast(FGameplayTag::RequestGameplayTag("Ailment.Stun", true));
 
-    UAnimMontage* MontageToPlay;
+        CancelAbilitiesMatchingTagQuery.MakeQuery_MatchAnyTags(
+            FGameplayTagContainer::CreateFromArray(
+                TArray<FGameplayTag>{
+                    FGameplayTag::RequestGameplayTag("Ailment.Dead"),
+                    FGameplayTag::RequestGameplayTag("Ailment.Perilous"),
+                    FGameplayTag::RequestGameplayTag("Ailment.Stun")}));
+    }
 };
 
 /**
@@ -117,6 +124,13 @@ class SOUL_LIKE_ACT_API UGA_Melee : public USoulGameplayAbility
 {
     GENERATED_BODY()
 
+public:
+    UGA_Melee()
+    {
+        ActivationBlockedTags.AddTagFast(FGameplayTag::RequestGameplayTag("Ailment.Dead", true));
+        ActivationBlockedTags.AddTagFast(FGameplayTag::RequestGameplayTag("Ailment.Stun", true));
+    }
+    
 protected:
     UPROPERTY()
     int32 CurrentComboIndex;

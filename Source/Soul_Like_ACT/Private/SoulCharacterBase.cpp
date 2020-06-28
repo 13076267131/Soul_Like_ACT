@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "ActorFxManager.h"
+#include "NavigationSystem.h"
 
 // Sets default values
 ASoulCharacterBase::ASoulCharacterBase()
@@ -30,6 +31,13 @@ ASoulCharacterBase::ASoulCharacterBase()
     TargetIcon->SetupAttachment(RootComponent);
     TargetIcon->SetWidgetSpace(EWidgetSpace::Screen);
     TargetIcon->SetDrawSize(FVector2D{35.f, 35.f});
+
+    //TODO remove 
+    static ConstructorHelpers::FClassFinder<UGameplayEffect> GE_Dead_ClassFinder(TEXT("/Game/Abilities/GEs/GE_Ailment_Dead"));
+    if(GE_Dead_ClassFinder.Succeeded()) DeadGE_Class = GE_Dead_ClassFinder.Class;
+
+    AbilitySystemComponent->OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &ASoulCharacterBase::BP_OnGameplayEffectApplied);
+    AbilitySystemComponent->OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &ASoulCharacterBase::BP_OnGameplayEffectRemoved);
 }
 
 
@@ -49,7 +57,6 @@ void ASoulCharacterBase::TriggerSlowMotion_WithDelay(float Delay)
 {
     if (GetWorldTimerManager().GetTimerRemaining(Handler_SlowMotionDelay) <= 0.f)
     {
-        //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Handler_SlowMotionDelay.IsValid()");
         GetWorldTimerManager().SetTimer(Handler_SlowMotionDelay, this, &ASoulCharacterBase::TriggerSlowMotion, 1.f, 0,
                                         Delay);
     }
@@ -68,16 +75,25 @@ void ASoulCharacterBase::AddStartupGameplayAbilities()
     ModifierManager->AddStartupGameplayAbilities();
 }
 
+void ASoulCharacterBase::HandleOnDead(const FHitResult& HitInfo,
+    const FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
+{
+    AbilitySystemComponent->ApplyGE_ToSelf(this, DeadGE_Class, 0);
+
+    BP_OnDead(HitInfo,DamageTags,InstigatorCharacter,DamageCauser);
+}
+
+void ASoulCharacterBase::HandleOnCrumble(float PostureDamageAmount, const bool IsCriticaled, const FHitResult& HitInfo,
+    const FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
+{
+    BP_OnCrumbled(PostureDamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
+}
+
 void ASoulCharacterBase::HandleDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun,
                                       const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
                                       ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
     OnDamaged(DamageAmount, IsCriticaled, bIsStun, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
-
-    if (GetIsHealthZero())
-    {
-        HandleOnDead();
-    }
 }
 
 void ASoulCharacterBase::HandleDotDamage(float DamageAmount, const bool IsCriticaled, const bool bIsStun,
@@ -85,11 +101,6 @@ void ASoulCharacterBase::HandleDotDamage(float DamageAmount, const bool IsCritic
                                          ASoulCharacterBase* InstigatorCharacter, AActor* DamageCauser)
 {
     OnDotDamaged(DamageAmount, IsCriticaled, bIsStun, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
-
-    if (GetIsHealthZero())
-    {
-        HandleOnDead();
-    }
 }
 
 void ASoulCharacterBase::HandlePostureDamage(float PostureDamageAmount, const bool IsCriticaled,
@@ -102,11 +113,6 @@ void ASoulCharacterBase::HandlePostureDamage(float PostureDamageAmount, const bo
 void ASoulCharacterBase::ResetPerilousStatus()
 {
     LOG_FUNC_FAIL();
-}
-
-void ASoulCharacterBase::HandleOnDead()
-{
-    bIsDead = true;
 }
 
 void ASoulCharacterBase::MakeStepDecelAndSound_Notify(ASoulCharacterBase* CharacterRef)
@@ -153,9 +159,17 @@ bool ASoulCharacterBase::BodySweep_Init(const AActor* Target, bool bUseTarget, f
 
 void ASoulCharacterBase::BodySweep_Tick(float Delta)
 {
+    //GEngine->AddOnScreenDebugMessage(-1,5,FColor::Red, (BodySweep_ForwardVec  * SweepingSpeed).ToString());
     if(!BodySweep_ForwardVec.IsNearlyZero())
     {
-        SetActorLocation(GetActorLocation() + Delta * SweepingSpeed * BodySweep_ForwardVec);
+        //DO NOT USE THIS
+        //AddMovementInput(BodySweep_ForwardVec, SweepingSpeed, true);
+
+        FVector ResultLocation = GetActorLocation() + BodySweep_ForwardVec * SweepingSpeed * Delta;
+        FNavLocation LocOnNavMesh;
+        FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld())->ProjectPointToNavigation(
+            ResultLocation, LocOnNavMesh);
+        SetActorLocation(LocOnNavMesh.Location + FVector{0,0,GetCapsuleComponent()->GetScaledCapsuleHalfHeight()});
     }
 }
 
@@ -180,15 +194,15 @@ USoulModifierManager* ASoulCharacterBase::GetModifierManager() const
     return ModifierManager;
 }
 
-const bool ASoulCharacterBase::IsInRivalFaction(ASoulCharacterBase* DamageDealer, ASoulCharacterBase* DamageReceiver)
+bool ASoulCharacterBase::IsInRivalFaction(ASoulCharacterBase* DamageDealer, ASoulCharacterBase* DamageReceiver)
 {
     if (DamageDealer->Faction == EActorFaction::Player && DamageReceiver->Faction == EActorFaction::Enemy)
-        return 1;
+        return true;
 
     else if (DamageDealer->Faction == EActorFaction::Enemy && DamageReceiver->Faction == EActorFaction::Player)
-        return 1;
+        return true;
 
-    return 0;
+    return false;
 }
 
 void ASoulCharacterBase::PossessedBy(AController* NewController)
@@ -242,16 +256,4 @@ void ASoulCharacterBase::BindOnAttributesChanged()
 
     AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(USoulAttributeSet::GetMaxPostureAttribute())
                           .AddUObject(this, &ASoulCharacterBase::HandlePostureChanged);
-}
-
-// Called every frame
-void ASoulCharacterBase::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-}
-
-// Called to bind functionality to input
-void ASoulCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
 }

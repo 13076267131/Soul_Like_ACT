@@ -9,9 +9,13 @@
 class UDA_FXCollection;
 class UMob_TargetingComponent;
 
+UENUM()
+enum class EAI_ActionType : uint8 { Attack, Parry, Dodge, DashBack, Walk };
+
 UCLASS()
 class SOUL_LIKE_ACT_API AMobBasic : public ASoulCharacterBase
 {
+private:
     GENERATED_BODY()
 
 protected:
@@ -33,15 +37,19 @@ protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
-    UFUNCTION(BlueprintNativeEvent)
-    void MobOnDead();
-
-    virtual void HandleOnDead() override;
-
     virtual void ForceOverrideFacingDirection(float Alpha) override;
+
+    virtual void HandleOnDead(const FHitResult& HitInfo,
+       const FGameplayTagContainer& DamageTags, ASoulCharacterBase* InstigatorCharacter,
+       AActor* DamageCauser) override;
+
 public:
     UMob_TargetingComponent* GetTargetingComponent() const { return TargetingComponent; }
 
-    UFUNCTION(BlueprintCallable, category = AI_Controller)
+    UFUNCTION(BlueprintCallable, category = "AI Controller")
     class AMobController* GetMobController() const;
+
+   UFUNCTION(BlueprintCallable, Category = "AI Controller")
+    class UMobRageManager* GetRageManager() const;
+        
 };

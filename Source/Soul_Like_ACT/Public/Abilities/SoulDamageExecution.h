@@ -22,6 +22,18 @@ public:
 };
 
 UCLASS()
+class SOUL_LIKE_ACT_API USoulReflectionDamageExecution : public UGameplayEffectExecutionCalculation
+{
+    GENERATED_BODY()
+
+public:
+    USoulReflectionDamageExecution();
+
+    virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
+                                        OUT FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
+};
+
+UCLASS()
 class SOUL_LIKE_ACT_API USoulDotDamageExecution : public UGameplayEffectExecutionCalculation
 {
     GENERATED_BODY()
