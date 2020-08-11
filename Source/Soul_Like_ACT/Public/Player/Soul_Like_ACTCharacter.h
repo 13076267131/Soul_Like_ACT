@@ -4,8 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "SoulCharacterBase.h"
-#include "Soul_Like_ACTCharacter.generated.h"
+#include "UObject/ObjectMacros.h"
 
+#include "Soul_Like_ACTCharacter.generated.h"
+/**
+ * TODO: implement 3-d version control and top-down control 
+ */
 UCLASS(config=Game)
 class ASoul_Like_ACTCharacter : public ASoulCharacterBase
 {
@@ -48,11 +52,12 @@ public:
 
     virtual void Tick(float DeltaTime) override;
 
-    /** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
+    // Camera will be snipped to a fixed transform
+    UPROPERTY()
+    bool bFreeCamera = true;
+    
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
     float BaseTurnRate;
-
-    /** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
     float BaseLookUpRate;
 
@@ -62,9 +67,8 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
     float LeanAmount_Anim;
 
-    bool bIsLeftMouseButtonPressed;
-
 protected:
+    void BlendCamera();
     //Tick------------------------------
     UFUNCTION(BlueprintCallable)
     void MoveForward(float Value);
@@ -122,5 +126,8 @@ public:
 
     virtual void GetMovementMode(ESoulMovementMode& MovementMode) const override;
 
+    UFUNCTION(BlueprintCallable, Category = Camera)
+    void SetCameraMode(bool bFreeCamera) { this->bFreeCamera = bFreeCamera; }
+    
     friend UActionSysManager;
 };

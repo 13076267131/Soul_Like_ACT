@@ -218,13 +218,13 @@ void ASoul_Like_ACTCharacter::GetMovementMode(ESoulMovementMode& MovementMode) c
 void ASoul_Like_ACTCharacter::TurnAtRate(float Rate)
 {
     // calculate delta for this frame from the rate information
-    AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+    AddControllerYawInput(bFreeCamera * Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ASoul_Like_ACTCharacter::LookUpAtRate(float Rate)
 {
     // calculate delta for this frame from the rate information
-    AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+    AddControllerPitchInput(bFreeCamera * Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ASoul_Like_ACTCharacter::ZoomCamera(float Rate)
@@ -274,6 +274,14 @@ void ASoul_Like_ACTCharacter::PredictMovement(FVector& DirectionVec, float& Degr
         Degree = 0;
 }
 
+void ASoul_Like_ACTCharacter::BlendCamera()
+{
+    if(!bFreeCamera)
+    {
+        
+    }
+}
+
 void ASoul_Like_ACTCharacter::MoveForward(float Value)
 {
     //Axis Value for AnimManager
@@ -293,12 +301,19 @@ void ASoul_Like_ACTCharacter::MakeMove()
         FVector Direction;
         float Degree;
         float LocoMulti;
-        PredictMovement(Direction, Degree);
-        DegreeToMovementMultiplier(Degree, LocoMulti);
 
-        if (TargetLockingComponent->GetIsTargetingEnabled())
-            AddMovementInput(Direction, .6f * LocoMulti);
-        else
-            AddMovementInput(Direction, LocoMulti);
+        if(isTopDownCamera)
+        {
+                        
+        } else
+        {
+            PredictMovement(Direction, Degree);
+            DegreeToMovementMultiplier(Degree, LocoMulti);
+
+            if (TargetLockingComponent->GetIsTargetingEnabled())
+                AddMovementInput(Direction, .6f * LocoMulti);
+            else
+                AddMovementInput(Direction, LocoMulti);   
+        }
     }
 }
