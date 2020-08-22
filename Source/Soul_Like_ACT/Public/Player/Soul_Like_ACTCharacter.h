@@ -52,9 +52,8 @@ public:
 
     virtual void Tick(float DeltaTime) override;
 
-    // Camera will be snipped to a fixed transform
     UPROPERTY()
-    bool bFreeCamera = true;
+    bool _bFreeCamera = true;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
     float BaseTurnRate;
@@ -127,7 +126,7 @@ public:
     virtual void GetMovementMode(ESoulMovementMode& MovementMode) const override;
 
     UFUNCTION(BlueprintCallable, Category = Camera)
-    void SetCameraMode(bool bFreeCamera) { this->bFreeCamera = bFreeCamera; }
+    void SetCameraMode(bool bFreeCamera) { _bFreeCamera = bFreeCamera; }
     
     friend UActionSysManager;
 };

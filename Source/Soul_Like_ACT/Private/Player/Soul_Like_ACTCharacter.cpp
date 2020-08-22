@@ -218,13 +218,13 @@ void ASoul_Like_ACTCharacter::GetMovementMode(ESoulMovementMode& MovementMode) c
 void ASoul_Like_ACTCharacter::TurnAtRate(float Rate)
 {
     // calculate delta for this frame from the rate information
-    AddControllerYawInput(bFreeCamera * Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+    AddControllerYawInput(_bFreeCamera * Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ASoul_Like_ACTCharacter::LookUpAtRate(float Rate)
 {
     // calculate delta for this frame from the rate information
-    AddControllerPitchInput(bFreeCamera * Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+    AddControllerPitchInput(_bFreeCamera * Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ASoul_Like_ACTCharacter::ZoomCamera(float Rate)
@@ -276,7 +276,7 @@ void ASoul_Like_ACTCharacter::PredictMovement(FVector& DirectionVec, float& Degr
 
 void ASoul_Like_ACTCharacter::BlendCamera()
 {
-    if(!bFreeCamera)
+    if(!_bFreeCamera)
     {
         
     }
@@ -302,7 +302,7 @@ void ASoul_Like_ACTCharacter::MakeMove()
         float Degree;
         float LocoMulti;
 
-        if(isTopDownCamera)
+        if(_bFreeCamera)
         {
                         
         } else
