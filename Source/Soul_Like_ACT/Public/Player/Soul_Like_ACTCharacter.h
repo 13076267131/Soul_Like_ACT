@@ -4,25 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "SoulCharacterBase.h"
-#include "UObject/ObjectMacros.h"
-
+#include "Item/WeaponActor.h"
 #include "Soul_Like_ACTCharacter.generated.h"
-/**
- * TODO: implement 3-d version control and top-down control 
- */
+
+class ASoulPlayerController;
+
 UCLASS(config=Game)
 class ASoul_Like_ACTCharacter : public ASoulCharacterBase
 {
 protected:
     GENERATED_BODY()
 
-    /** Camera boom positioning the camera behind the character */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-    class USpringArmComponent* CameraBoom;
-
-    /** Follow camera */
+    class USpringArmComponent* Soul_CameraBoom;
+    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Camera)
+    UChildActorComponent* Soul_CameraActor;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-    class UCameraComponent* FollowCamera;
+    class USpringArmComponent* TPS_CameraBoom;
+    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Camera)
+    UChildActorComponent* TPS_CameraActor;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Component)
     class UActionSysManager* ActionSysManager;
@@ -39,6 +39,8 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = AI)
     class UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSource;
 
+    ASoulPlayerController* _PlayerController;
+
 protected:
     virtual void BeginPlay() override;
 
@@ -52,7 +54,7 @@ public:
 
     virtual void Tick(float DeltaTime) override;
 
-    UPROPERTY()
+    UPROPERTY(meta = (DeprecatedNode))
     bool _bFreeCamera = true;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -67,13 +69,12 @@ public:
     float LeanAmount_Anim;
 
 protected:
-    void BlendCamera();
     //Tick------------------------------
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION()
     void MoveForward(float Value);
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION()
     void MoveRight(float Value);
-    UFUNCTION(BlueprintCallable)
+
     void MakeMove();
 
     void TurnAtRate(float Rate);
@@ -86,7 +87,7 @@ protected:
     void CalculateLeanValue(float TurnValue);
     //----------------------------------
 
-    void PredictMovement(FVector& DirectionVec, float& Degree);
+    void PredictMovement(FRotator InForward, FVector& DirectionVec, float& Degree) const;
 
     UFUNCTION(BlueprintImplementableEvent)
     void DegreeToMovementMultiplier(const float& Degree, float& Multiplier);
@@ -98,13 +99,14 @@ protected:
      * It overrides the direction with controller's rotation or by calling lock-target component;
      */
     virtual void ForceOverrideFacingDirection(float Alpha) override;
-    
-public:
-    /** Returns CameraBoom subobject **/
-    FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-    /** Returns FollowCamera subobject **/
-    FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+//------------CAMERA---------------
+public:
+    UFUNCTION(BlueprintCallable, Category = Camera)
+    void GetActiveCameraAndSpringArm(ACameraActor*& ActiveCam, USpringArmComponent*& ActiveSpringArm, bool& isValid) const;
+
+//-----------CAMERA------------------
+public:
     FORCEINLINE class UActionSysManager* GetActionSysManager() const { return ActionSysManager; }
 
     UFUNCTION(BlueprintCallable)
@@ -113,20 +115,21 @@ public:
     UFUNCTION(BlueprintCallable)
     AWeaponActor* EquipGear(TSubclassOf<AWeaponActor> WeaponClassRef, bool bShowTracelines);
 
-    UFUNCTION(BlueprintCallable, meta = (ExpandEnumAsExecs = "Outp", BlueprintInternalUseOnly))
-    void GetMyPlayerController(class ASoulPlayerController*& MyController, EIsControllerValid& Outp);
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    ASoulPlayerController* GetSoulController();
 
     UFUNCTION(BlueprintCallable)
     class UInventoryManager* GetInventoryManager() const;
 
-    UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly))
-    static void GetPlayer(UWorld* InWorld, bool& Successful, ASoulPlayerController*& SoulPlayerController,
+    UFUNCTION(BlueprintCallable, BlueprintPure, meta = (BlueprintInternalUseOnly, WorldContext="WorldContextObj"))
+    static void GetPlayer(UObject* WorldContextObj, bool& Successful, ASoulPlayerController*& SoulPlayerController,
                           ASoul_Like_ACTCharacter*& SoulCharacter, UInventoryManager*& SoulInventoryManager);
 
     virtual void GetMovementMode(ESoulMovementMode& MovementMode) const override;
 
-    UFUNCTION(BlueprintCallable, Category = Camera)
+    UFUNCTION(BlueprintCallable, meta=(DeprecatedNode), Category = Camera)
     void SetCameraMode(bool bFreeCamera) { _bFreeCamera = bFreeCamera; }
     
     friend UActionSysManager;
+    friend class ASoulPlayerController;
 };

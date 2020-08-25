@@ -2,24 +2,22 @@
 
 #include "Player/Soul_Like_ACTCharacter.h"
 
-#include "BPFL/BPFL_Math.h"
 #include "Player/ActionSysManager.h"
 #include "Player/LockTargetComponent.h"
 #include "Player/InventoryManager.h"
 #include "Player/SoulPlayerController.h"
-#include "Camera/CameraComponent.h"
 #include "Item/WeaponActor.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/ArrowComponent.h"
 #include "Components/InputComponent.h"
 #include "Perception/AIPerceptionSystem.h"
-#include "Perception/AISenseConfig_Sight.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Player/SoulPlayerCamera.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ASoul_Like_ACTCharacter
@@ -45,22 +43,36 @@ ASoul_Like_ACTCharacter::ASoul_Like_ACTCharacter()
     GetCharacterMovement()->MaxWalkSpeed = 550.f;
     GetCharacterMovement()->AirControl = 0.2f;
 
-    // Create a camera boom (pulls in towards the player if there is a collision)
-    CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-    CameraBoom->SetupAttachment(RootComponent);
-    CameraBoom->TargetArmLength = 550.0f; // The camera follows at this distance behind the character	
-    CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+    // Soul-Like Cam
+    Soul_CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Soul Camera Boom"));
+    Soul_CameraBoom->SetupAttachment(RootComponent);
+    Soul_CameraBoom->TargetArmLength = 400.0f;	
+    Soul_CameraBoom->bUsePawnControlRotation = true;
 
-    // Create a follow camera
-    FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-    FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-    // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-    FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+    Soul_CameraActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("Soul Follow Camera"));
+    Soul_CameraActor->SetupAttachment(Soul_CameraBoom, USpringArmComponent::SocketName);
+    Soul_CameraActor->SetChildActorClass(ASoulPlayerCamera::StaticClass());
+    // Soul_CameraActor->CreateChildActor();
+
+    //TPS Cam
+    TPS_CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("TPS Camera Boom"));
+    TPS_CameraBoom->SetupAttachment(RootComponent);
+    TPS_CameraBoom->TargetArmLength = 650.0f;	
+    TPS_CameraBoom->bUsePawnControlRotation = false;
+    TPS_CameraBoom->bInheritPitch = false;
+    TPS_CameraBoom->bInheritRoll = false;
+    TPS_CameraBoom->bInheritYaw = false;
+    TPS_CameraBoom->SetRelativeRotation(FRotator(0.f, -55.f, 0.f));
+
+    TPS_CameraActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("TPS Follow Camera"));
+    TPS_CameraActor->SetupAttachment(TPS_CameraBoom, USpringArmComponent::SocketName);
+    TPS_CameraActor->SetChildActorClass(ASoulPlayerCamera::StaticClass());
+    // TPS_CameraActor->CreateChildActor();
 
     // Arrow Component for Target Lock Component
     TargetLockArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("TargetLockArrow"));
     TargetLockArrow->SetupAttachment(RootComponent);
-    TargetLockArrow->SetUsingAbsoluteRotation(1);
+    TargetLockArrow->SetUsingAbsoluteRotation(true);
 
     // Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
     // are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -95,6 +107,8 @@ void ASoul_Like_ACTCharacter::PossessedBy(AController* NewController)
 void ASoul_Like_ACTCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    MakeMove();
 }
 
 void ASoul_Like_ACTCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -110,26 +124,68 @@ void ASoul_Like_ACTCharacter::SetupPlayerInputComponent(class UInputComponent* P
     PlayerInputComponent->BindAxis("LookUpRate", this, &ASoul_Like_ACTCharacter::LookUpAtRate);
 
     PlayerInputComponent->BindAxis("Zoom", this, &ASoul_Like_ACTCharacter::ZoomCamera);
-}
 
+    PlayerInputComponent->BindAxis("MoveForward", this, &ASoul_Like_ACTCharacter::MoveForward);
+    PlayerInputComponent->BindAxis("MoveRight", this, &ASoul_Like_ACTCharacter::MoveRight);
+
+}
+//TODO add keyboard predict direction
 void ASoul_Like_ACTCharacter::ForceOverrideFacingDirection(float Alpha /*=180.f*/)
 {
     FRotator LookAtRotation;
-    
+
+    //Case: targeting
     if(TargetLockingComponent->GetIsTargetingEnabled())
     {
         AActor* Target = TargetLockingComponent->LockedTarget;
 
         //A: Use looking-at rotation
         if(Target)
-             LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Cast<AActor>(Target)->GetActorLocation());
+        {
+            LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Cast<AActor>(Target)->GetActorLocation());
+        }
         else
+        {
             return;
+        }
     }
+    //Case: WSAD
+    else if (!(FMath::IsNearlyZero(ForwardAxisValue) && FMath::IsNearlyZero(RightAxisValue)))
+    {
+        FVector to_vector;
+        float degree;
+        switch (GetSoulController()->GetCamMode())
+        {
+        case ECameraMode::SoulLike:
+            PredictMovement(GetControlRotation(), to_vector, degree);
+            break;
+        case ECameraMode::TPS:
+            PredictMovement(FRotator::ZeroRotator, to_vector, degree);
+            break;
+        case ECameraMode::DetachedCam:
+            return;
+        default:
+            return;
+        }
+
+        LookAtRotation = to_vector.Rotation();
+    }
+    //Case: Not-pressing the button
     else
     {
         //B: Use controller's rotation
-        LookAtRotation = GetController()->GetControlRotation();
+        switch (GetSoulController()->GetCamMode())
+        {
+        case ECameraMode::SoulLike:
+            LookAtRotation = GetControlRotation();
+            break;
+        case ECameraMode::TPS:
+            return;
+        case ECameraMode::DetachedCam:
+            return;
+        default:
+            return;
+        }
     }
 
     //trim-off roll and pitch axises
@@ -139,20 +195,29 @@ void ASoul_Like_ACTCharacter::ForceOverrideFacingDirection(float Alpha /*=180.f*
     SetActorRotation(TargetRotation);
 }
 
-void ASoul_Like_ACTCharacter::GetMyPlayerController(class ASoulPlayerController*& MyController,
-                                                    EIsControllerValid& Outp)
+void ASoul_Like_ACTCharacter::GetActiveCameraAndSpringArm(ACameraActor*& ActiveCam, USpringArmComponent*& ActiveSpringArm, bool& isValid) const
 {
-    if (!GetController())
+    if(!Controller) return;
+    ASoulPlayerController* MyController = Cast<ASoulPlayerController>(GetController());
+    
+    if(MyController)
     {
-        Outp = EIsControllerValid::IsNotValid;
-    }
-    else
-    {
-        MyController = Cast<ASoulPlayerController>(GetController());
-        if (MyController)
-            Outp = EIsControllerValid::IsValid;
-        else
-            Outp = EIsControllerValid::IsNotValid;
+        switch (MyController->GetCamMode())
+        {
+        case ECameraMode::SoulLike:
+            ActiveCam = Cast<ACameraActor>(Soul_CameraActor->GetChildActor());
+            ActiveSpringArm = Soul_CameraBoom;
+            isValid = true;
+            break;
+        case ECameraMode::TPS:
+            ActiveCam = Cast<ACameraActor>(TPS_CameraActor->GetChildActor());
+            ActiveSpringArm = TPS_CameraBoom;
+            break;
+        case ECameraMode::DetachedCam:
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -167,14 +232,12 @@ void ASoul_Like_ACTCharacter::ResetRotation()
         FRotator{GetActorRotation().Pitch, GetInstigator()->GetViewRotation().Yaw, GetActorRotation().Roll});
 }
 
-
 AWeaponActor* ASoul_Like_ACTCharacter::EquipGear(TSubclassOf<AWeaponActor> WeaponClassRef, bool bShowTracelines)
 {
     //UnEquip and delete the item
-
-
     AWeaponActor* LocalWeapon = Cast<AWeaponActor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(
         GetWorld(), WeaponClassRef, FTransform::Identity, ESpawnActorCollisionHandlingMethod::AlwaysSpawn, this));
+    
     LocalWeapon->SetInstigator(this);
     LocalWeapon->SetOwner(this);
     LocalWeapon->bEnableDrawTraceLine = bShowTracelines;
@@ -183,11 +246,19 @@ AWeaponActor* ASoul_Like_ACTCharacter::EquipGear(TSubclassOf<AWeaponActor> Weapo
     return LocalWeapon;
 }
 
-void ASoul_Like_ACTCharacter::GetPlayer(UWorld* InWorld, bool& Successful, ASoulPlayerController*& SoulPlayerController,
+ASoulPlayerController* ASoul_Like_ACTCharacter::GetSoulController()
+{
+    if(!_PlayerController)
+        _PlayerController = Cast<ASoulPlayerController>(GetController());
+
+    return _PlayerController;
+}
+
+void ASoul_Like_ACTCharacter::GetPlayer(UObject* WorldContextObj, bool& Successful, ASoulPlayerController*& SoulPlayerController,
                                         ASoul_Like_ACTCharacter*& SoulCharacter,
                                         UInventoryManager*& SoulInventoryManager)
 {
-    SoulPlayerController = Cast<ASoulPlayerController>(InWorld->GetFirstPlayerController());
+    SoulPlayerController = Cast<ASoulPlayerController>(WorldContextObj->GetWorld()->GetFirstPlayerController());
     if (SoulPlayerController)
     {
         SoulCharacter = Cast<ASoul_Like_ACTCharacter>(SoulPlayerController->GetPawn());
@@ -215,22 +286,31 @@ void ASoul_Like_ACTCharacter::GetMovementMode(ESoulMovementMode& MovementMode) c
         Super::GetMovementMode(MovementMode);
 }
 
+//TODO this should be disabled when TPS mode
 void ASoul_Like_ACTCharacter::TurnAtRate(float Rate)
 {
     // calculate delta for this frame from the rate information
-    AddControllerYawInput(_bFreeCamera * Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+    if(GetSoulController()->GetCamMode() == ECameraMode::SoulLike)
+        AddControllerYawInput(_bFreeCamera * Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ASoul_Like_ACTCharacter::LookUpAtRate(float Rate)
 {
     // calculate delta for this frame from the rate information
-    AddControllerPitchInput(_bFreeCamera * Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+    if(GetSoulController()->GetCamMode() == ECameraMode::SoulLike)
+        AddControllerPitchInput(_bFreeCamera * Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ASoul_Like_ACTCharacter::ZoomCamera(float Rate)
 {
-    float& ArmLength = CameraBoom->TargetArmLength;
-    ArmLength += Rate * -100.f;
+    if(GetSoulController()->GetCamMode() == ECameraMode::SoulLike)
+    {        
+        Soul_CameraBoom->TargetArmLength += Rate * -100.f;
+    }
+    else if(GetSoulController()->GetCamMode() == ECameraMode::TPS)
+    {
+        TPS_CameraBoom->TargetArmLength += Rate * -100.f;
+    }
 }
 
 void ASoul_Like_ACTCharacter::CalculateLeanValue(float TurnValue)
@@ -249,18 +329,16 @@ void ASoul_Like_ACTCharacter::CalculateLeanValue(float TurnValue)
     LeanAmount_Anim = FMath::FInterpTo(LeanAmount_Anim, LeanAmount_Char, GetWorld()->GetDeltaSeconds(), LeanSpeed_Char);
 }
 
-
-void ASoul_Like_ACTCharacter::PredictMovement(FVector& DirectionVec, float& Degree)
+void ASoul_Like_ACTCharacter::PredictMovement(FRotator InForward, FVector& DirectionVec, float& Degree) const
 {
-    const FRotator Rotation = Controller->GetControlRotation();
 
-    const FRotator YawRotation(0, Rotation.Yaw, 0);
+    const FRotator YawRotation(0, InForward.Yaw, 0);
 
     DirectionVec =
     (
         FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X) * ForwardAxisValue +
         FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y) * RightAxisValue
-    ).GetSafeNormal();
+    ).GetSafeNormal2D();
 
     if (!DirectionVec.IsNearlyZero())
     {
@@ -274,46 +352,41 @@ void ASoul_Like_ACTCharacter::PredictMovement(FVector& DirectionVec, float& Degr
         Degree = 0;
 }
 
-void ASoul_Like_ACTCharacter::BlendCamera()
-{
-    if(!_bFreeCamera)
-    {
-        
-    }
-}
 
 void ASoul_Like_ACTCharacter::MoveForward(float Value)
 {
-    //Axis Value for AnimManager
     ForwardAxisValue = Value;
 }
 
 void ASoul_Like_ACTCharacter::MoveRight(float Value)
 {
-    //Get axis value for AnimManager
     RightAxisValue = Value;
 }
 
 void ASoul_Like_ACTCharacter::MakeMove()
 {
-    if (Controller)
+    if(GetSoulController())
     {
         FVector Direction;
         float Degree;
         float LocoMulti;
-
-        if(_bFreeCamera)
+        
+        if(GetSoulController()->GetCamMode() == ECameraMode::SoulLike)
         {
-                        
-        } else
-        {
-            PredictMovement(Direction, Degree);
-            DegreeToMovementMultiplier(Degree, LocoMulti);
+            PredictMovement(GetController()->GetControlRotation(), Direction, Degree);
 
-            if (TargetLockingComponent->GetIsTargetingEnabled())
-                AddMovementInput(Direction, .6f * LocoMulti);
-            else
-                AddMovementInput(Direction, LocoMulti);   
         }
+        else if(GetSoulController()->GetCamMode() == ECameraMode::TPS)
+        {
+            PredictMovement(FRotator::ZeroRotator, Direction, Degree);
+        }
+
+        DegreeToMovementMultiplier(Degree, LocoMulti);
+
+        if (TargetLockingComponent->GetIsTargetingEnabled())
+            AddMovementInput(Direction, .6f * LocoMulti);
+        else
+            AddMovementInput(Direction, LocoMulti);   
+        
     }
 }

@@ -11,6 +11,7 @@
 #include "Abilities/SoulGameplayAbility.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Player/SoulPlayerController.h"
 
 // Sets default values for this component's properties
 UActionSysManager::UActionSysManager()
@@ -71,7 +72,17 @@ void UActionSysManager::PredictMovingDirection(ASoul_Like_ACTCharacter* Characte
 {
     FVector PlayerVelocity;
     float Degree;
-    CharacterRef->PredictMovement(PlayerVelocity, Degree);
+    
+    if(CharacterRef->GetSoulController()->GetCamMode() == ECameraMode::SoulLike)
+    {
+        CharacterRef->PredictMovement(CharacterRef->GetController()->GetControlRotation(), PlayerVelocity, Degree);
+
+    }
+    else if(CharacterRef->GetSoulController()->GetCamMode() == ECameraMode::TPS)
+    {
+        CharacterRef->PredictMovement(FRotator::ZeroRotator, PlayerVelocity, Degree);
+    }
+    
     const FRotator PlayerRotation = CharacterRef->GetActorRotation();
     if (!PlayerVelocity.IsNearlyZero())
     {
