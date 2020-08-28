@@ -110,11 +110,6 @@ void ASoulCharacterBase::HandlePostureDamage(float PostureDamageAmount, const bo
     OnPostureDamaged(PostureDamageAmount, IsCriticaled, HitInfo, DamageTags, InstigatorCharacter, DamageCauser);
 }
 
-void ASoulCharacterBase::ResetPerilousStatus()
-{
-    LOG_FUNC_FAIL();
-}
-
 void ASoulCharacterBase::MakeStepDecelAndSound_Notify(ASoulCharacterBase* CharacterRef)
 {
     CharacterRef->MakeStepDecelAndSound();

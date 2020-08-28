@@ -10,15 +10,12 @@
 
 class AWeaponActor;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryLoadingFinished, UInventoryManager*, OutInventoryManager, bool,
-                                             OutFirstTimeInventLoading);
-
-/**
- * This component is only been used to handle Items
- */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SOUL_LIKE_ACT_API UInventoryManager : public UActorComponent
 {
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryLoadingFinished, UInventoryManager*, OutInventoryManager, bool,
+                                             OutFirstTimeInventLoading);
+    
     GENERATED_BODY()
 
     class ASoul_Like_ACTCharacter* PlayerRef;

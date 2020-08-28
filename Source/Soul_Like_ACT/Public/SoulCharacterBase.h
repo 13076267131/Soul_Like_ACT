@@ -167,7 +167,7 @@ public:
     ATTRIBUTE_GETTER_AND_HANDLECHANGED_OneParam(CriticalMulti);
 
     UFUNCTION(BlueprintCallable)
-    float GetPosturePercent() { return GetPosture() / GetMaxPosture(); }
+    float GetPosturePercent() const { return GetPosture() / GetMaxPosture(); }
 
     /** Returns the character level that is passed to the ability system */
     UFUNCTION(BlueprintCallable)
@@ -296,9 +296,6 @@ protected:
 
     UFUNCTION(BlueprintNativeEvent)
     void MakeStepDecelAndSound();
-
-    UFUNCTION(BlueprintCallable)
-    void ResetPerilousStatus();
 
     UPROPERTY()
     TArray<ASoulCharacterBase*> CounterTargets;

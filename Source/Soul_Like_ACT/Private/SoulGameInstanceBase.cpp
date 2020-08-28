@@ -114,7 +114,7 @@ void USoulGameInstanceBase::MakeSaveData()
 
     if (!TempPawn || !Cast<ASoul_Like_ACTCharacter>(TempPawn))
     {
-        LOG_FUNC_FAIL();
+        LOG_FUNC_FAIL("");
         return;
     }
 

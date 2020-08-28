@@ -1,9 +1,7 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "Player/Soul_Like_ACTCharacter.h"
-
-#include "Player/ActionSysManager.h"
-#include "Player/LockTargetComponent.h"
+#include "Player/PlayerTargetingComponent.h"
 #include "Player/InventoryManager.h"
 #include "Player/SoulPlayerController.h"
 #include "Item/WeaponActor.h"
@@ -74,13 +72,7 @@ ASoul_Like_ACTCharacter::ASoul_Like_ACTCharacter()
     TargetLockArrow->SetupAttachment(RootComponent);
     TargetLockArrow->SetUsingAbsoluteRotation(true);
 
-    // Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-    // are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
-
-    ActionSysManager = CreateDefaultSubobject<UActionSysManager>(TEXT("ActionSysManager"));
-    ActionSysManager->PlayerRef = this;
-
-    TargetLockingComponent = CreateDefaultSubobject<ULockTargetComponent>(TEXT("TargetLockingComponent"));
+    TargetingComponent = CreateDefaultSubobject<UPlayerTargetingComponent>(TEXT("TargetLockingComponent"));
 
     InventoryManager = CreateDefaultSubobject<UInventoryManager>(TEXT("InventoryManager"));
     InventoryManager->PlayerRef = this;
@@ -94,8 +86,6 @@ ASoul_Like_ACTCharacter::ASoul_Like_ACTCharacter()
 void ASoul_Like_ACTCharacter::BeginPlay()
 {
     Super::BeginPlay();
-
-    TargetLockingComponent->InitComponent(TargetLockArrow);
 }
 
 
@@ -128,45 +118,56 @@ void ASoul_Like_ACTCharacter::SetupPlayerInputComponent(class UInputComponent* P
     PlayerInputComponent->BindAxis("MoveForward", this, &ASoul_Like_ACTCharacter::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ASoul_Like_ACTCharacter::MoveRight);
 
+    FInputActionBinding Binding_Targeting("Targeting", IE_Pressed);
+    Binding_Targeting.ActionDelegate.GetDelegateForManualSet().BindLambda(
+        [this]()
+        {
+            TargetingComponent->ToggleCameraLock(GetSoulController()->GetCamMode() == ECameraMode::SoulLike);
+        });
+
+    FInputActionBinding Binding_LeftTarget("LeftTarget", IE_Pressed);
+    Binding_Targeting.ActionDelegate.GetDelegateForManualSet().BindLambda(
+        [this]()
+        {
+            TargetingComponent->Toggle_InDirection(ETargetFindingDirection::Left);
+        });
+
+    FInputActionBinding Binding_RightTarget("RightTarget", IE_Pressed);
+    Binding_Targeting.ActionDelegate.GetDelegateForManualSet().BindLambda(
+        [this]()
+        {
+            TargetingComponent->Toggle_InDirection(ETargetFindingDirection::Right);
+        });
 }
 //TODO add keyboard predict direction
 void ASoul_Like_ACTCharacter::ForceOverrideFacingDirection(float Alpha /*=180.f*/)
 {
     FRotator LookAtRotation;
 
-    //Case: targeting
-    if(TargetLockingComponent->GetIsTargetingEnabled())
+    if(GetSoulController()->GetCamMode() == ECameraMode::DetachedCam)
     {
-        AActor* Target = TargetLockingComponent->LockedTarget;
+        LOG_FUNC_FAIL("Camera detached from the character");
+        return;
+    }
+
+    //Case: targeting
+    if(TargetingComponent->GetIsTargetingEnabled())
+    {
+        AActor* Target = TargetingComponent->LockedTarget;
 
         //A: Use looking-at rotation
         if(Target)
-        {
             LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Cast<AActor>(Target)->GetActorLocation());
-        }
         else
-        {
             return;
-        }
     }
     //Case: WSAD
-    else if (!(FMath::IsNearlyZero(ForwardAxisValue) && FMath::IsNearlyZero(RightAxisValue)))
+    else if (IsMovementInputPressed())
     {
         FVector to_vector;
         float degree;
-        switch (GetSoulController()->GetCamMode())
-        {
-        case ECameraMode::SoulLike:
-            PredictMovement(GetControlRotation(), to_vector, degree);
-            break;
-        case ECameraMode::TPS:
-            PredictMovement(FRotator::ZeroRotator, to_vector, degree);
-            break;
-        case ECameraMode::DetachedCam:
-            return;
-        default:
-            return;
-        }
+        
+        PredictMovement(to_vector, degree);
 
         LookAtRotation = to_vector.Rotation();
     }
@@ -315,7 +316,7 @@ void ASoul_Like_ACTCharacter::ZoomCamera(float Rate)
 
 void ASoul_Like_ACTCharacter::CalculateLeanValue(float TurnValue)
 {
-    if (TargetLockingComponent->GetIsTargetingEnabled() || GetMovementComponent()->Velocity.Size() < 10.f)
+    if (TargetingComponent->GetIsTargetingEnabled() || GetMovementComponent()->Velocity.Size() < 10.f)
     {
         LeanAmount_Char = 0.f;
         LeanSpeed_Char = 10.f;
@@ -329,10 +330,18 @@ void ASoul_Like_ACTCharacter::CalculateLeanValue(float TurnValue)
     LeanAmount_Anim = FMath::FInterpTo(LeanAmount_Anim, LeanAmount_Char, GetWorld()->GetDeltaSeconds(), LeanSpeed_Char);
 }
 
-void ASoul_Like_ACTCharacter::PredictMovement(FRotator InForward, FVector& DirectionVec, float& Degree) const
+void ASoul_Like_ACTCharacter::PredictMovement(FVector& DirectionVec, float& Degree)
 {
+    FRotator YawRotation;
 
-    const FRotator YawRotation(0, InForward.Yaw, 0);
+    if(GetSoulController()->GetCamMode() == ECameraMode::SoulLike)
+    {
+        YawRotation = FRotator(0.f, GetControlRotation().Yaw, 0.f);
+    }
+    else if(GetSoulController()->GetCamMode() == ECameraMode::TPS)
+    {
+        YawRotation = FRotator::ZeroRotator;
+    }
 
     DirectionVec =
     (
@@ -371,19 +380,11 @@ void ASoul_Like_ACTCharacter::MakeMove()
         float Degree;
         float LocoMulti;
         
-        if(GetSoulController()->GetCamMode() == ECameraMode::SoulLike)
-        {
-            PredictMovement(GetController()->GetControlRotation(), Direction, Degree);
-
-        }
-        else if(GetSoulController()->GetCamMode() == ECameraMode::TPS)
-        {
-            PredictMovement(FRotator::ZeroRotator, Direction, Degree);
-        }
+        PredictMovement(Direction, Degree);
 
         DegreeToMovementMultiplier(Degree, LocoMulti);
 
-        if (TargetLockingComponent->GetIsTargetingEnabled())
+        if (TargetingComponent->GetIsTargetingEnabled())
             AddMovementInput(Direction, .6f * LocoMulti);
         else
             AddMovementInput(Direction, LocoMulti);   

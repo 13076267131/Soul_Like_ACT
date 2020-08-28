@@ -89,12 +89,9 @@ bool UInventoryManager::AddInventoryItem(FSoulItemData InItemData)
             return true;
         }
 
-        LOG_FUNC_FAIL();
+        LOG_FUNC_FAIL("");
         return false;
     }
-
-    LOG_FUNC_FAIL();
-    return false;
 }
 
 bool UInventoryManager::AddEquipment(FSoulInventSlot InventorySlot)

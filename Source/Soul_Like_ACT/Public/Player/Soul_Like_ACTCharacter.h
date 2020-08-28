@@ -24,14 +24,11 @@ protected:
     UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Camera)
     UChildActorComponent* TPS_CameraActor;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Component)
-    class UActionSysManager* ActionSysManager;
-
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
     class UArrowComponent* TargetLockArrow;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
-    class ULockTargetComponent* TargetLockingComponent;
+    class UPlayerTargetingComponent* TargetingComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
     class UInventoryManager* InventoryManager;
@@ -87,7 +84,14 @@ protected:
     void CalculateLeanValue(float TurnValue);
     //----------------------------------
 
-    void PredictMovement(FRotator InForward, FVector& DirectionVec, float& Degree) const;
+    UFUNCTION(BlueprintCallable)
+    bool IsMovementInputPressed() const
+    {
+        return !(FMath::IsNearlyZero(ForwardAxisValue) && FMath::IsNearlyZero(RightAxisValue));
+    }
+    
+    UFUNCTION(BlueprintCallable)
+    void PredictMovement(FVector& DirectionVec, float& Degree);
 
     UFUNCTION(BlueprintImplementableEvent)
     void DegreeToMovementMultiplier(const float& Degree, float& Multiplier);
@@ -107,8 +111,6 @@ public:
 
 //-----------CAMERA------------------
 public:
-    FORCEINLINE class UActionSysManager* GetActionSysManager() const { return ActionSysManager; }
-
     UFUNCTION(BlueprintCallable)
     void ResetRotation();
 
@@ -130,6 +132,5 @@ public:
     UFUNCTION(BlueprintCallable, meta=(DeprecatedNode), Category = Camera)
     void SetCameraMode(bool bFreeCamera) { _bFreeCamera = bFreeCamera; }
     
-    friend UActionSysManager;
     friend class ASoulPlayerController;
 };

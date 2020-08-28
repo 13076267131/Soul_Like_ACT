@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "LockTargetComponent.generated.h"
+#include "PlayerTargetingComponent.generated.h"
 
 UENUM(BlueprintType)
 enum class ETargetFindingDirection : uint8
@@ -14,41 +14,45 @@ enum class ETargetFindingDirection : uint8
     Right,
 };
 
+struct FRotationCache
+{
+    bool bOwnerControllerRotationYaw = false
+     , bOwnerOrientRotToMovement = true
+     , bOwnerControllerDesiredRot = false;
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class SOUL_LIKE_ACT_API ULockTargetComponent : public UActorComponent
+class SOUL_LIKE_ACT_API UPlayerTargetingComponent : public UActorComponent
 {
     GENERATED_BODY()
 
 protected:
     FTimerHandle TargetBlockingHandler;
 
-    bool bFreeCamera;
-
+    bool bLockCamera;
+    
     bool bIsFacingOffsetEnabled;
     float FacingOffsetDelta;
     float FacingOffset_ForwardRotationYaw;
     float FacingOffset_CurrentRotationYaw;
 
-    bool bOwnerControllerRotationYaw = false
-         , bOwnerOrientRotToMovement = true
-         , bOwnerControllerDesiredRot = false;
+    FRotationCache RotationCache;
 
+    UPROPERTY()
     TArray<AActor*> PotentialTargetActors;
 
-    class UArrowComponent* PlayerArrow;
-    class ACharacter* PlayerRef;
+    class ACharacter* _PlayerRef;
 
 public:
-    // Sets default values for this component's properties
-    ULockTargetComponent();
+    UPlayerTargetingComponent();
 
+    UPROPERTY()
     class AActor* LockedTarget;
 
-    UPROPERTY(BlueprintReadOnly)
+    UPROPERTY()
     bool isTargetingEnabled;
 
 protected:
-    // Called when the game starts
     virtual void BeginPlay() override;
 
     //Detection Stages-----------
@@ -66,7 +70,7 @@ protected:
     void DisableLockingTarget();
 
     void CacheRotationSetting();
-    void ResetRotationSetting();
+    void ResetRotationSetting() const;
 
     void SetRotationMode_FaceTarget();
 
@@ -76,20 +80,17 @@ protected:
     void Timer_CheckBlockingAndDistance();
 
     void Tick_UpdateRotation();
-
-    void InitComponent(class UArrowComponent* ArrowComponentRef);
 public:
-    // Called every frame
     virtual void TickComponent(float DeltaTime, ELevelTick TickType,
                                FActorComponentTickFunction* ThisTickFunction) override;
 
     UFUNCTION(BlueprintCallable)
-    void ToggleCameraLock(bool FreeCamera);
+    void ToggleCameraLock(bool _bLockCamera);
 
     UFUNCTION(BlueprintCallable)
     void Toggle_InDirection(ETargetFindingDirection Direction) { FindTarget(Direction); }
 
-    bool GetIsTargetingEnabled() { return isTargetingEnabled; }
+    bool GetIsTargetingEnabled() const { return isTargetingEnabled; }
 
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = TargetLocking)
     void GetLockedTarget(bool& isEnabled, AActor*& OutLockedTarget) const
