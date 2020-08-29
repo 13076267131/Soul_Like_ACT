@@ -18,12 +18,12 @@ class SOUL_LIKE_ACT_API UInventoryManager : public UActorComponent
     
     GENERATED_BODY()
 
-    class ASoul_Like_ACTCharacter* PlayerRef;
+    class ASoul_Like_ACTCharacter* _PlayerRef;
 
 public:
     UInventoryManager();
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, meta = (WorldContextObject="WorldContext"))
     static bool GetInventoryManager(UObject* WorldContext, UInventoryManager*& InventoryManager);
 
 protected:

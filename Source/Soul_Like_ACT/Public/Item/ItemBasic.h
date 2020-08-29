@@ -26,7 +26,7 @@ enum class EGearType : uint8
 };
 
 /** Base class for all items, do not blueprint directly */
-UCLASS(Abstract, BlueprintType)
+UCLASS(Abstract)
 class SOUL_LIKE_ACT_API USoulItem : public UPrimaryDataAsset
 {
     GENERATED_BODY()
@@ -89,7 +89,7 @@ public:
     virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 };
 
-UCLASS()
+UCLASS(Abstract, BlueprintType)
 class SOUL_LIKE_ACT_API USoulWeaponItem : public USoulItem
 {
     GENERATED_BODY()
@@ -103,7 +103,7 @@ public:
     }
 };
 
-UCLASS()
+UCLASS(Abstract, BlueprintType)
 class SOUL_LIKE_ACT_API USoulArmourItem : public USoulItem
 {
     GENERATED_BODY()
@@ -118,7 +118,7 @@ public:
     }
 };
 
-UCLASS()
+UCLASS(Abstract, BlueprintType)
 class SOUL_LIKE_ACT_API USoulPotionItem : public USoulItem
 {
     GENERATED_BODY()
@@ -133,7 +133,7 @@ public:
     }
 };
 
-UCLASS()
+UCLASS(Abstract, BlueprintType)
 class SOUL_LIKE_ACT_API USoulJewelItem : public USoulItem
 {
     GENERATED_BODY()

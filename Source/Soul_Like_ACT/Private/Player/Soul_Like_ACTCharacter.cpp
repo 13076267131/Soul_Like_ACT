@@ -75,7 +75,7 @@ ASoul_Like_ACTCharacter::ASoul_Like_ACTCharacter()
     TargetingComponent = CreateDefaultSubobject<UPlayerTargetingComponent>(TEXT("TargetLockingComponent"));
 
     InventoryManager = CreateDefaultSubobject<UInventoryManager>(TEXT("InventoryManager"));
-    InventoryManager->PlayerRef = this;
+    InventoryManager->_PlayerRef = this;
 
     Faction = EActorFaction::Player;
 

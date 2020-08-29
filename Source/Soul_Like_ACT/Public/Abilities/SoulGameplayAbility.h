@@ -82,7 +82,7 @@ public:
  * Most games will need to implement a subclass to support their game-specific code
  */
 UCLASS()
-class SOUL_LIKE_ACT_API USoulModifierGameplayAbility : public USoulGameplayAbility
+class SOUL_LIKE_ACT_API USoulModifierGameplayAbility : public UGameplayAbility
 {
     GENERATED_BODY()
 
@@ -90,6 +90,7 @@ public:
     USoulModifierGameplayAbility()
         : DisplayName(FText::FromString("Invalid Modifier"))
     {
+        InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
     }
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Default)
