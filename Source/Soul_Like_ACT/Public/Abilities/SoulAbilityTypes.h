@@ -43,7 +43,7 @@ public:
 
 /** A "processed" version of RPGGameplayEffectContainer that can be passed around and eventually applied */
 USTRUCT(BlueprintType)
-struct FSoulGameplayEffectContainerSpec
+ struct FSoulGameplayEffectContainerSpec
 {
     GENERATED_BODY()
 

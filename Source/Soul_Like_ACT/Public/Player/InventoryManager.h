@@ -15,6 +15,11 @@ class SOUL_LIKE_ACT_API UInventoryManager : public UActorComponent
 {
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryLoadingFinished, UInventoryManager*, OutInventoryManager, bool,
                                              OutFirstTimeInventLoading);
+
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlottedItemChanged, FSoulInventSlot, ItemSlot, FSoulItemData, Item);
+
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEquipmentChanged, FSoulEquipmentSlot, EquipmentSlot, FSoulItemData,
+                                                 Item);
     
     GENERATED_BODY()
 
@@ -27,9 +32,6 @@ public:
     static bool GetInventoryManager(UObject* WorldContext, UInventoryManager*& InventoryManager);
 
 protected:
-    /** Adds a new inventory item, will add it to an empty slot if possible.
-    If the item supports count you can add more than one count.
-    It will also update the level when adding if required */
     UFUNCTION(BlueprintCallable, Category = Inventory)
     bool AddInventoryItem(FSoulItemData InItemData);
 
@@ -39,40 +41,29 @@ protected:
     UFUNCTION(BlueprintCallable, Category = Equipment)
     bool RemoveEquipment(FSoulEquipmentSlot FromEquipSlot);
 
-    /** Remove an inventory item, will also remove from slots.
-    A remove count of <= 0 means to remove all copies */
     UFUNCTION(BlueprintCallable, Category = Inventory)
     bool RemoveInventoryItem(FSoulItemData RemovedItem);
 
-    /** Remove an inventory item */
     UFUNCTION(BlueprintCallable, Category = Inventory)
     bool RemoveInventoryItemAtIndex(FSoulInventSlot InItemSlot, int32 ItemCount = 1);
 
-    /** Get the reference of the ItemData at the slot. Return true if the data has a valid ItemBase and positive quantity*/
     UFUNCTION(BlueprintPure, Category = Inventory)
     bool GetInventoryItemData(FSoulInventSlot InItemSlot, FSoulItemData& ItemData) const;
-    /** Get the reference of the Gear ItemData at the slot. Return true if the data has a valid ItemBase and positive quantity*/
     UFUNCTION(BlueprintPure, Category = Inventory)
     bool GetEquipItemData(FSoulEquipmentSlot InEquipSlot, FSoulItemData& ItemData) const;
 
-    /** Returns number of instances of this item found in the inventory. This uses count from GetItemData */
     UFUNCTION(BlueprintPure, Category = Inventory)
     int32 GetSlottedItemCount(FSoulInventSlot InItemSlot) const;
 
     UFUNCTION(BlueprintCallable, Category = Inventory)
     const EGearType GetGearType(FSoulInventSlot InItemSlot);
-
-    /**
-     * Save/Load
-     */
+    
 public:
-    /** Map of slot, from type/num to item, initialized from ItemSlotsPerType on RPGGameInstanceBase */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Inventory)
     TMap<FSoulInventSlot, FSoulItemData> InventoryItems;
 
-    /** Map of slot, from type/num to item, initialized from ItemSlotsPerType on RPGGameInstanceBase */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Inventory)
-    TMap<FSoulEquipmentSlot, FSoulItemData> EquipedItems;
+    TMap<FSoulEquipmentSlot, FSoulItemData> EquippedItems;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     AWeaponActor* CurrentWeapon;

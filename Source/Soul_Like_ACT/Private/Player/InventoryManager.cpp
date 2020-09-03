@@ -109,9 +109,9 @@ bool UInventoryManager::AddEquipment(FSoulInventSlot InventorySlot)
 
             //remove the current GA
             if (MyModiferManager)
-                MyModiferManager->UpdateModifierToPlayer(EquipedItems[EquipSlot], false);
+                MyModiferManager->UpdateModifierToPlayer(EquippedItems[EquipSlot], false);
 
-            SetItemSlot(EquipedItems[EquipSlot], InventorySlot);
+            SetItemSlot(EquippedItems[EquipSlot], InventorySlot);
 
             InventoryToEquipment(InventData, EquipSlot);
 
@@ -140,8 +140,8 @@ bool UInventoryManager::RemoveEquipment(FSoulEquipmentSlot FromEquipSlot)
         if (MyModiferManager)
             MyModiferManager->UpdateModifierToPlayer(OldData, false);
 
-        EquipedItems[FromEquipSlot] = FSoulItemData();
-        NotifyEquipmentChanged(FromEquipSlot, EquipedItems[FromEquipSlot]);
+        EquippedItems[FromEquipSlot] = FSoulItemData();
+        NotifyEquipmentChanged(FromEquipSlot, EquippedItems[FromEquipSlot]);
 
         AddInventoryItem(OldData);
         return true;
@@ -226,7 +226,7 @@ bool UInventoryManager::GetEquipSlot(EGearType GearType, FSoulEquipmentSlot& Equ
 
     EquipSlot = FSoulEquipmentSlot(GearType);
 
-    if (EquipedItems.Contains(EquipSlot))
+    if (EquippedItems.Contains(EquipSlot))
         return true;
 
     return false;
@@ -247,7 +247,7 @@ bool UInventoryManager::GetInventoryItemData(FSoulInventSlot InItemSlot, FSoulIt
 
 bool UInventoryManager::GetEquipItemData(FSoulEquipmentSlot InEquipSlot, FSoulItemData& ItemData) const
 {
-    const FSoulItemData* TempItemData = EquipedItems.Find(InEquipSlot);
+    const FSoulItemData* TempItemData = EquippedItems.Find(InEquipSlot);
 
     if (TempItemData && TempItemData->IsValid())
     {
@@ -319,7 +319,7 @@ bool UInventoryManager::LoadInventoryData(TArray<FSoulItemData>& InInventoryItem
         ++i;
     }
 
-    EquipedItems = InEquipedItems;
+    EquippedItems = InEquipedItems;
 
     //TODO: update GAs
 
@@ -337,14 +337,14 @@ bool UInventoryManager::InventoryToEquipment(FSoulItemData FromItem, FSoulEquipm
         {
             //TODO: update GA
 
-            EquipedItems[MyEquipSlot] = FromItem;
+            EquippedItems[MyEquipSlot] = FromItem;
 
             NotifyEquipmentChanged(MyEquipSlot, FromItem);
 
             USoulModifierManager* MyModiferManager = USoulModifierManager::GetSoulModifierManger(GetOwner());
 
             if (MyModiferManager)
-                MyModiferManager->UpdateModifierToPlayer(EquipedItems[MyEquipSlot], true);
+                MyModiferManager->UpdateModifierToPlayer(EquippedItems[MyEquipSlot], true);
 
             return true;
         }
@@ -370,21 +370,21 @@ void UInventoryManager::SetEquipSlot(FSoulItemData& InItemData, FSoulEquipmentSl
 
     if (!GetEquipItemData(EquipSlot, MyInventData))
     {
-        EquipedItems[EquipSlot] = InItemData;
+        EquippedItems[EquipSlot] = InItemData;
         InItemData.ItemCount = 0;
     }
 
         //Switch ItemData
     else
     {
-        EquipedItems[EquipSlot] = InItemData;
+        EquippedItems[EquipSlot] = InItemData;
         InItemData = MyInventData;
     }
 
-    if (EquipedItems[EquipSlot].IsValid())
+    if (EquippedItems[EquipSlot].IsValid())
     {
         UE_LOG(LogTemp, Warning, TEXT("New_ItemData-> Name:%s"),
-               *(EquipedItems[EquipSlot].ItemBase->ItemName.ToString()));
+               *(EquippedItems[EquipSlot].ItemBase->ItemName.ToString()));
     }
 
     else
@@ -392,7 +392,7 @@ void UInventoryManager::SetEquipSlot(FSoulItemData& InItemData, FSoulEquipmentSl
         UE_LOG(LogTemp, Error, TEXT("New_ItemData->Invalid"));
     }
 
-    NotifyEquipmentChanged(EquipSlot, EquipedItems[EquipSlot]);
+    NotifyEquipmentChanged(EquipSlot, EquippedItems[EquipSlot]);
 }
 
 void UInventoryManager::SetItemSlot(UPARAM(ref) FSoulItemData& InItemData, FSoulInventSlot ItemSlot)

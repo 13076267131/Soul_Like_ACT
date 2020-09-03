@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "AttributeSet.h"
+#include "ItemAttribute.h"
 #include "Engine/DataAsset.h"
 #include "Engine/Texture.h"
 #include "SoulAssetManager.h"
@@ -74,9 +77,7 @@ public:
     int32 MaxSlots;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
-    TSubclassOf<class USoulPrimaryStatusGameplayAbility> PrimaryAbility;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Abilities)
-    int32 PrimaryAbilityLevel;
+    TArray<UItemAttribute> ItemAttributes;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
     TMap<TSubclassOf<class USoulModifierGameplayAbility>, int32> Modifiers;
@@ -89,7 +90,7 @@ public:
     virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 };
 
-UCLASS(Abstract, BlueprintType)
+UCLASS(Blueprintable)
 class SOUL_LIKE_ACT_API USoulWeaponItem : public USoulItem
 {
     GENERATED_BODY()
@@ -103,7 +104,7 @@ public:
     }
 };
 
-UCLASS(Abstract, BlueprintType)
+UCLASS(Blueprintable)
 class SOUL_LIKE_ACT_API USoulArmourItem : public USoulItem
 {
     GENERATED_BODY()
@@ -118,7 +119,7 @@ public:
     }
 };
 
-UCLASS(Abstract, BlueprintType)
+UCLASS(Blueprintable)
 class SOUL_LIKE_ACT_API USoulPotionItem : public USoulItem
 {
     GENERATED_BODY()
@@ -133,7 +134,7 @@ public:
     }
 };
 
-UCLASS(Abstract, BlueprintType)
+UCLASS(Blueprintable)
 class SOUL_LIKE_ACT_API USoulJewelItem : public USoulItem
 {
     GENERATED_BODY()

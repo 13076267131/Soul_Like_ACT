@@ -204,8 +204,4 @@ struct SOUL_LIKE_ACT_API FSoulItemData
 };
 
 
-/** Delegate called when the contents of an inventory slot change */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlottedItemChanged, FSoulInventSlot, ItemSlot, FSoulItemData, Item);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEquipmentChanged, FSoulEquipmentSlot, EquipmentSlot, FSoulItemData,
-                                             Item);

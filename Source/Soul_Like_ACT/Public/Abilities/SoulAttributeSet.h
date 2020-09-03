@@ -26,17 +26,14 @@ public:
     virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
     virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
-    /** Current Health, when 0 we expect owner to die. Capped by MaxHealth */
     UPROPERTY(BlueprintReadOnly, Category = "Health")
     FGameplayAttributeData Health;
     ATTRIBUTE_ACCESSORS(USoulAttributeSet, Health)
 
-    /** MaxHealth is its own attribute, since GameplayEffects may modify it */
     UPROPERTY(BlueprintReadOnly, Category = "Health")
     FGameplayAttributeData MaxHealth;
     ATTRIBUTE_ACCESSORS(USoulAttributeSet, MaxHealth)
 
-    /** Current Health, when 0 we expect owner to die. Capped by MaxHealth */
     UPROPERTY(BlueprintReadOnly, Category = "Defense")
     FGameplayAttributeData Posture;
     ATTRIBUTE_ACCESSORS(USoulAttributeSet, Posture)
@@ -53,6 +50,16 @@ public:
     FGameplayAttributeData DefensePower;
     ATTRIBUTE_ACCESSORS(USoulAttributeSet, DefensePower)
 
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData Attack_Base;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, Attack_Base)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData Attack_Inc;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, Attack_Inc)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData Attack_More;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, Attack_More)
+    
     UPROPERTY(BlueprintReadOnly, Category = "Damage")
     FGameplayAttributeData AttackPower;
     ATTRIBUTE_ACCESSORS(USoulAttributeSet, AttackPower)

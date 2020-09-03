@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Abilities/SoulGameplayAbility.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/SoulAbilitySystemComponent.h"
 #include "Abilities/SoulTargetType.h"
 #include "SoulCharacterBase.h"
@@ -107,5 +109,40 @@ void USoulModifierGameplayAbility::RemoveEffectsFromSelf()
     {
         if (LocalActiveEffect.WasSuccessfullyApplied())
             LocalActiveEffect.GetOwningAbilitySystemComponent()->RemoveActiveGameplayEffect(LocalActiveEffect);
+    }
+}
+
+USoulPrimaryStatusGameplayAbility::USoulPrimaryStatusGameplayAbility()
+{
+}
+
+void USoulPrimaryStatusGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+                                                        const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
+                                                        const FGameplayEventData* TriggerEventData)
+{
+    for (auto& LocalGE : ModifierEffects)
+    {
+        
+        FGameplayEffectSpecHandle GE_SpecHandle = MakeOutgoingGameplayEffectSpec(LocalGE, 1);
+        while(auto setter : GE_SpecHandle.Data->SetByCallerTagMagnitudes)
+        GE_SpecHandle.Data->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag("Tag.what"), ParamStruct.Params[0]);
+        auto ActiveGE_Handle = K2_ApplyGameplayEffectSpecToOwner(GE_SpecHandle);
+
+        if (ActiveGE_Handle.IsValid())
+        {
+            EffectCollection.Add(ActiveGE_Handle);
+        }
+    }
+}
+
+void USoulPrimaryStatusGameplayAbility::OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo,
+    const FGameplayAbilitySpec& Spec)
+{
+    auto ABS = Cast<USoulAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
+
+    for (FActiveGameplayEffectHandle& LocalActiveEffect : EffectCollection)
+    {
+        if (LocalActiveEffect.WasSuccessfullyApplied())
+            ABS->RemoveActiveGameplayEffect(LocalActiveEffect);
     }
 }

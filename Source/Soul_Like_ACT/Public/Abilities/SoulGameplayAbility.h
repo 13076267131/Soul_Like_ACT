@@ -6,6 +6,8 @@
 #include "Abilities/GameplayAbility.h"
 #include "Abilities/SoulAbilityTypes.h"
 #include "GameplayTagContainer.h"
+#include "Modifier.h"
+
 #include "SoulGameplayAbility.generated.h"
 
 /**
@@ -109,14 +111,28 @@ public:
 };
 
 UCLASS()
-class SOUL_LIKE_ACT_API USoulPrimaryStatusGameplayAbility : public USoulModifierGameplayAbility
+class SOUL_LIKE_ACT_API USoulPrimaryStatusGameplayAbility : public USoulGameplayAbility
 {
     GENERATED_BODY()
 
 public:
-    USoulPrimaryStatusGameplayAbility()
-    {
-    }
+    USoulPrimaryStatusGameplayAbility();
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Modifier)
+    uint8 ParamNum = 1;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Modifier)
+    FString ModifierFormat = "Attack Damage:{a}";
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Default)
+    TArray<TSubclassOf<UGameplayEffect>> ModifierEffects;
+    
+    UPROPERTY()
+    TArray<FActiveGameplayEffectHandle> EffectCollection;
+
+    UPROPERTY()
+    FModifierParams ParamStruct;
+
+    virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+    virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 };
 
 

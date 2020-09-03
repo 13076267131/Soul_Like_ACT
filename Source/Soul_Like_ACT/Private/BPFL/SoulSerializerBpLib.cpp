@@ -34,7 +34,7 @@ void USoulSerializerBpLib::GetModifiersFromItem(const USoulItem* ItemRef, TArray
 }
 
 void USoulSerializerBpLib::GetPrimaryStatusFromItem(const USoulItem* ItemRef, TArray<FText>& ModifierNames,
-                                                    TArray<FText>& ModifierLevels, bool& Successful)
+                                                    TArray<FText>& ModifierValues, bool& Successful)
 {
     if (!ItemRef->PrimaryAbility)
     {
@@ -50,9 +50,13 @@ void USoulSerializerBpLib::GetPrimaryStatusFromItem(const USoulItem* ItemRef, TA
         Successful = 0;
         return;
     }
-    ModifierNames.Add(TempAbility->DisplayName);
 
-    ModifierLevels.Add(FText::FromString(FString::FromInt(ItemRef->PrimaryAbilityLevel)));
+    for(int i = 0; i < TempAbility->AttributeNames.Num(); ++i)
+    {
+        ModifierNames.Add(FText::FromName(TempAbility->AttributeNames[i]));
+
+        ModifierValues.Add(FText::FromString(FString::FromInt(TempAbility->Values[i])));
+    }
 
     Successful = ModifierNames.Num() > 0;
 }

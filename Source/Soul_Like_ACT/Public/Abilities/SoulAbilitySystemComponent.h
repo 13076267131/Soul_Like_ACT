@@ -50,6 +50,9 @@ public:
     bool TryActivateAbilityWithDelegate(FGameplayAbilitySpecHandle AbilityToActivate, bool bAllowRemoteActivation,
                                         FOnGameplayAbilityEnded::FDelegate* OnGameplayAbilityEndedDelegate = nullptr);
 
+    UFUNCTION(BlueprintCallable, Category = Attributes)
+    void AddAttributeValue(const FGameplayAttribute Attribute, float AdditiveValue, bool bClampNegative = false);
+
 #pragma region Utilities
     
     UFUNCTION(BlueprintCallable, Category = GameplayAbility)

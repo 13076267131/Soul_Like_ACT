@@ -93,10 +93,6 @@ void USoulModifierManager::AddStartupGameplayAbilities()
 
 bool USoulModifierManager::UpdateModifierToPlayer(const FSoulItemData& InputItemData, bool bIsAdded /*= true*/)
 {
-    // 	if (PlayerRef->Role != ROLE_Authority)
-    // 	{
-    // 		return false;
-    // 	}
     if (!InputItemData.IsValid())
     {
         LOG_FUNC_ERROR("Invalid InputItemData");

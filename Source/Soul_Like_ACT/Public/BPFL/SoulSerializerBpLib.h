@@ -27,7 +27,7 @@ public:
 
     UFUNCTION(BlueprintCallable)
     static void GetPrimaryStatusFromItem(const USoulItem* ItemRef, TArray<FText>& ModifierNames,
-                                         TArray<FText>& ModifierLevels, bool& Successful);
+                                         TArray<FText>& ModifierValues, bool& Successful);
 
     UFUNCTION(BlueprintCallable)
     static void AttributeToString(FGameplayAttribute Attribute, FString& Output);

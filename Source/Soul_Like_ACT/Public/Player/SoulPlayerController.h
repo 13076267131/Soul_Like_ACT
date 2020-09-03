@@ -25,14 +25,14 @@ protected:
     UPROPERTY()
     ASoul_Like_ACTCharacter* PlayerPawn;
 
-    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = CameraController)
+    UPROPERTY()
     ECameraMode CameraMode;
 
 public:
     ASoulPlayerController();
 
     UFUNCTION()
-    void OnPossess(APawn* InPawn) override;
+    virtual void OnPossess(APawn* InPawn) override;
     
     UFUNCTION(BlueprintCallable)
     ECameraMode GetCamMode() const { return CameraMode; }

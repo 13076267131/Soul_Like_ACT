@@ -183,6 +183,18 @@ bool USoulAbilitySystemComponent::TryActivateAbilityWithDelegate(FGameplayAbilit
     return InternalTryActivateAbility(AbilityToActivate, FPredictionKey(), nullptr, OnGameplayAbilityEndedDelegate);
 }
 
+void USoulAbilitySystemComponent::AddAttributeValue(const FGameplayAttribute Attribute, float AdditiveValue,
+                                                    bool bClampNegative/*= false*/)
+{
+    const float CurrentValue = GetNumericAttributeBase(Attribute);
+    float NewValue = CurrentValue + AdditiveValue;
+
+    if(bClampNegative)
+        NewValue = FMath::Clamp(NewValue, 0.f, MAX_flt);
+    
+    SetNumericAttributeBase(Attribute, NewValue);
+}
+
 bool USoulAbilitySystemComponent::IsAbilityGiven(TSubclassOf<UGameplayAbility> Ability)
 {
     for(auto& Spec : ActivatableAbilities.Items)
