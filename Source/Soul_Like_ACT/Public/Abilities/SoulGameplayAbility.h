@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "Soul_Like_ACT.h"
 #include "Abilities/GameplayAbility.h"
 #include "Abilities/SoulAbilityTypes.h"
 #include "GameplayTagContainer.h"
@@ -23,8 +22,7 @@ class SOUL_LIKE_ACT_API USoulGameplayAbility : public UGameplayAbility
 public:
     // Constructor and overrides
     USoulGameplayAbility()
-    {
-    }
+    {}
 
     UFUNCTION(BlueprintCallable)
     float GetAttackSpeed() const;
@@ -78,61 +76,27 @@ public:
     }
 };
 
-/**
- * Subclass of ability blueprint type with game-specific data
- * This class uses GameplayEffectContainers to allow easier execution of gameplay effects based on a triggering tag
- * Most games will need to implement a subclass to support their game-specific code
- */
 UCLASS()
-class SOUL_LIKE_ACT_API USoulModifierGameplayAbility : public UGameplayAbility
+class SOUL_LIKE_ACT_API UModifierAbility : public USoulGameplayAbility
 {
     GENERATED_BODY()
 
 public:
-    USoulModifierGameplayAbility()
-        : DisplayName(FText::FromString("Invalid Modifier"))
+    UModifierAbility()
     {
-        InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+        InstancingPolicy = EGameplayAbilityInstancingPolicy::Type::InstancedPerActor;
     }
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Default)
-    FText DisplayName;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Default)
-    int32 MaxLevel;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Default)
-    TArray<TSubclassOf<UGameplayEffect>> ModifierEffects;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Default)
-    TArray<FActiveGameplayEffectHandle> EffectCollection;
-
-    UFUNCTION(BlueprintCallable, Category = ModifierAbility)
-    void ApplyEffectsToSelf();
-    UFUNCTION(BlueprintCallable, Category = ModifierAbility)
-    void RemoveEffectsFromSelf();
-};
-
-UCLASS()
-class SOUL_LIKE_ACT_API USoulPrimaryStatusGameplayAbility : public USoulGameplayAbility
-{
-    GENERATED_BODY()
-
-public:
-    USoulPrimaryStatusGameplayAbility();
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Modifier)
-    uint8 ParamNum = 1;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Modifier)
-    FString ModifierFormat = "Attack Damage:{a}";
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Default)
-    TArray<TSubclassOf<UGameplayEffect>> ModifierEffects;
     
-    UPROPERTY()
-    TArray<FActiveGameplayEffectHandle> EffectCollection;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Default)
+    TArray<TSubclassOf<UGameplayEffect>> ModifierEffects;
 
-    UPROPERTY()
-    FModifierParams ParamStruct;
-
+    void SetModifierParameters(const TArray<float>& Params);
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
     virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+
+protected:
+    UPROPERTY()
+    TMap<FModifierEffectHandles, FModifierParams> ModifierEffectHandles;
 };
 
 

@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Abilities/SoulGameplayAbility.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/SoulAbilitySystemComponent.h"
 #include "Abilities/SoulTargetType.h"
 #include "SoulCharacterBase.h"
+#include "BPFL/BPFL_AbilitySystem.h"
+#include "Abilities/Modifier.h"
 
 
 FSoulGameplayEffectContainerSpec USoulGameplayAbility::MakeEffectContainerSpecFromContainer(
@@ -89,53 +90,65 @@ TArray<FActiveGameplayEffectHandle> USoulGameplayAbility::ApplyEffectContainer(
     return ApplyEffectContainerSpec(Spec);
 }
 
-void USoulModifierGameplayAbility::ApplyEffectsToSelf()
-{
-    for (auto& LocalGE : ModifierEffects)
-    {
-        FActiveGameplayEffectHandle NewActivatedGE = USoulAbilitySystemComponent::ApplyGE_ToSelf(
-            GetOwningActorFromActorInfo(), LocalGE, GetAbilityLevel());
 
-        if (NewActivatedGE.IsValid())
-        {
-            EffectCollection.Add(NewActivatedGE);
-        }
-    }
-}
-
-void USoulModifierGameplayAbility::RemoveEffectsFromSelf()
-{
-    for (FActiveGameplayEffectHandle& LocalActiveEffect : EffectCollection)
-    {
-        if (LocalActiveEffect.WasSuccessfullyApplied())
-            LocalActiveEffect.GetOwningAbilitySystemComponent()->RemoveActiveGameplayEffect(LocalActiveEffect);
-    }
-}
-
-USoulPrimaryStatusGameplayAbility::USoulPrimaryStatusGameplayAbility()
+UModifierAbility::UModifierAbility()
 {
 }
 
-void USoulPrimaryStatusGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-                                                        const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
+void UModifierAbility::SetModifierParameters(const TArray<float>& Params)
+{
+    ParamPtr = MakeShared<FModifierParams>(Params);
+}
+
+void UModifierAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+                                                        const FGameplayAbilityActorInfo* ActorInfo,
+                                                        const FGameplayAbilityActivationInfo ActivationInfo,
                                                         const FGameplayEventData* TriggerEventData)
 {
+    TArray<FGameplayTag> GE_Setters;
+    int32 TotalSetters;
+    bool areSetterTagsValid;
+
+    UBPFL_AbilitySystem::GetSetByCallerTagsFromAbility(StaticClass(),
+                                                    GE_Setters, TotalSetters, areSetterTagsValid);
+
+    if(!areSetterTagsValid)
+    {
+        LOG_FUNC_ERROR(this->GetName() + " has GE(s) without a DataTag filled in SetByCaller");
+        K2_EndAbility();
+    }
+    if(ParamPtr.Get()->Params.Num() != TotalSetters)
+    {
+        LOG_FUNC_ERROR(this->GetName() + " setter's number does not match with ModifierParams");
+        K2_EndAbility(); 
+    }
+
+    auto GE_SetterIter = GE_Setters.begin();
+    auto GE_setterParam  = ParamPtr.Get()->Params.begin();
+    
     for (auto& LocalGE : ModifierEffects)
     {
-        
         FGameplayEffectSpecHandle GE_SpecHandle = MakeOutgoingGameplayEffectSpec(LocalGE, 1);
-        while(auto setter : GE_SpecHandle.Data->SetByCallerTagMagnitudes)
-        GE_SpecHandle.Data->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag("Tag.what"), ParamStruct.Params[0]);
+
+        GE_SpecHandle.Data->SetSetByCallerMagnitude(*GE_SetterIter, *GE_setterParam);
+        
         auto ActiveGE_Handle = K2_ApplyGameplayEffectSpecToOwner(GE_SpecHandle);
 
         if (ActiveGE_Handle.IsValid())
         {
             EffectCollection.Add(ActiveGE_Handle);
+        }else
+        {
+            LOG_FUNC_ERROR(LocalGE->GetName() + " failed to create a EffectSpecHandle");
+            K2_EndAbility();
         }
+
+        ++GE_SetterIter;
+        ++GE_setterParam;
     }
 }
 
-void USoulPrimaryStatusGameplayAbility::OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo,
+void UModifierAbility::OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo,
     const FGameplayAbilitySpec& Spec)
 {
     auto ABS = Cast<USoulAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());

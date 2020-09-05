@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "SoulGameplayAbility.h"
 #include "Types/SoulItemTypes.h"
 #include "Components/ActorComponent.h"
 #include "SoulModifierManager.generated.h"
@@ -39,12 +41,10 @@ protected:
     */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Default)
     TMap<TSubclassOf<USoulGameplayAbility>, int32> DefaultActiveAbilities;
-    /**
-    * These GAs are created when Beginplay
-    * DefaultModifers can only be triggered or modify attributes, thus permanent.
-    */
+
+    //FDataTableRowHandle hook with FModifier
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Default)
-    TMap<TSubclassOf<USoulModifierGameplayAbility>, int32> DefaultModifiers;
+    TMap<FModifier, FModifierParams> DefaultModifiers;
 
     /**
      * GameAbilitySpecHandles that for future usages

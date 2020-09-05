@@ -3,12 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
-#include "AttributeSet.h"
-#include "ItemAttribute.h"
 #include "Engine/DataAsset.h"
-#include "Engine/Texture.h"
 #include "SoulAssetManager.h"
+#include "Abilities/Modifier.h"
 #include "ItemBasic.generated.h"
 
 class USoulGameplayAbility;
@@ -38,7 +35,6 @@ public:
     /** Constructor */
     USoulItem()
         : MaxCount(1)
-          , MaxLevel(1)
     {
     }
 
@@ -57,11 +53,9 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
     FText ItemDescription;
 
-    /** Icon to display */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
     UTexture* ItemIcon;
 
-    /** Maximum number of instances that can be in inventory at once, <= 0 means infinite */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Max)
     int32 MaxCount;
 
@@ -69,20 +63,12 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = Max)
     bool IsConsumable() const;
 
-    /** Maximum level this item can be, <= 0 means infinite */
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Max)
-    int32 MaxLevel;
-
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
-    int32 MaxSlots;
-
+    TMap<FModifier, FModifierParams> PrimModifiers;
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
-    TArray<UItemAttribute> ItemAttributes;
+    TMap<FModifier, FModifierParams> Modifiers;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
-    TMap<TSubclassOf<class USoulModifierGameplayAbility>, int32> Modifiers;
-
-    /** Returns the logical name, equivalent to the primary asset id */
     UFUNCTION(BlueprintCallable, Category = Item)
     FString GetIdentifierString() const;
 

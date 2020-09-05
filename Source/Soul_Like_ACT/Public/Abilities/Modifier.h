@@ -1,40 +1,50 @@
 #pragma once
-
 #include "CoreMinimal.h"
-#include "AttributeSet.h"
-#include "Abilities/SoulGameplayAbility.h"
+#include "GameplayEffectTypes.h"
+#include "Engine/DataTable.h"
+#include "Modifier.generated.h"
 
-#include "ItemAttribute.generated.h"
-
-UCLASS(Blueprintable)
-class SOUL_LIKE_ACT_API UModifier : public UDataAsset
+USTRUCT(BlueprintType)
+struct SOUL_LIKE_ACT_API FModifier : public FTableRowBase
 {
     GENERATED_BODY()
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName DisplayName;
-    // UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-    // FGameplayTag ModifierType;
-    // UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    // FGameplayTagContainer TagCluster;
 
     //Attack + 10 && defense - 10
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<TSubclassOf<USoulPrimaryStatusGameplayAbility>> GA_Modifiers;
+    TSubclassOf<class UModifierAbility> ModifierClass;
 };
 
 USTRUCT(BlueprintType)
-struct SOUL_LIKE_ACT_API FModifierParams
+struct FModifierParams
 {
     GENERATED_BODY()
 
 public:
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Modifier)
-    TArray<float> Params;
+    FModifierParams();
 
-    static bool IsValid(const UModifier& Modifier)
-    {
-       return true; 
-    }
+    FModifierParams(TArray<float> InParams)
+        :Params(InParams)
+    {}
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TArray<float> Params;
+};
+
+USTRUCT()
+struct FModifierEffectHandles
+{
+    GENERATED_BODY()
+
+    FModifierEffectHandles(){}
+    
+    FModifierEffectHandles(TArray<struct FActiveGameplayEffectHandle>& InEffectHandles)
+        :EffectHandles(InEffectHandles)
+    {}
+
+    UPROPERTY()
+    TArray<struct FActiveGameplayEffectHandle> EffectHandles;
 };

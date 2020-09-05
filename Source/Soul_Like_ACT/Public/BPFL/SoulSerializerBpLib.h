@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "Abilities/Modifier.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Abilities/SoulGameplayAbility.h"
 #include "SoulSerializerBpLib.generated.h"
@@ -20,20 +22,8 @@ class SOUL_LIKE_ACT_API USoulSerializerBpLib : public UBlueprintFunctionLibrary
     GENERATED_BODY()
 
 public:
-
-    UFUNCTION(BlueprintCallable)
-    static void GetModifiersFromItem(const USoulItem* ItemRef, TArray<FText>& ModifierNames,
-                                     TArray<FText>& ModifierLevels, bool& Successful);
-
-    UFUNCTION(BlueprintCallable)
-    static void GetPrimaryStatusFromItem(const USoulItem* ItemRef, TArray<FText>& ModifierNames,
-                                         TArray<FText>& ModifierValues, bool& Successful);
-
     UFUNCTION(BlueprintCallable)
     static void AttributeToString(FGameplayAttribute Attribute, FString& Output);
-
-    static void ModiferToText(const TPair<TSubclassOf<USoulModifierGameplayAbility>, int32>& InputAbilityInfo,
-                              FText& ModifierName, FText& ModifierLevel);
 
     template <typename T, typename Y>
     static FORCEINLINE void AddKeysToMap(TArray<T>& InKeys, TMap<T, Y>& InMap)

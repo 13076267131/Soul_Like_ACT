@@ -70,14 +70,14 @@ void USoulModifierManager::AddStartupGameplayAbilities()
         }
     }
 
-    for (TPair<TSubclassOf<USoulModifierGameplayAbility>, int32>& TempModifier : DefaultModifiers)
+    for (auto& TempModifier : DefaultModifiers)
     {
-        if (TempModifier.Key)
+        if (TempModifier.Key.ModifierClass->IsValidLowLevel())
         {
             auto LocalGrantedMod = GetOwnerGameplayAbilityComponent()->GiveAbility(
                 FGameplayAbilitySpec(
-                    TempModifier.Key
-                    , TempModifier.Value
+                    TempModifier.Key.ModifierClass
+                    , 1
                     , INDEX_NONE
                     , GetOwner())
             );
@@ -85,6 +85,10 @@ void USoulModifierManager::AddStartupGameplayAbilities()
             GrantedModifierAbilities.Add(LocalGrantedMod);
 
             GetOwnerGameplayAbilityComponent()->TryActivateAbility(LocalGrantedMod, true);
+        }
+        else
+        {
+           LOG_FUNC_ERROR(); 
         }
     }
 
@@ -98,7 +102,7 @@ bool USoulModifierManager::UpdateModifierToPlayer(const FSoulItemData& InputItem
         LOG_FUNC_ERROR("Invalid InputItemData");
         return false;
     }
-    for (TPair<TSubclassOf<USoulModifierGameplayAbility>, int32>& ItemModifier : InputItemData.ItemBase->Modifiers)
+    for (auto& ItemModifier : InputItemData.ItemBase->modi)
     {
         bool bIsModNew = false;
 
