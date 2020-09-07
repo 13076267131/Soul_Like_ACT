@@ -82,6 +82,9 @@ class SOUL_LIKE_ACT_API UModifierAbility : public USoulGameplayAbility
     GENERATED_BODY()
 
 public:
+    /**
+     * Can call GetPrimaryInstance() after called GiveAbility().
+     */
     UModifierAbility()
     {
         InstancingPolicy = EGameplayAbilityInstancingPolicy::Type::InstancedPerActor;
@@ -96,7 +99,9 @@ public:
 
 protected:
     UPROPERTY()
-    TMap<FModifierEffectHandles, FModifierParams> ModifierEffectHandles;
+    TMap<FModifierEffectHandles, FModifierParams> ModifierEffectParams;
+    UPROPERTY()
+    TArray<FModifierParams> ExtraParams;
 };
 
 

@@ -90,13 +90,14 @@ TArray<FActiveGameplayEffectHandle> USoulGameplayAbility::ApplyEffectContainer(
     return ApplyEffectContainerSpec(Spec);
 }
 
-
-UModifierAbility::UModifierAbility()
-{
-}
-
 void UModifierAbility::SetModifierParameters(const TArray<float>& Params)
 {
+    if(!GetCurrentAbilitySpec()->GetPrimaryInstance())
+    {
+        LOG_FUNC_ERROR(StaticClass()->GetName() + " cannot find primary class");
+        return;
+    }
+    
     ParamPtr = MakeShared<FModifierParams>(Params);
 }
 

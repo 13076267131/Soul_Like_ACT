@@ -40,11 +40,19 @@ struct FModifierEffectHandles
     GENERATED_BODY()
 
     FModifierEffectHandles(){}
-    
     FModifierEffectHandles(TArray<struct FActiveGameplayEffectHandle>& InEffectHandles)
         :EffectHandles(InEffectHandles)
     {}
 
     UPROPERTY()
     TArray<struct FActiveGameplayEffectHandle> EffectHandles;
+
+    bool operator==(const FModifierEffectHandles& Other) const
+    {
+        for(int i = 0; i < EffectHandles.Num(); ++i)
+            if(EffectHandles[i] != Other.EffectHandles[i])
+                return false; 
+
+        return true;
+    }
 };
