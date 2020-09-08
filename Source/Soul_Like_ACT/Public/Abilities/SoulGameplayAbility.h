@@ -6,6 +6,9 @@
 #include "Abilities/GameplayAbility.h"
 #include "Abilities/SoulAbilityTypes.h"
 #include "GameplayTagContainer.h"
+#include "SoulAbilityTask_PlayMontageAndWaitForEvent.h"
+#include "SoulJsonObject.h"
+
 #include "SoulGameplayAbility.generated.h"
 
 /**
@@ -61,19 +64,21 @@ class SOUL_LIKE_ACT_API USoulActiveAbility : public USoulGameplayAbility
 {
     GENERATED_BODY()
 
-public:
-    USoulActiveAbility()
-    {
-        ActivationBlockedTags.AddTagFast(FGameplayTag::RequestGameplayTag("Ailment.Dead", true));
-        ActivationBlockedTags.AddTagFast(FGameplayTag::RequestGameplayTag("Ailment.Stun", true));
+    FName LatentSectionName;
+    UPROPERTY()
+    FTimerHandle JumpSectionHandle;
 
-        CancelAbilitiesMatchingTagQuery.MakeQuery_MatchAnyTags(
-            FGameplayTagContainer::CreateFromArray(
-                TArray<FGameplayTag>{
-                    FGameplayTag::RequestGameplayTag("Ailment.Dead"),
-                    FGameplayTag::RequestGameplayTag("Ailment.Perilous"),
-                    FGameplayTag::RequestGameplayTag("Ailment.Stun")}));
-    }
+public:
+    USoulActiveAbility();
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = AbilityTask)
+    USoulAbilityTask_PlayMontageAndWaitForEvent* AbilityTask;
+    
+    UFUNCTION(BlueprintCallable, Category = Ability)
+    void EndLatentAbility(bool bUseDuration, FName InLatentSectionName, float Duration);
+
+    UFUNCTION()
+    void _EndLatentAbility();
 };
 
 /**

@@ -4,6 +4,17 @@
 #include "SoulJsonObject.h"
 
 
+void USoulJsonObjectWrapper::SetJumpSection(USoulJsonObjectWrapper* JsonObjectWrapper, bool isSameMontage,
+    FString JumpTargetName)
+{
+    if (JsonObjectWrapper->JsonObject.Object.IsValid())
+    {
+        JsonObjectWrapper->JsonObject.Object->SetBoolField("isSameMontage", isSameMontage);
+
+        JsonObjectWrapper->JsonObject.Object->SetStringField("JumpTargetName", JumpTargetName);
+    }
+}
+
 void USoulJsonObjectWrapper::SoulTryGetJumpSection(USoulJsonObjectWrapper* JsonObjectWrapper, bool& isSameMontage,
                                                    FString& JumpTargetName, bool& bSuccessful)
 {

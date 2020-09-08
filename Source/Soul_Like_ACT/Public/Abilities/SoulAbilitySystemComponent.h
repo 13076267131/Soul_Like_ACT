@@ -43,8 +43,9 @@ public:
                                                         const TSubclassOf<UGameplayEffect> GameplayEffect,
                                                         const int32 AbilityLevel);
 
-    bool TryActivateAbilityByClassWithDelegate(TSubclassOf<UGameplayAbility> InAbilityToActivate,
-                                               FOnGameplayAbilityEnded::FDelegate* OnGameplayAbilityEndedDelegate =
+    bool TryActivateAbilityByClassWithDelegate(FGameplayAbilitySpecHandle& OutAbilitySpecHandle
+                                               , TSubclassOf<UGameplayAbility> InAbilityToActivate
+                                               , FOnGameplayAbilityEnded::FDelegate* OnGameplayAbilityEndedDelegate =
                                                    nullptr);
 
     bool TryActivateAbilityWithDelegate(FGameplayAbilitySpecHandle AbilityToActivate, bool bAllowRemoteActivation,

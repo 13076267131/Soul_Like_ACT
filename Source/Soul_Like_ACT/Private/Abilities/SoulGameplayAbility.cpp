@@ -72,6 +72,55 @@ TArray<FActiveGameplayEffectHandle> USoulGameplayAbility::ApplyEffectContainerSp
     return AllEffects;
 }
 
+USoulActiveAbility::USoulActiveAbility()
+{
+    ActivationBlockedTags.AddTagFast(FGameplayTag::RequestGameplayTag("Ailment.Dead", true));
+    ActivationBlockedTags.AddTagFast(FGameplayTag::RequestGameplayTag("Ailment.Stun", true));
+
+    CancelAbilitiesMatchingTagQuery.MakeQuery_MatchAnyTags(
+        FGameplayTagContainer::CreateFromArray(
+            TArray<FGameplayTag>{
+                FGameplayTag::RequestGameplayTag("Ailment.Dead"),
+                FGameplayTag::RequestGameplayTag("Ailment.Perilous"),
+                FGameplayTag::RequestGameplayTag("Ailment.Stun")
+            }));
+}
+
+void USoulActiveAbility::EndLatentAbility(bool bUseDuration, FName InLatentSectionName, float Duration)
+{
+    LatentSectionName = InLatentSectionName;
+
+    if (bUseDuration && Duration > 0.f)
+    {
+        GetWorld()->GetTimerManager().SetTimer(JumpSectionHandle
+                                               , this
+                                               , &USoulActiveAbility::_EndLatentAbility
+                                               , 0.f
+                                               , false,
+                                               Duration);
+    }
+    else
+    {
+        _EndLatentAbility();
+    }
+}
+
+void USoulActiveAbility::_EndLatentAbility()
+{
+    if(!LatentSectionName.IsNone() && LatentSectionName.IsValid())
+    {
+        FGameplayEventData Payload;
+        auto JumpSecPayLoad =  USoulJsonObjectWrapper::MakeSoulJsonObject();
+        USoulJsonObjectWrapper::SetJumpSection(JumpSecPayLoad, true, LatentSectionName.ToString());
+        Payload.OptionalObject = JumpSecPayLoad;
+    
+        SendGameplayEvent(FGameplayTag::RequestGameplayTag("Anim.Combo"), Payload);
+    }else
+    {
+        K2_EndAbility();
+    }
+}
+
 float USoulGameplayAbility::GetAttackSpeed() const
 {
     ASoulCharacterBase* OwnerCharacter = Cast<ASoulCharacterBase>(GetOwningActorFromActorInfo());
@@ -83,7 +132,8 @@ float USoulGameplayAbility::GetAttackSpeed() const
 TArray<FActiveGameplayEffectHandle> USoulGameplayAbility::ApplyEffectContainer(
     FGameplayTag ContainerTag, const FGameplayEventData& EventData, int32 OverrideGameplayLevel)
 {
-    const FSoulGameplayEffectContainerSpec Spec = MakeEffectContainerSpec(ContainerTag, EventData, OverrideGameplayLevel);
+    const FSoulGameplayEffectContainerSpec Spec = MakeEffectContainerSpec(
+        ContainerTag, EventData, OverrideGameplayLevel);
     return ApplyEffectContainerSpec(Spec);
 }
 
