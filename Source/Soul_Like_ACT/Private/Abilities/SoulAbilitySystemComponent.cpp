@@ -83,8 +83,8 @@ FActiveGameplayEffectHandle USoulAbilitySystemComponent::ApplyGE_ToTarget(
 }
 
 bool USoulAbilitySystemComponent::TryActivateAbilityByClassWithDelegate(
-    TSubclassOf<UGameplayAbility> InAbilityToActivate,
-    FOnGameplayAbilityEnded::FDelegate* OnGameplayAbilityEndedDelegate /*= nullptr*/)
+    FGameplayAbilitySpecHandle& OutAbilitySpecHandle, TSubclassOf<UGameplayAbility> InAbilityToActivate,
+    FOnGameplayAbilityEnded::FDelegate* OnGameplayAbilityEndedDelegate)
 {
     bool bSuccess = false;
 
@@ -94,6 +94,7 @@ bool USoulAbilitySystemComponent::TryActivateAbilityByClassWithDelegate(
     {
         if (Spec.Ability == InAbilityCDO)
         {
+            OutAbilitySpecHandle = Spec.Handle;
             bSuccess |= TryActivateAbilityWithDelegate(Spec.Handle, true, OnGameplayAbilityEndedDelegate);
             break;
         }

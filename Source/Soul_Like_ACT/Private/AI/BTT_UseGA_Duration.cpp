@@ -1,23 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/BTT_UseGA.h"
+#include "AI/BTT_UseGA_Duration.h"
 #include "AIController.h"
 #include "AbilitySystemGlobals.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Abilities/SoulAbilitySystemComponent.h"
 #include "Abilities/SoulGameplayAbility.h"
 
-
-UBTT_UseGA::UBTT_UseGA(const FObjectInitializer& ObjectInitializer)
-    : Super(ObjectInitializer)
+UBTT_UseGA_Duration::UBTT_UseGA_Duration()
 {
-    NodeName = "Use Melee Ability";
+    NodeName = "Use Casting Ability";
     bCreateNodeInstance = true;
     bNotifyTick = false;
 }
 
-EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTT_UseGA_Duration::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     USoulAbilitySystemComponent* ASC = Cast<USoulAbilitySystemComponent>(
         UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(
@@ -31,8 +29,8 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
     BTC = &OwnerComp;
 
     UClass* GA_Class = bUseKey
-                            ? OwnerComp.GetBlackboardComponent()->GetValueAsClass(GA_Melee_CDO.SelectedKeyName)
-                            : *AbilityClass;
+                           ? OwnerComp.GetBlackboardComponent()->GetValueAsClass(GA_Melee_CDO.SelectedKeyName)
+                           : *AbilityClass;
 
     if(!GA_Class->IsValidLowLevel())
     {
@@ -40,30 +38,34 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
         return EBTNodeResult::Aborted;
     }
     
-    if(!ASC->IsAbilityGiven(GA_Class))
+    if (!ASC->IsAbilityGiven(GA_Class))
     {
         GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Ability is not given to ASC");
-
         ASC->GiveAbility(FGameplayAbilitySpec(GA_Class));
     }
-        
-    if(GA_Class && GA_Class->IsChildOf(UGA_Melee::StaticClass()))
+
+    if (GA_Class && GA_Class->IsChildOf(USoulActiveAbility::StaticClass()))
     {
-        FGameplayAbilitySpecHandle _handle;
-
         FOnGameplayAbilityEnded::FDelegate DelegateObj = FOnGameplayAbilityEnded::FDelegate::CreateUObject(
-                                                                                            this, &UBTT_UseGA::OnGA_Ended);
-
-        if (!ASC->TryActivateAbilityByClassWithDelegate(_handle, GA_Class, &DelegateObj))
+                                                            this, &UBTT_UseGA_Duration::OnGA_Ended);
+        if (!ASC->TryActivateAbilityByClassWithDelegate(GA_Handle, GA_Class, &DelegateObj))
             return EBTNodeResult::Failed;
     }
-        
+    
+    const auto AbilitySpec = ASC->FindAbilitySpecFromHandle(GA_Handle);
+
+    if(AbilitySpec->Ability->GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::InstancedPerActor
+        && AbilitySpec->GetPrimaryInstance()->IsA(USoulActiveAbility::StaticClass()))
+    {
+
+        Cast<USoulActiveAbility>(AbilitySpec->GetPrimaryInstance())->EndLatentAbility(true, EndSection, EndLatency);
+    }
     return EBTNodeResult::InProgress;
 }
 
-
-
-void UBTT_UseGA::OnGA_Ended(class UGameplayAbility* Ability)
+void UBTT_UseGA_Duration::OnGA_Ended(UGameplayAbility* Ability)
 {
+    GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, "EndLatentAbility");
+
     FinishLatentTask(*BTC, EBTNodeResult::Succeeded);
 }

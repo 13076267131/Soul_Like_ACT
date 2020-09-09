@@ -15,13 +15,13 @@ class SOUL_LIKE_ACT_API USoulJsonObjectWrapper : public UObject
 {
     GENERATED_BODY()
 
+public:
     USoulJsonObjectWrapper()
-        : Super()
+    : Super()
     {
         JsonObject = UBlueprintJsonLibrary::JsonMake();
     }
-
-public:
+    
     UPROPERTY(BlueprintReadWrite, Category = Json)
     FBlueprintJsonObject JsonObject;
 
@@ -41,7 +41,11 @@ public:
         }
     }
 
-    UFUNCTION(BlueprintCallable, Category = Json)
+    UFUNCTION(BlueprintCallable, Category = Abilities)
+    static void SetJumpSection(USoulJsonObjectWrapper* JsonObjectWrapper, bool isSameMontage,
+                                      FString JumpTargetName);
+    
+    UFUNCTION(BlueprintCallable, Category = Abilities)
     static void SoulTryGetJumpSection(USoulJsonObjectWrapper* JsonObjectWrapper, bool& isSameMontage,
                                       FString& JumpTargetName, bool& bSuccessful);
 };

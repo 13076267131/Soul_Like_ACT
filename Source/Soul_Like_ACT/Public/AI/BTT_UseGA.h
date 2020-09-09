@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "Abilities/GameplayAbility.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTT_UseGA.generated.h"
 
@@ -19,7 +21,11 @@ class SOUL_LIKE_ACT_API UBTT_UseGA : public UBTTaskNode
 
 public:
     UPROPERTY(EditAnywhere, Category = Abilities)
+    bool bUseKey;
+    UPROPERTY(EditAnywhere, Category = Abilities)
     FBlackboardKeySelector GA_Melee_CDO;
+    UPROPERTY(EditAnywhere, Category = Abilities)
+    TSubclassOf<class UGameplayAbility> AbilityClass;
 
     UPROPERTY()
     UBehaviorTreeComponent* BTC;
