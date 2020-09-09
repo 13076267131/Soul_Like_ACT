@@ -30,19 +30,19 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 
     BTC = &OwnerComp;
 
-    FOnGameplayAbilityEnded::FDelegate DelegateObj = FOnGameplayAbilityEnded::FDelegate::CreateUObject(
-        this, &UBTT_UseGA::OnGA_Ended);
-
     UClass* GA_Class = bUseKey
                             ? OwnerComp.GetBlackboardComponent()->GetValueAsClass(GA_Melee_CDO.SelectedKeyName)
                             : *AbilityClass;
 
-    //Give GA to ASC if not given yet
+    if(!GA_Class->IsValidLowLevel())
+    {
+        LOG_FUNC_ERROR("No valid GA_Class is found");
+        return EBTNodeResult::Aborted;
+    }
+    
     if(!ASC->IsAbilityGiven(GA_Class))
     {
         GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Ability is not given to ASC");
-
-        //return EBTNodeResult::Failed;
 
         ASC->GiveAbility(FGameplayAbilitySpec(GA_Class));
     }
@@ -50,6 +50,10 @@ EBTNodeResult::Type UBTT_UseGA::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
     if(GA_Class && GA_Class->IsChildOf(UGA_Melee::StaticClass()))
     {
         FGameplayAbilitySpecHandle _handle;
+
+        FOnGameplayAbilityEnded::FDelegate DelegateObj = FOnGameplayAbilityEnded::FDelegate::CreateUObject(
+                                                                                            this, &UBTT_UseGA::OnGA_Ended);
+
         if (!ASC->TryActivateAbilityByClassWithDelegate(_handle, GA_Class, &DelegateObj))
             return EBTNodeResult::Failed;
     }

@@ -74,6 +74,8 @@ TArray<FActiveGameplayEffectHandle> USoulGameplayAbility::ApplyEffectContainerSp
 
 USoulActiveAbility::USoulActiveAbility()
 {
+    InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+    
     ActivationBlockedTags.AddTagFast(FGameplayTag::RequestGameplayTag("Ailment.Dead", true));
     ActivationBlockedTags.AddTagFast(FGameplayTag::RequestGameplayTag("Ailment.Stun", true));
 
@@ -95,9 +97,10 @@ void USoulActiveAbility::EndLatentAbility(bool bUseDuration, FName InLatentSecti
         GetWorld()->GetTimerManager().SetTimer(JumpSectionHandle
                                                , this
                                                , &USoulActiveAbility::_EndLatentAbility
-                                               , 0.f
+                                               , Duration
                                                , false,
-                                               Duration);
+                                               -1);
+        GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, FString::SanitizeFloat(GetWorld()->GetTimerManager().GetTimerRemaining(JumpSectionHandle)));
     }
     else
     {
@@ -107,14 +110,15 @@ void USoulActiveAbility::EndLatentAbility(bool bUseDuration, FName InLatentSecti
 
 void USoulActiveAbility::_EndLatentAbility()
 {
+
     if(!LatentSectionName.IsNone() && LatentSectionName.IsValid())
     {
         FGameplayEventData Payload;
-        auto JumpSecPayLoad =  USoulJsonObjectWrapper::MakeSoulJsonObject();
+        const auto JumpSecPayLoad =  USoulJsonObjectWrapper::MakeSoulJsonObject();
         USoulJsonObjectWrapper::SetJumpSection(JumpSecPayLoad, true, LatentSectionName.ToString());
         Payload.OptionalObject = JumpSecPayLoad;
     
-        SendGameplayEvent(FGameplayTag::RequestGameplayTag("Anim.Combo"), Payload);
+        SendGameplayEvent(FGameplayTag::RequestGameplayTag("Ability.Event.Combo"), Payload);
     }else
     {
         K2_EndAbility();

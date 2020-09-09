@@ -28,32 +28,36 @@ EBTNodeResult::Type UBTT_UseGA_Duration::ExecuteTask(UBehaviorTreeComponent& Own
 
     BTC = &OwnerComp;
 
-    FOnGameplayAbilityEnded::FDelegate DelegateObj = FOnGameplayAbilityEnded::FDelegate::CreateUObject(
-        this, &UBTT_UseGA_Duration::OnGA_Ended);
-
     UClass* GA_Class = bUseKey
                            ? OwnerComp.GetBlackboardComponent()->GetValueAsClass(GA_Melee_CDO.SelectedKeyName)
                            : *AbilityClass;
 
-    //Give GA to ASC if not given yet
+    if(!GA_Class->IsValidLowLevel())
+    {
+        LOG_FUNC_ERROR("No valid GA_Class is found");
+        return EBTNodeResult::Aborted;
+    }
+    
     if (!ASC->IsAbilityGiven(GA_Class))
     {
         GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Ability is not given to ASC");
-
-        //return EBTNodeResult::Failed;
-
         ASC->GiveAbility(FGameplayAbilitySpec(GA_Class));
     }
 
-    if (GA_Class && GA_Class->IsChildOf(UGA_Melee::StaticClass()))
+    if (GA_Class && GA_Class->IsChildOf(USoulActiveAbility::StaticClass()))
     {
+        FOnGameplayAbilityEnded::FDelegate DelegateObj = FOnGameplayAbilityEnded::FDelegate::CreateUObject(
+                                                            this, &UBTT_UseGA_Duration::OnGA_Ended);
         if (!ASC->TryActivateAbilityByClassWithDelegate(GA_Handle, GA_Class, &DelegateObj))
             return EBTNodeResult::Failed;
     }
+    
     const auto AbilitySpec = ASC->FindAbilitySpecFromHandle(GA_Handle);
 
-    if(AbilitySpec->GetPrimaryInstance()->IsA(USoulActiveAbility::StaticClass()))
+    if(AbilitySpec->Ability->GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::InstancedPerActor
+        && AbilitySpec->GetPrimaryInstance()->IsA(USoulActiveAbility::StaticClass()))
     {
+
         Cast<USoulActiveAbility>(AbilitySpec->GetPrimaryInstance())->EndLatentAbility(true, EndSection, EndLatency);
     }
     return EBTNodeResult::InProgress;
@@ -61,5 +65,7 @@ EBTNodeResult::Type UBTT_UseGA_Duration::ExecuteTask(UBehaviorTreeComponent& Own
 
 void UBTT_UseGA_Duration::OnGA_Ended(UGameplayAbility* Ability)
 {
+    GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, "EndLatentAbility");
+
     FinishLatentTask(*BTC, EBTNodeResult::Succeeded);
 }
