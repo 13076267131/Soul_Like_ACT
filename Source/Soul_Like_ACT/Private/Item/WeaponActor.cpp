@@ -3,7 +3,7 @@
 #include "Item/WeaponActor.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Abilities/SoulAbilitySysBPLib.h"
+#include "BPFL/BPFL_AbilitySystem.h"
 #include "SoulCharacterBase.h"
 #include "DrawDebugHelpers.h"
 
@@ -78,15 +78,15 @@ bool AWeaponActor::TryExcludeActor(AActor* HitActor)
 {
     if (MyTargets.Contains(HitActor))
     {
-        return 0;
+        return false;
     }
     MyTargets.Add(HitActor);
-    return 1;
+    return true;
 }
 
 void AWeaponActor::StartSwing(const float& InDmgMulti)
 {
-    bIsTracingCollision = 1;
+    bIsTracingCollision = true;
 
     DmgMultiplier = InDmgMulti;
 
@@ -104,7 +104,7 @@ void AWeaponActor::StartSwing(const float& InDmgMulti)
 
 void AWeaponActor::EndSwing()
 {
-    bIsTracingCollision = 0;
+    bIsTracingCollision = false;
 }
 
 // Called every frame

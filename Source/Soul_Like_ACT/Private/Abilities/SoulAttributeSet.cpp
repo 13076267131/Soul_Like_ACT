@@ -12,8 +12,13 @@ USoulAttributeSet::USoulAttributeSet()
       , Posture(0.f)
       , MaxPosture(1.f)
       , PostureStrength(0.0f)
-      , DefensePower(0.f)
-      , AttackPower(0.0f)
+      , DefensePower(0.f), DefensePower_Base(0.f)
+      , DefensePower_Inc(0.f), DefensePower_More(1.f)
+      // AttackPower =  AttackPower_Base * (1 + AttackPower_Inc) * AttackPower_More
+      // where:
+      //        AttackPower_More *= new_attack_more
+      //        AttackPower_Inc += new_attack_inc
+      , AttackPower(0.0f), AttackPower_Base(0.f), AttackPower_Inc(0.f), AttackPower_More(1.f)
       , AttackSpeed(0.0f)
       , Leech(0.0f)
       , PostureCrumble(0.0f)

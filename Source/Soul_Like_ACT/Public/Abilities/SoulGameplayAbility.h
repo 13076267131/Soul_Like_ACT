@@ -5,6 +5,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "Abilities/SoulAbilityTypes.h"
 #include "GameplayTagContainer.h"
+#include "Modifier.h"
 #include "SoulAbilityTask_PlayMontageAndWaitForEvent.h"
 #include "SoulJsonObject.h"
 #include "SoulGameplayAbility.generated.h"
@@ -93,17 +94,23 @@ public:
     }
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Default)
-    TArray<TSubclassOf<UGameplayEffect>> ModifierEffects;
+    TArray<TSubclassOf<UGameplayEffect>> ModifierEffectClasses;
 
-    void SetModifierParameters(const TArray<float>& Params);
-    virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-    virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+    bool AddModifierParameters(const TArray<float>& Params, TSharedPtr<FModifierEffectHandles>& ModifierHandlePtr);
+    bool RemoveModifierParam(const FModifierEffectHandles& ModifierHandle);
 
+    UFUNCTION(BlueprintCallable)
+    void GetFinalParams(TArray<float>& Result) const;
+    
+    UFUNCTION()
+    virtual void UpdateModifier();
+    
+    UFUNCTION(BlueprintImplementableEvent)
+    void BP_UpdateModifier();
+    
 protected:
     UPROPERTY()
-    TMap<FModifierEffectHandles, FModifierParams> ModifierEffectParams;
-    UPROPERTY()
-    TArray<FModifierParams> ExtraParams;
+    FModifierParams CurrentParam;
 };
 
 

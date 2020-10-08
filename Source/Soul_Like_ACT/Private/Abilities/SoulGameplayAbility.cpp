@@ -144,44 +144,33 @@ TArray<FActiveGameplayEffectHandle> USoulGameplayAbility::ApplyEffectContainer(
     return ApplyEffectContainerSpec(Spec);
 }
 
-void UModifierAbility::SetModifierParameters(const TArray<float>& Params)
+bool UModifierAbility::AddModifierParameters(const TArray<float>& Params,
+    TSharedPtr<FModifierEffectHandles>& ModifierHandlePtr)
 {
-    if(!GetCurrentAbilitySpec()->GetPrimaryInstance())
-    {
-        LOG_FUNC_ERROR(StaticClass()->GetName() + " cannot find primary class");
-        return;
-    }
+    check(GetCurrentAbilitySpec()->GetPrimaryInstance());
     
-    ParamPtr = MakeShared<FModifierParams>(Params);
-}
-
-void UModifierAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-                                                        const FGameplayAbilityActorInfo* ActorInfo,
-                                                        const FGameplayAbilityActivationInfo ActivationInfo,
-                                                        const FGameplayEventData* TriggerEventData)
-{
     TArray<FGameplayTag> GE_Setters;
     int32 TotalSetters;
-    bool areSetterTagsValid;
+    bool areParamSettersValid;
 
     UBPFL_AbilitySystem::GetSetByCallerTagsFromAbility(StaticClass(),
-                                                    GE_Setters, TotalSetters, areSetterTagsValid);
+                                                    GE_Setters, TotalSetters, areParamSettersValid);
 
-    if(!areSetterTagsValid)
+    if(!areParamSettersValid)
     {
         LOG_FUNC_ERROR(this->GetName() + " has GE(s) without a DataTag filled in SetByCaller");
-        K2_EndAbility();
+        return false;
     }
     if(ParamPtr.Get()->Params.Num() != TotalSetters)
     {
         LOG_FUNC_ERROR(this->GetName() + " setter's number does not match with ModifierParams");
-        K2_EndAbility(); 
+        return false; 
     }
 
     auto GE_SetterIter = GE_Setters.begin();
     auto GE_setterParam  = ParamPtr.Get()->Params.begin();
     
-    for (auto& LocalGE : ModifierEffects)
+    for (auto& LocalGE : ModifierEffectClasses)
     {
         FGameplayEffectSpecHandle GE_SpecHandle = MakeOutgoingGameplayEffectSpec(LocalGE, 1);
 
@@ -201,6 +190,30 @@ void UModifierAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
         ++GE_SetterIter;
         ++GE_setterParam;
     }
+}
+
+bool UModifierAbility::RemoveModifierParam(const FModifierEffectHandles& ModifierHandle)
+{
+}
+
+void UModifierAbility::GetFinalParams(TArray<float>& Result) const
+{
+    Result.Reset();
+
+    Result = CurrentParam.Params;
+}
+
+void UModifierAbility::UpdateModifier()
+{
+    BP_UpdateModifier();
+}
+
+void UModifierAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+                                       const FGameplayAbilityActorInfo* ActorInfo,
+                                       const FGameplayAbilityActivationInfo ActivationInfo,
+                                       const FGameplayEventData* TriggerEventData)
+{
+    
 }
 
 void UModifierAbility::OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo,

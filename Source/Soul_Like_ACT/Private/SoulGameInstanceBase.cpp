@@ -129,7 +129,7 @@ void USoulGameInstanceBase::MakeSoulItemSaveData(FSoulItemData InItemData, FSoul
 void USoulGameInstanceBase::MakeSoulItemData(UObject* InItemBase, TArray<UObject*> InJewels, FSoulItemData& OutItemData,
                                              int32 InItemCount /*= 1*/, int32 InItemLevel /*= 1*/)
 {
-    OutItemData = FSoulItemData(Cast<USoulItem>(InItemBase), InItemCount, InItemLevel);
+    OutItemData = FSoulItemData(Cast<UPA_Item>(InItemBase), InItemCount, InItemLevel);
     for (UObject* Jew : InJewels)
     {
         OutItemData.SlotedJewls.Add(Cast<USoulJewelItem>(InItemBase));

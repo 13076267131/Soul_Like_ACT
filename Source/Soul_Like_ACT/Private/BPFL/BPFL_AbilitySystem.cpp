@@ -9,7 +9,7 @@ inline void UBPFL_AbilitySystem::GetSetByCallerTagsFromAbility(TSubclassOf<UModi
     SetterNum = 0;
     SetterTags.Reset();
 
-    for(auto GE_Class : ModifierClass.GetDefaultObject()->ModifierEffects)
+    for(auto GE_Class : ModifierClass.GetDefaultObject()->ModifierEffectClasses)
     {
         for(auto ModifierInfo: GE_Class.GetDefaultObject()->Modifiers)
         {

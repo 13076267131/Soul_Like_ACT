@@ -10,8 +10,6 @@ struct SOUL_LIKE_ACT_API FModifier : public FTableRowBase
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FName DisplayName;
 
     //Attack + 10 && defense - 10
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -32,6 +30,21 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<float> Params;
+
+    bool operator==(const FModifierParams& Other) const
+    {
+        return Params == Other.Params;
+    }
+
+    bool Merge(const FModifierParams& Other)
+    {
+        if(Params.Num() != Other.Params.Num()) return false;
+        
+        for(int i = 0;i < Params.Num(); ++i)
+            Params[i]+=Other.Params[i];
+        
+        return true;
+    }
 };
 
 USTRUCT()

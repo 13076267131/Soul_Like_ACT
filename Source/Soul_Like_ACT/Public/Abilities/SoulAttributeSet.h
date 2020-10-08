@@ -49,20 +49,28 @@ public:
     UPROPERTY(BlueprintReadOnly, Category = "Defense")
     FGameplayAttributeData DefensePower;
     ATTRIBUTE_ACCESSORS(USoulAttributeSet, DefensePower)
+    UPROPERTY(BlueprintReadOnly, Category = "Defense")
+    FGameplayAttributeData DefensePower_Base;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, DefensePower_Base)
+    UPROPERTY(BlueprintReadOnly, Category = "Defense")
+    FGameplayAttributeData DefensePower_Inc;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, DefensePower_Inc)
+    UPROPERTY(BlueprintReadOnly, Category = "Defense")
+    FGameplayAttributeData DefensePower_More;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, DefensePower_More)
 
-    UPROPERTY(BlueprintReadOnly, Category = "Damage")
-    FGameplayAttributeData Attack_Base;
-    ATTRIBUTE_ACCESSORS(USoulAttributeSet, Attack_Base)
-    UPROPERTY(BlueprintReadOnly, Category = "Damage")
-    FGameplayAttributeData Attack_Inc;
-    ATTRIBUTE_ACCESSORS(USoulAttributeSet, Attack_Inc)
-    UPROPERTY(BlueprintReadOnly, Category = "Damage")
-    FGameplayAttributeData Attack_More;
-    ATTRIBUTE_ACCESSORS(USoulAttributeSet, Attack_More)
-    
     UPROPERTY(BlueprintReadOnly, Category = "Damage")
     FGameplayAttributeData AttackPower;
     ATTRIBUTE_ACCESSORS(USoulAttributeSet, AttackPower)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData AttackPower_Base;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, AttackPower_Base)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData AttackPower_Inc;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, AttackPower_Inc)
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData AttackPower_More;
+    ATTRIBUTE_ACCESSORS(USoulAttributeSet, AttackPower_More)
 
     UPROPERTY(BlueprintReadOnly, Category = "Damage")
     FGameplayAttributeData AttackSpeed;
@@ -88,10 +96,10 @@ public:
     FGameplayAttributeData CriticalMulti;
     ATTRIBUTE_ACCESSORS(USoulAttributeSet, CriticalMulti)
 
+    
     UPROPERTY(BlueprintReadOnly, Category = "Output", meta = (HideFromLevelInfos))
     FGameplayAttributeData Damage;
     ATTRIBUTE_ACCESSORS(USoulAttributeSet, Damage)
-
     UPROPERTY(BlueprintReadOnly, Category = "Output", meta = (HideFromLevelInfos))
     FGameplayAttributeData PostureDamage;
     ATTRIBUTE_ACCESSORS(USoulAttributeSet, PostureDamage)

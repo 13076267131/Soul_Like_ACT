@@ -2,10 +2,9 @@
 
 
 #include "Item/SoulAssetManager.h"
-#include "Item/ItemBasic.h"
+#include "Item/PA_Item.h"
 #include "AbilitySystemGlobals.h"
 
-const FPrimaryAssetType USoulAssetManager::PotionItemType = TEXT("Potion");
 const FPrimaryAssetType USoulAssetManager::JewelItemType = TEXT("Jewel");
 const FPrimaryAssetType USoulAssetManager::WeaponItemType = TEXT("Weapon");
 const FPrimaryAssetType USoulAssetManager::ArmourItemType = TEXT("Armour");
@@ -28,19 +27,22 @@ USoulAssetManager* USoulAssetManager::Get()
     else
     {
         UE_LOG(LogTemp, Fatal, TEXT("Invalid AssetManager in DefaultEngine.ini, must be SoulAssetManager!"));
-        return NewObject<USoulAssetManager>(); // never calls this
+        return NewObject<USoulAssetManager>();
     }
 }
 
-USoulItem* USoulAssetManager::ForceLoadItem(const FPrimaryAssetId& PrimaryAssetId, bool bLogWarning /*= true*/)
+UPA_Item_Abstract* USoulAssetManager::ForceLoadItem(const FPrimaryAssetId& PrimaryAssetId, bool bLogWarning /*= true*/)
 {
     const FSoftObjectPath ItemPath = GetPrimaryAssetPath(PrimaryAssetId);
 
     // This does a synchronous load and may hitch
-    USoulItem* LoadedItem = Cast<USoulItem>(ItemPath.TryLoad());
+    UPA_Item_Abstract* LoadedItem = Cast<UPA_Item_Abstract>(ItemPath.TryLoad());
 
     if (bLogWarning && LoadedItem == nullptr)
+    {
         UE_LOG(LogTemp, Warning, TEXT("Failed to load item for identifier %s!"), *PrimaryAssetId.ToString());
+        return nullptr;
+    }
 
     return LoadedItem;
 }

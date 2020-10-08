@@ -11,7 +11,7 @@
 
 struct FGameplayAttribute;
 class USoulGameplayAbility;
-class USoulItem;
+class UPA_Item;
 
 /**
  * 
